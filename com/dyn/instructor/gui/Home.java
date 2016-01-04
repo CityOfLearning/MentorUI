@@ -1,30 +1,18 @@
 package com.dyn.instructor.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dyn.instructor.TeacherMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBox;
 import com.rabbit.gui.component.control.DropDown;
-import com.rabbit.gui.component.control.MultiTextbox;
 import com.rabbit.gui.component.control.Slider;
-import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
-import com.rabbit.gui.component.list.DisplayList;
-import com.rabbit.gui.component.list.ScrollableDisplayList;
-import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
-import com.rabbit.gui.component.list.entries.StringEntry.OnClickListener;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
 public class Home extends Show {
@@ -75,8 +63,22 @@ public class Home extends Show {
 
 		this.registerComponent(studentMenu);
 
-		this.registerComponent(new Slider((int) (this.width * .25), (int) (this.height * .6), 100, 20, 10)
-				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos)));
+		// time of day
+		this.registerComponent(new TextLabel(this.width / 6, (int) (this.height * .75), this.width / 3, 20,
+				"Set the Time of Day", TextAlignment.CENTER));
+
+		this.registerComponent(new Slider(this.width / 6 + 15, (int) (this.height * .8), 120, 20, 10)
+				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos))
+				.setProgress((float) mapClamp((Minecraft.getMinecraft().theWorld.getWorldTime() + 6000) % 24000, 0,
+						24000, 0, 1))
+				.setId("tod"));
+
+		// speed slider
+		this.registerComponent(new TextLabel((int) (this.width * .5), (int) (this.height * .75), this.width / 3, 20,
+				"Set your movement speed", TextAlignment.CENTER));
+
+		this.registerComponent(new Slider((int) (this.width * .5 + 15), (int) (this.height * .8), 120, 20, 10)
+				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos)).setId("speed"));
 
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
@@ -101,10 +103,28 @@ public class Home extends Show {
 	}
 
 	private void sliderChanged(Slider s, float pos) {
-		System.out.println("Slider pos: " + pos);
+		System.out.println(s.getId() + " " + s.isScrolling());
+		if (s.getId() == "tod") {
+			int sTime = (int) (24000 * pos); // get the absolute time
+			sTime -= 6000; // minecraft time is offset so lets move things
+							// backward
+							// to go from 0-24 instead of 6-5
+			if (sTime < 0) {
+				sTime += 24000;
+			}
+			teacher.sendChatMessage("/time set " + sTime);
+		}
+		if (s.getId() == "speed") {
+			teacher.sendChatMessage("/speed " + (1 + pos * 2));
+		}
 	}
 
 	private void teleportToStudent() {
 		teacher.sendChatMessage("/tp " + teacher.getDisplayName() + " " + selection);
+	}
+
+	private float mapClamp(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
+		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+		return Math.max(outputMin, Math.min(outputMax, outVal));
 	}
 }

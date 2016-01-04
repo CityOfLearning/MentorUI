@@ -51,15 +51,15 @@ public class Roster extends Show {
 			}
 		}
 
-		userlist.clear();
+		/*userlist.clear();
 		for (int i = 10; i > 0; i--) {
 			userlist.add("Test" + i);
 		}
 		TeacherMod.roster.clear();
 		for (int i = 10; i > 0; i--) {
 			TeacherMod.roster.add("Test user" + i);
-		}
-
+		}*/
+		
 		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20, "Roster",
 				TextAlignment.CENTER));
 

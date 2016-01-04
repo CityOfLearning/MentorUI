@@ -8,5 +8,5 @@ public class Reference {
 	public static final String MINECRAFT_VERSION = "1.7.10";
 	
 	public static final String SERVER_PROXY_CLASS = "com.dyn.instructor.proxy.Server";
-	public static final String CLIENT_PROXY_CLASS = "com.dyn.instructor.proxy.Server";
+	public static final String CLIENT_PROXY_CLASS = "com.dyn.instructor.proxy.Client";
 }

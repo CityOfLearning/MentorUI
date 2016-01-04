@@ -56,7 +56,7 @@ public class TeacherMod {
 
 		FMLCommonHandler.instance().bus().register(this);
 
-		TeacherMod.guiKey = new KeyBinding("key.toggle.tutorialGui", Keyboard.KEY_K, "key.categories.toggle");
+		TeacherMod.guiKey = new KeyBinding("key.toggle.teacherui", Keyboard.KEY_K, "key.categories.toggle");
 
 		ClientRegistry.registerKeyBinding(TeacherMod.guiKey);
 	}
