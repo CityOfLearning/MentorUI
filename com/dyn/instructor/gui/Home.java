@@ -82,7 +82,7 @@ public class Home extends Show {
 
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .9), new ResourceLocation("tutorial", "textures/gui/background.png")));
+				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void toggleCreative() {

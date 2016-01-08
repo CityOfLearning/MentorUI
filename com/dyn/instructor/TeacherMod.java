@@ -30,7 +30,7 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
 public class TeacherMod {
 
-	public static KeyBinding guiKey;
+	public static KeyBinding teacherKey;
 
 	public static ArrayList<String> roster = new ArrayList();
 
@@ -56,9 +56,9 @@ public class TeacherMod {
 
 		FMLCommonHandler.instance().bus().register(this);
 
-		TeacherMod.guiKey = new KeyBinding("key.toggle.teacherui", Keyboard.KEY_K, "key.categories.toggle");
+		this.teacherKey = new KeyBinding("key.toggle.teacherui", Keyboard.KEY_K, "key.categories.toggle");
 
-		ClientRegistry.registerKeyBinding(TeacherMod.guiKey);
+		ClientRegistry.registerKeyBinding(this.teacherKey);
 	}
 
 	@Mod.EventHandler
@@ -77,7 +77,7 @@ public class TeacherMod {
 		if ((Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
 			return;
 		}
-		if (guiKey.getIsKeyPressed()) {
+		if (this.teacherKey.getIsKeyPressed()) {
 			if (MinecraftServer.getServer().getConfigurationManager()
 					.func_152596_g(Minecraft.getMinecraft().thePlayer.getGameProfile()))
 				GuiFoundation.display(new Home());

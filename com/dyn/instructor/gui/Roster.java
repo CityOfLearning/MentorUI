@@ -31,8 +31,8 @@ public class Roster extends Show {
 	private boolean isCreative;
 	private StringEntry selectedEntry;
 	private DisplayList selectedList;
-	private ScrollableDisplayList userList;
-	private ScrollableDisplayList rosterList;
+	private ScrollableDisplayList userDisplayList;
+	private ScrollableDisplayList rosterDisplayList;
 	private ArrayList<String> userlist = new ArrayList();
 	private ArrayList<String> filteredlist = new ArrayList();
 
@@ -80,10 +80,10 @@ public class Roster extends Show {
 						.setId("rostersearch").setTextChangedListener(
 								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		userList = new ScrollableDisplayList((int) (this.width * .2), (int) (this.height * .35), this.width / 4, 130,
+		userDisplayList = new ScrollableDisplayList((int) (this.width * .2), (int) (this.height * .35), this.width / 4, 130,
 				15, ulist);
-		userList.setId("users");
-		this.registerComponent(userList);
+		userDisplayList.setId("users");
+		this.registerComponent(userDisplayList);
 
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList();
@@ -93,22 +93,26 @@ public class Roster extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterList = new ScrollableDisplayList((int) (this.width * .55), (int) (this.height * .35), this.width / 4, 130,
+		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .55), (int) (this.height * .35), this.width / 4, 130,
 				15, rlist);
-		rosterList.setId("roster");
-		this.registerComponent(rosterList);
+		rosterDisplayList.setId("roster");
+		this.registerComponent(rosterDisplayList);
 
 		// Buttons
 		this.registerComponent(new Button(this.width / 2 - 10, (int) (this.height * .4), 20, 20, ">>")
 				.setClickListener(but -> addToRoster()));
 		this.registerComponent(new Button(this.width / 2 - 10, (int) (this.height * .6), 20, 20, "<<")
 				.setClickListener(but -> removeFromRoster()));
+		
+		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
+				.setClickListener(but -> this.getStage().display(new GiveItem())));
+		
 		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
 				.setClickListener(but -> this.getStage().displayPrevious()));
 
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .9), new ResourceLocation("tutorial", "textures/gui/background.png")));
+				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void addToRoster() {
@@ -116,8 +120,8 @@ public class Roster extends Show {
 			System.out.println("moving user " + selectedEntry.getTitle() + " from user list to roster");
 			TeacherMod.roster.add(selectedEntry.getTitle());
 			selectedEntry.setSelected(false);
-			rosterList.add(selectedEntry);
-			userList.remove(selectedEntry);
+			rosterDisplayList.add(selectedEntry);
+			userDisplayList.remove(selectedEntry);
 		}
 	}
 
@@ -126,25 +130,25 @@ public class Roster extends Show {
 			System.out.println("moving user " + selectedEntry.getTitle() + " from roster to user list");
 			TeacherMod.roster.remove(selectedEntry.getTitle());
 			selectedEntry.setSelected(false);
-			rosterList.remove(selectedEntry);
-			userList.add(selectedEntry);
+			rosterDisplayList.remove(selectedEntry);
+			userDisplayList.add(selectedEntry);
 		}
 	}
 
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "usersearch") {
-			userList.clear();
+			userDisplayList.clear();
 			for (String student : userlist) {
 				if(student.contains(textbox.getText())){
-					userList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					userDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "rostersearch") {
-			rosterList.clear();
+			rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
 				if(student.contains(textbox.getText())){
-					rosterList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
