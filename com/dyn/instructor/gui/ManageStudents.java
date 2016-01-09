@@ -26,17 +26,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
-public class Roster extends Show {
+public class ManageStudents extends Show {
 
+	private EntityClientPlayerMP teacher;
 	private boolean isCreative;
 	private StringEntry selectedEntry;
-	private DisplayList selectedList;
-	private ScrollableDisplayList userDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
 	private ArrayList<String> userlist = new ArrayList();
-	private ArrayList<String> filteredlist = new ArrayList();
 
-	public Roster() {
+	public ManageStudents() {
 		this.setBackground(new DefaultBackground());
 		this.title = "Teacher Gui Roster Management";
 	}
@@ -45,14 +43,16 @@ public class Roster extends Show {
 	public void setup() {
 		super.setup();
 
+		teacher = Minecraft.getMinecraft().thePlayer;
+
 		for (String s : MinecraftServer.getServer().getAllUsernames()) {
 			if (!TeacherMod.roster.contains(s) && s != Minecraft.getMinecraft().thePlayer.getDisplayName()) {
 				userlist.add(s);
 			}
 		}
-		
-		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20, "Roster Management",
-				TextAlignment.CENTER));
+
+		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20,
+				"Roster Management", TextAlignment.CENTER));
 
 		// The students not on the Roster List for this class
 		ArrayList<ListEntry> ulist = new ArrayList();
@@ -64,17 +64,8 @@ public class Roster extends Show {
 
 		this.registerComponent(
 				new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20, "Search for User")
-						.setId("usersearch").setTextChangedListener(
-								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-		this.registerComponent(
-				new TextBox((int) (this.width * .55), (int) (this.height * .25), this.width / 4, 20, "Search for User")
 						.setId("rostersearch").setTextChangedListener(
 								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-
-		userDisplayList = new ScrollableDisplayList((int) (this.width * .2), (int) (this.height * .35), this.width / 4, 130,
-				15, ulist);
-		userDisplayList.setId("users");
-		this.registerComponent(userDisplayList);
 
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList();
@@ -84,61 +75,40 @@ public class Roster extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .55), (int) (this.height * .35), this.width / 4, 130,
-				15, rlist);
+		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
+				this.width / 3, 100, 15, rlist);
 		rosterDisplayList.setId("roster");
 		this.registerComponent(rosterDisplayList);
 
-		// Buttons
-		this.registerComponent(new Button(this.width / 2 - 10, (int) (this.height * .4), 20, 20, ">>")
-				.setClickListener(but -> addToRoster()));
-		this.registerComponent(new Button(this.width / 2 - 10, (int) (this.height * .6), 20, 20, "<<")
-				.setClickListener(but -> removeFromRoster()));
-		
-		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
-				.setClickListener(but -> this.getStage().display(new GiveItem())));
-		
 		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
 				.setClickListener(but -> this.getStage().displayPrevious()));
+
+		this.registerComponent(
+				new Button((int) (this.width * .5), (int) (this.height * .2), 150, 20, "Teleport to Student")
+						.setClickListener(but -> teleportToStudent()));
+
+		this.registerComponent(
+				new Button((int) (this.width * .5), (int) (this.height * .3), 150, 20, "Teleport Student to Me")
+						.setClickListener(but -> teleportStudentTo()));
+		
+		this.registerComponent(
+				new Button((int) (this.width * .525), (int) (this.height * .4), 60, 20, "Mute")
+						.setClickListener(but -> muteStudent()));
+
+		this.registerComponent(
+				new Button((int) (this.width * .675), (int) (this.height * .4), 60, 20, "Unmute")
+						.setClickListener(but -> unmuteStudent()));
 
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
 				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
-	private void addToRoster() {
-		if (selectedList.getId() == "users") {
-			System.out.println("moving user " + selectedEntry.getTitle() + " from user list to roster");
-			TeacherMod.roster.add(selectedEntry.getTitle());
-			selectedEntry.setSelected(false);
-			rosterDisplayList.add(selectedEntry);
-			userDisplayList.remove(selectedEntry);
-		}
-	}
-
-	private void removeFromRoster() {
-		if (selectedList.getId() == "roster") {
-			System.out.println("moving user " + selectedEntry.getTitle() + " from roster to user list");
-			TeacherMod.roster.remove(selectedEntry.getTitle());
-			selectedEntry.setSelected(false);
-			rosterDisplayList.remove(selectedEntry);
-			userDisplayList.add(selectedEntry);
-		}
-	}
-
 	private void textChanged(TextBox textbox, String previousText) {
-		if (textbox.getId() == "usersearch") {
-			userDisplayList.clear();
-			for (String student : userlist) {
-				if(student.contains(textbox.getText())){
-					userDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
-				}
-			}
-		} else if (textbox.getId() == "rostersearch") {
+		if (textbox.getId() == "rostersearch") {
 			rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
-				if(student.contains(textbox.getText())){
+				if (student.contains(textbox.getText())) {
 					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
@@ -148,7 +118,25 @@ public class Roster extends Show {
 
 	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		selectedEntry = entry;
-		selectedList = list;
+	}
 
+	private void teleportStudentTo() {
+		if (!selectedEntry.getTitle().isEmpty())
+			teacher.sendChatMessage("/tp " + selectedEntry.getTitle() + " " + teacher.getDisplayName());
+	}
+
+	private void teleportToStudent() {
+		if (!selectedEntry.getTitle().isEmpty())
+			teacher.sendChatMessage("/tp " + teacher.getDisplayName() + " " + selectedEntry.getTitle());
+	}
+	
+	private void muteStudent() {
+		if (!selectedEntry.getTitle().isEmpty())
+			teacher.sendChatMessage("/mute " + selectedEntry.getTitle());
+	}
+
+	private void unmuteStudent() {
+		if (!selectedEntry.getTitle().isEmpty())
+			teacher.sendChatMessage("/unmute " + selectedEntry.getTitle());
 	}
 }

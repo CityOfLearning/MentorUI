@@ -62,6 +62,9 @@ public class GiveItem extends Show {
 		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
 				.setClickListener(but -> this.getStage().displayPrevious()));
 
+		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
+				.setClickListener(but -> this.getStage().display(new ManageStudents())));
+		
 		// get all the items in the registry
 		RegistryNamespaced blockRegistry = GameData.getBlockRegistry();
 		Iterator iterator = blockRegistry.iterator();
@@ -164,7 +167,7 @@ public class GiveItem extends Show {
 
 		this.registerComponent(new Button((int) (this.width * .8) - 10, (int) (this.height * .8), 30, 20, "Give")
 				.setClickListener(but -> giveItem()));
-
+		
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
 				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
