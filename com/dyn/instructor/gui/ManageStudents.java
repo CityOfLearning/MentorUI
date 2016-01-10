@@ -1,14 +1,9 @@
 package com.dyn.instructor.gui;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import com.dyn.instructor.TeacherMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
-import com.rabbit.gui.component.control.CheckBox;
-import com.rabbit.gui.component.control.DropDown;
-import com.rabbit.gui.component.control.MultiTextbox;
 import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -16,19 +11,15 @@ import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
 import com.rabbit.gui.component.list.entries.StringEntry;
-import com.rabbit.gui.component.list.entries.StringEntry.OnClickListener;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
 public class ManageStudents extends Show {
 
-	private EntityClientPlayerMP teacher;
 	private boolean isCreative;
 	private StringEntry selectedEntry;
 	private ScrollableDisplayList rosterDisplayList;
@@ -43,10 +34,11 @@ public class ManageStudents extends Show {
 	public void setup() {
 		super.setup();
 
-		teacher = Minecraft.getMinecraft().thePlayer;
+		TeacherMod.teacher = Minecraft.getMinecraft().thePlayer;
 
 		for (String s : MinecraftServer.getServer().getAllUsernames()) {
-			if (!TeacherMod.roster.contains(s) && s != Minecraft.getMinecraft().thePlayer.getDisplayName()) {
+			if (!TeacherMod.roster.contains(s)
+					&& s != Minecraft.getMinecraft().thePlayer.getDisplayName().getUnformattedText()) {
 				userlist.add(s);
 			}
 		}
@@ -81,7 +73,13 @@ public class ManageStudents extends Show {
 		this.registerComponent(rosterDisplayList);
 
 		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
-				.setClickListener(but -> this.getStage().displayPrevious()));
+				.setClickListener(but -> {
+					TeacherMod.currentTab = this.getStage().getPrevious();
+					if(TeacherMod.currentTab == null){
+						TeacherMod.currentTab = new GiveItem();
+					}
+					this.getStage().display(TeacherMod.currentTab);
+				}));
 
 		this.registerComponent(
 				new Button((int) (this.width * .5), (int) (this.height * .2), 150, 20, "Teleport to Student")
@@ -90,14 +88,12 @@ public class ManageStudents extends Show {
 		this.registerComponent(
 				new Button((int) (this.width * .5), (int) (this.height * .3), 150, 20, "Teleport Student to Me")
 						.setClickListener(but -> teleportStudentTo()));
-		
-		this.registerComponent(
-				new Button((int) (this.width * .525), (int) (this.height * .4), 60, 20, "Mute")
-						.setClickListener(but -> muteStudent()));
 
-		this.registerComponent(
-				new Button((int) (this.width * .675), (int) (this.height * .4), 60, 20, "Unmute")
-						.setClickListener(but -> unmuteStudent()));
+		this.registerComponent(new Button((int) (this.width * .525), (int) (this.height * .4), 60, 20, "Mute")
+				.setClickListener(but -> muteStudent()));
+
+		this.registerComponent(new Button((int) (this.width * .675), (int) (this.height * .4), 60, 20, "Unmute")
+				.setClickListener(but -> unmuteStudent()));
 
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
@@ -122,21 +118,23 @@ public class ManageStudents extends Show {
 
 	private void teleportStudentTo() {
 		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/tp " + selectedEntry.getTitle() + " " + teacher.getDisplayName());
+			TeacherMod.teacher
+					.sendChatMessage("/tp " + selectedEntry.getTitle() + " " + TeacherMod.teacher.getDisplayName());
 	}
 
 	private void teleportToStudent() {
 		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/tp " + teacher.getDisplayName() + " " + selectedEntry.getTitle());
+			TeacherMod.teacher
+					.sendChatMessage("/tp " + TeacherMod.teacher.getDisplayName() + " " + selectedEntry.getTitle());
 	}
-	
+
 	private void muteStudent() {
 		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/mute " + selectedEntry.getTitle());
+			TeacherMod.teacher.sendChatMessage("/mute " + selectedEntry.getTitle());
 	}
 
 	private void unmuteStudent() {
 		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/unmute " + selectedEntry.getTitle());
+			TeacherMod.teacher.sendChatMessage("/unmute " + selectedEntry.getTitle());
 	}
 }

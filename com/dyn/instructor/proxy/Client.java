@@ -1,9 +1,5 @@
 package com.dyn.instructor.proxy;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-
 public class Client implements Proxy {
 
         /**
