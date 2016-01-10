@@ -1,17 +1,12 @@
 package com.dyn.instructor.gui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import com.dyn.instructor.TeacherMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
-import com.rabbit.gui.component.control.CheckBox;
-import com.rabbit.gui.component.control.DropDown;
-import com.rabbit.gui.component.control.Slider;
 import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -22,25 +17,21 @@ import com.rabbit.gui.component.list.entries.StringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
-import cpw.mods.fml.common.registry.GameData;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockSlab;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryNamespaced;
+import net.minecraft.util.RegistrySimple;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class GiveItem extends Show {
 
 	private ScrollableDisplayList itemDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
-	private ArrayList<Item> itemList = new ArrayList();
-	private ArrayList<String> itemNameList = new ArrayList();
+	// private ArrayList<String> itemNameList = new ArrayList();
 	private StringEntry selectedUser;
 	private StringEntry selectedItem;
 	private TextBox userBox;
@@ -60,49 +51,23 @@ public class GiveItem extends Show {
 				TextAlignment.CENTER));
 
 		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
-				.setClickListener(but -> this.getStage().displayPrevious()));
+				.setClickListener(but -> {
+					TeacherMod.currentTab = this.getStage().getPrevious();
+					if (TeacherMod.currentTab == null) {
+						TeacherMod.currentTab = new Roster();
+					}
+					this.getStage().display(TeacherMod.currentTab);
+				}));
 
-		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
-				.setClickListener(but -> this.getStage().display(new ManageStudents())));
-		
-		// get all the items in the registry
-		RegistryNamespaced blockRegistry = GameData.getBlockRegistry();
-		Iterator iterator = blockRegistry.iterator();
-
-		List<Item> blockList = new ArrayList();
-
-		while (iterator.hasNext()) {
-			Block blocks = (Block) iterator.next();
-			blockList.add(Item.getItemFromBlock(blocks));
-		}
-
-		RegistryNamespaced itemRegistry = GameData.getItemRegistry();
-		iterator = itemRegistry.iterator();
-
-		List<Item> itemsList = new ArrayList();
-
-		while (iterator.hasNext()) {
-			Item items = (Item) iterator.next();
-			itemsList.add(items);
-
-		}
-
-		for (Item i : blockList) {
-			if (!itemList.contains(i)) {
-				itemList.add(i);
-			}
-		}
-		for (Item i : itemsList) {
-			if (!itemList.contains(i)) {
-				itemList.add(i);
-			}
-		}
-
-		itemList.remove(null);
+		this.registerComponent(
+				new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>").setClickListener(but -> {
+					TeacherMod.currentTab = new ManageStudents();
+					this.getStage().display(TeacherMod.currentTab);
+				}));
 
 		ArrayList<ListEntry> dslist = new ArrayList();
 
-		for (Item i : itemList) {
+		for (Item i : TeacherMod.itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
 					List<ItemStack> subItem = new ArrayList();
@@ -113,9 +78,8 @@ public class GiveItem extends Show {
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
-					dslist.add(new StringEntry(
-							is.getDisplayName(), (StringEntry entry, DisplayList dlist, int mouseX,
-									int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist, int mouseX,
+							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
@@ -129,8 +93,8 @@ public class GiveItem extends Show {
 						.setId("itemsearch").setTextChangedListener(
 								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		itemDisplayList = new ScrollableDisplayList((int) (this.width * .5), (int) (this.height * .35),
-				this.width / 3, 100, 15, dslist);
+		itemDisplayList = new ScrollableDisplayList((int) (this.width * .5), (int) (this.height * .35), this.width / 3,
+				100, 15, dslist);
 		itemDisplayList.setId("itms");
 
 		this.registerComponent(itemDisplayList);
@@ -143,8 +107,9 @@ public class GiveItem extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayName(), (StringEntry entry,
-				DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayName().getUnformattedText(),
+				(StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX,
+						mouseY)));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
 				this.width / 3, 100, 15, rlist);
@@ -167,7 +132,7 @@ public class GiveItem extends Show {
 
 		this.registerComponent(new Button((int) (this.width * .8) - 10, (int) (this.height * .8), 30, 20, "Give")
 				.setClickListener(but -> giveItem()));
-		
+
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
 				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
@@ -176,11 +141,34 @@ public class GiveItem extends Show {
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "itemsearch") {
 			itemDisplayList.clear();
-			for (Item i : itemList) {
-				ItemStack is = new ItemStack(i);
-				if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
-					itemDisplayList.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
-							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			for (Item i : TeacherMod.itemList) {
+				/*
+				 * if (i != null) { ItemStack is = new ItemStack(i); if
+				 * (is.getDisplayName().toLowerCase().contains(textbox.getText()
+				 * .toLowerCase())) { itemDisplayList.add(new
+				 * StringEntry(is.getDisplayName(), (StringEntry entry,
+				 * DisplayList dlist, int mouseX, int mouseY) ->
+				 * entryClicked(entry, dlist, mouseX, mouseY))); } }
+				 */
+				if (i != null) {
+					if (i.getHasSubtypes()) {
+						List<ItemStack> subItem = new ArrayList();
+						i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
+						for (ItemStack is : subItem) {
+							if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
+								itemDisplayList
+										.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+												int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+							}
+						}
+					} else {
+						ItemStack is = new ItemStack(i);
+						if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
+							itemDisplayList
+									.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+											int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+						}
+					}
 				}
 			}
 		} else if (textbox.getId() == "usersearch") {
@@ -221,33 +209,32 @@ public class GiveItem extends Show {
 		}
 		Item tItem = null;
 		ItemStack itmSt = null;
-		System.out.println(itemBox.getText());
-		for (Item i : itemList) {
+		for (Item i : TeacherMod.itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
 					List<ItemStack> subItem = new ArrayList();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
 						if (is.getDisplayName().contentEquals(itemBox.getText())) {
-							tItem = i;
+							tItem = is.getItem();
 							itmSt = is;
 						}
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
 					if (is.getDisplayName().contentEquals(itemBox.getText())) {
-						tItem = i;
+						tItem = is.getItem();
 					}
 				}
 			}
 		}
-		System.out.println(userBox.getText() + ", " + tItem + ", " + amountBox.getText() + ", " + itmSt);
+		
 		if (tItem == null)
 			return;
 		String itemMod = "";
 		if (itmSt != null)
 			itemMod = " " + itmSt.getItemDamage();
-		Minecraft.getMinecraft().thePlayer.sendChatMessage(
-				"/give " + userBox.getText() + " " + Item.getIdFromItem(tItem) + " " + amountBox.getText() + " " + itemMod);
+		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + userBox.getText() + " "
+				+ GameRegistry.findUniqueIdentifierFor(tItem) + " " + amountBox.getText() + " " + itemMod);
 	}
 }
