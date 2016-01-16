@@ -12,10 +12,12 @@ import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
 public class Home extends Show {
 
+	private EntityClientPlayerMP teacher;
 	private boolean isCreative;
 	private DropDown studentDrop;
 	private String selection;
@@ -30,19 +32,14 @@ public class Home extends Show {
 	public void setup() {
 		super.setup();
 
-		if(TeacherMod.teacher == null){
-			TeacherMod.teacher = Minecraft.getMinecraft().thePlayer;
-		}
-		isCreative = TeacherMod.teacher.capabilities.isCreativeMode;
+		teacher = Minecraft.getMinecraft().thePlayer;
+		isCreative = teacher.capabilities.isCreativeMode;
 
 		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20,
 				"Teacher Control", TextAlignment.CENTER));
 
 		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
-.setClickListener(but -> {
-					TeacherMod.currentTab = new Roster();
-					this.getStage().display(TeacherMod.currentTab);
-				}));
+				.setClickListener(but -> this.getStage().display(new Roster())));
 
 		this.registerComponent(
 				new CheckBox((int) (this.width * .55), (int) (this.height * .22), "Set Creative Mode", isCreative)
@@ -89,7 +86,7 @@ public class Home extends Show {
 	}
 
 	private void toggleCreative() {
-		TeacherMod.teacher.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
+		teacher.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
 		isCreative = !isCreative;
 	}
 
@@ -97,7 +94,7 @@ public class Home extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : TeacherMod.roster) {
-			TeacherMod.teacher.sendChatMessage("/tp " + student + " " + TeacherMod.teacher.getDisplayName());
+			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayName());
 		}
 	}
 
@@ -115,15 +112,15 @@ public class Home extends Show {
 			if (sTime < 0) {
 				sTime += 24000;
 			}
-			TeacherMod.teacher.sendChatMessage("/time set " + sTime);
+			teacher.sendChatMessage("/time set " + sTime);
 		}
 		if (s.getId() == "speed") {
-			TeacherMod.teacher.sendChatMessage("/speed " + (1 + pos * 2));
+			teacher.sendChatMessage("/speed " + (1 + pos * 2));
 		}
 	}
 
 	private void teleportToStudent() {
-		TeacherMod.teacher.sendChatMessage("/tp " + TeacherMod.teacher.getDisplayName() + " " + selection);
+		teacher.sendChatMessage("/tp " + teacher.getDisplayName() + " " + selection);
 	}
 
 	private float mapClamp(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
