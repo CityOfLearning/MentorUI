@@ -2,6 +2,8 @@ package com.dyn.instructor;
 
 import net.minecraftforge.common.config.Configuration;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.Logger;
 import com.dyn.instructor.proxy.Proxy;
 import com.dyn.instructor.reference.Reference;
@@ -24,6 +26,10 @@ public class TeacherMod {
 	public static Proxy proxy;
 
 	public static Logger logger;
+	
+	public static boolean opped = false;
+	
+	public static List<String> usernames = new ArrayList();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {

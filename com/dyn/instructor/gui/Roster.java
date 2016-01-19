@@ -15,7 +15,6 @@ import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
 public class Roster extends Show {
@@ -37,7 +36,7 @@ public class Roster extends Show {
 	public void setup() {
 		super.setup();
 
-		for (String s : MinecraftServer.getServer().getAllUsernames()) {
+		for (String s : TeacherMod.usernames) {
 			if (!TeacherMod.roster.contains(s) && s != Minecraft.getMinecraft().thePlayer.getDisplayName()) {
 				userlist.add(s);
 			}

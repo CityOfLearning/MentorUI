@@ -1,14 +1,12 @@
 package com.dyn.instructor.proxy;
 
-import java.util.UUID;
-
+import com.dyn.instructor.handler.EventHandler;
 import com.mojang.authlib.GameProfile;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.UserListOpsEntry;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.MinecraftForge;
 
 public class Server implements Proxy {
 
@@ -23,13 +21,23 @@ public class Server implements Proxy {
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
+		EventHandler eH = new EventHandler();
+		
+		FMLCommonHandler.instance().bus().register(eH);
+		
+		MinecraftForge.EVENT_BUS.register(eH);
 
 	}
 
-	protected int getOpLevel(GameProfile profile) {
+	@Override
+	public String[] getServerUsers(){
+		return MinecraftServer.getServer().getAllUsernames();
+	}
+	
+	@Override
+	public int getOpLevel(GameProfile profile) {
 		// does the configuration manager return null on the client side?
-		MinecraftServer minecraftServer = getServer();
+		MinecraftServer minecraftServer = MinecraftServer.getServer();
 		if (minecraftServer == null)
 			return 0;
 		if (!minecraftServer.getConfigurationManager().func_152596_g(profile))
@@ -39,13 +47,5 @@ public class Server implements Proxy {
 		return entry != null ? entry.func_152644_a() : MinecraftServer.getServer().getOpPermissionLevel();
 	}
 
-	private MinecraftServer getServer() {
-		// for some reason getting the server returns null unless you use this
-		// method
-		WorldServer worldServer = DimensionManager.getWorld(0); // default world
-		GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "FakePlayer");
-		FakePlayer fakePlayer = new FakePlayer(worldServer, gameProfile);
-		return fakePlayer.mcServer;
-	}
 
 }

@@ -16,7 +16,6 @@ import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
 public class ManageStudents extends Show {
@@ -35,10 +34,10 @@ public class ManageStudents extends Show {
 	@Override
 	public void setup() {
 		super.setup();
-
+		
 		teacher = Minecraft.getMinecraft().thePlayer;
 
-		for (String s : MinecraftServer.getServer().getAllUsernames()) {
+		for (String s : TeacherMod.usernames) {
 			if (!TeacherMod.roster.contains(s) && s != Minecraft.getMinecraft().thePlayer.getDisplayName()) {
 				userlist.add(s);
 			}

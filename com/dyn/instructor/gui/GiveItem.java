@@ -211,7 +211,6 @@ public class GiveItem extends Show {
 		}
 		Item tItem = null;
 		ItemStack itmSt = null;
-		System.out.println(itemBox.getText());
 		for (Item i : itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
@@ -231,7 +230,6 @@ public class GiveItem extends Show {
 				}
 			}
 		}
-		System.out.println(userBox.getText() + ", " + tItem + ", " + amountBox.getText() + ", " + itmSt);
 		if (tItem == null)
 			return;
 		String itemMod = "";
