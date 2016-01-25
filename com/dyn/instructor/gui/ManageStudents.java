@@ -2,6 +2,7 @@ package com.dyn.instructor.gui;
 
 import java.util.ArrayList;
 import com.dyn.instructor.TeacherMod;
+import com.dyn.server.ServerMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.TextBox;
@@ -37,7 +38,7 @@ public class ManageStudents extends Show {
 		
 		teacher = Minecraft.getMinecraft().thePlayer;
 
-		for (String s : TeacherMod.usernames) {
+		for (String s : ServerMod.usernames) {
 			if (!TeacherMod.roster.contains(s) && s != Minecraft.getMinecraft().thePlayer.getDisplayName()) {
 				userlist.add(s);
 			}

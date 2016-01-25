@@ -2,9 +2,8 @@ package com.dyn.instructor.proxy;
 
 import org.lwjgl.input.Keyboard;
 
-import com.dyn.instructor.TeacherMod;
 import com.dyn.instructor.gui.Home;
-import com.mojang.authlib.GameProfile;
+import com.dyn.server.ServerMod;
 import com.rabbit.gui.GuiFoundation;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -33,7 +32,7 @@ public class Client implements Proxy {
 		if ((Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
 			return;
 		}
-		if (TeacherMod.opped && this.teacherKey.getIsKeyPressed()) {
+		if (ServerMod.opped && this.teacherKey.getIsKeyPressed()) {
 			GuiFoundation.proxy.display(new Home());
 		}
 	}
@@ -46,17 +45,4 @@ public class Client implements Proxy {
 
 		ClientRegistry.registerKeyBinding(this.teacherKey);
 	}
-
-	@Override
-	public String[] getServerUsers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getOpLevel(GameProfile profile) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }
