@@ -75,6 +75,9 @@ public class ManageStudents extends Show {
 
 		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
 				.setClickListener(but -> this.getStage().displayPrevious()));
+		
+		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
+				.setClickListener(but -> this.getStage().display(new GiveAchievement())));
 
 		this.registerComponent(
 				new Button((int) (this.width * .5), (int) (this.height * .2), 150, 20, "Teleport to Student")
@@ -91,6 +94,14 @@ public class ManageStudents extends Show {
 		this.registerComponent(
 				new Button((int) (this.width * .675), (int) (this.height * .4), 60, 20, "Unmute")
 						.setClickListener(but -> unmuteStudent()));
+		
+		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .5), 150, 20, "Teleport Students to me")
+				.setClickListener(but -> teleportStudentsToMe()));
+		
+		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .7), 150, 20, "Clear Student Roster")
+				.setClickListener(but -> {
+					TeacherMod.roster.clear();
+				}));
 
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
@@ -121,6 +132,14 @@ public class ManageStudents extends Show {
 	private void teleportToStudent() {
 		if (!selectedEntry.getTitle().isEmpty())
 			teacher.sendChatMessage("/tp " + teacher.getDisplayName() + " " + selectedEntry.getTitle());
+	}
+	
+	private void teleportStudentsToMe() {
+		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
+		/// Player2 is the person that Player1 is teleporting to
+		for (String student : TeacherMod.roster) { //evidently this works for multi world teleportation...
+			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayName());
+		}
 	}
 	
 	private void muteStudent() {

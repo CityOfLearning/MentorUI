@@ -1,10 +1,8 @@
 package com.dyn.instructor.gui;
 
-import com.dyn.instructor.TeacherMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBox;
-import com.rabbit.gui.component.control.DropDown;
 import com.rabbit.gui.component.control.Slider;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -19,9 +17,7 @@ public class Home extends Show {
 
 	private EntityClientPlayerMP teacher;
 	private boolean isCreative;
-	private DropDown studentDrop;
 	private String selection;
-	private DropDown studentMenu;
 
 	public Home() {
 		this.setBackground(new DefaultBackground());
@@ -44,24 +40,6 @@ public class Home extends Show {
 		this.registerComponent(
 				new CheckBox((int) (this.width * .55), (int) (this.height * .22), "Set Creative Mode", isCreative)
 						.setStatusChangedListener(btn -> toggleCreative()));
-
-		this.registerComponent(new Button(this.width / 6, (int) (this.height * .2), 150, 20, "Clear Student Roster")
-				.setClickListener(but -> {
-					TeacherMod.roster.clear();
-					studentMenu.clear();
-				}));
-
-		this.registerComponent(new Button(this.width / 6, (int) (this.height * .3), 150, 20, "Teleport Students to me")
-				.setClickListener(but -> teleportStudentsToMe()));
-
-		this.registerComponent(new Button(this.width / 6, (int) (this.height * .4), 150, 20, "Teleport to Student")
-				.setClickListener(but -> teleportToStudent()));
-
-		studentMenu = new DropDown((int) (this.width * .55), (int) (this.height * .42), 100, "Teleport to Student")
-				.addAll(TeacherMod.roster.toArray())
-				.setItemSelectedListener((DropDown dropdown, String selected) -> dropDownSelection(dropdown, selected));
-
-		this.registerComponent(studentMenu);
 
 		// time of day
 		this.registerComponent(new TextLabel(this.width / 6, (int) (this.height * .75), this.width / 3, 20,
@@ -90,18 +68,6 @@ public class Home extends Show {
 		isCreative = !isCreative;
 	}
 
-	private void teleportStudentsToMe() {
-		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
-		/// Player2 is the person that Player1 is teleporting to
-		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayName());
-		}
-	}
-
-	private void dropDownSelection(DropDown dropdown, String selected) {
-		selection = selected;
-	}
-
 	private void sliderChanged(Slider s, float pos) {
 		System.out.println(s.getId() + " " + s.isScrolling());
 		if (s.getId() == "tod") {
@@ -114,13 +80,9 @@ public class Home extends Show {
 			}
 			teacher.sendChatMessage("/time set " + sTime);
 		}
-		if (s.getId() == "speed") {
-			teacher.sendChatMessage("/speed " + (1 + pos * 2));
+		if (s.getId() == "speed") { //speed has to be an integer value
+			teacher.sendChatMessage("/speed " + (int)(1 + pos * 3));
 		}
-	}
-
-	private void teleportToStudent() {
-		teacher.sendChatMessage("/tp " + teacher.getDisplayName() + " " + selection);
 	}
 
 	private float mapClamp(float value, float inputMin, float inputMax, float outputMin, float outputMax) {

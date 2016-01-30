@@ -4,6 +4,8 @@ import org.lwjgl.input.Keyboard;
 
 import com.dyn.instructor.gui.Home;
 import com.dyn.server.ServerMod;
+import com.dyn.server.packets.PacketDispatcher;
+import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.rabbit.gui.GuiFoundation;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -33,6 +35,7 @@ public class Client implements Proxy {
 			return;
 		}
 		if (ServerMod.opped && this.teacherKey.getIsKeyPressed()) {
+			PacketDispatcher.sendToServer(new RequestUserlistMessage());
 			GuiFoundation.proxy.display(new Home());
 		}
 	}
