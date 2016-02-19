@@ -6,6 +6,7 @@ import java.util.List;
 import com.dyn.instructor.TeacherMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
+import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -49,11 +50,31 @@ public class GiveItem extends Show {
 		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20, "Give Items",
 				TextAlignment.CENTER));
 
-		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
-				.setClickListener(but -> this.getStage().displayPrevious()));
+		// the side buttons
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .2), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
+								.addHoverText("Home Page").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new Home())));
 
-		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
-				.setClickListener(but -> this.getStage().display(new ManageStudents())));
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .35), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
+								.addHoverText("Setup Student Roster").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new Roster())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .5), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+								.addHoverText("Manage Students").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new ManageStudents())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .65), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(false)
+								.addHoverText("Give Items").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new GiveItem())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .8), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
+								.addHoverText("Award Achievements").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new GiveAchievement())));
 		
 		// get all the items in the registry
 		RegistryNamespaced blockRegistry = GameData.getBlockRegistry();
@@ -159,8 +180,8 @@ public class GiveItem extends Show {
 				.setClickListener(but -> giveItem()));
 		
 		// The background
-		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
+		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),
+				(int) (this.height * .8), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void textChanged(TextBox textbox, String previousText) {

@@ -1,8 +1,8 @@
 package com.dyn.instructor.gui;
 
 import com.rabbit.gui.background.DefaultBackground;
-import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBox;
+import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.Slider;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -34,8 +34,31 @@ public class Home extends Show {
 		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20,
 				"Teacher Control", TextAlignment.CENTER));
 
-		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
-				.setClickListener(but -> this.getStage().display(new Roster())));
+		// the side buttons
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .2), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(false)
+								.addHoverText("Home Page").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new Home())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .35), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
+								.addHoverText("Setup Student Roster").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new Roster())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .5), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+								.addHoverText("Manage Students").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new ManageStudents())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .65), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
+								.addHoverText("Give Items").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new GiveItem())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .8), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
+								.addHoverText("Award Achievements").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new GiveAchievement())));
 
 		this.registerComponent(
 				new CheckBox((int) (this.width * .55), (int) (this.height * .22), "Set Creative Mode", isCreative)
@@ -47,8 +70,8 @@ public class Home extends Show {
 
 		this.registerComponent(new Slider(this.width / 6 + 15, (int) (this.height * .8), 120, 20, 10)
 				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos))
-				.setProgress(mapClamp((Minecraft.getMinecraft().theWorld.getWorldTime() + 6000) % 24000, 0,
-						24000, 0, 1))
+				.setProgress(
+						mapClamp((Minecraft.getMinecraft().theWorld.getWorldTime() + 6000) % 24000, 0, 24000, 0, 1))
 				.setId("tod"));
 
 		// speed slider
@@ -59,8 +82,8 @@ public class Home extends Show {
 				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos)).setId("speed"));
 
 		// The background
-		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
+		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),
+				(int) (this.height * .8), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void toggleCreative() {
@@ -80,8 +103,8 @@ public class Home extends Show {
 			}
 			teacher.sendChatMessage("/time set " + sTime);
 		}
-		if (s.getId() == "speed") { //speed has to be an integer value
-			teacher.sendChatMessage("/speed " + (int)(1 + pos * 3));
+		if (s.getId() == "speed") { // speed has to be an integer value
+			teacher.sendChatMessage("/speed " + (int) (1 + pos * 3));
 		}
 	}
 

@@ -5,6 +5,7 @@ import com.dyn.instructor.TeacherMod;
 import com.dyn.server.ServerMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
+import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -73,11 +74,31 @@ public class ManageStudents extends Show {
 		rosterDisplayList.setId("roster");
 		this.registerComponent(rosterDisplayList);
 
-		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
-				.setClickListener(but -> this.getStage().displayPrevious()));
-		
-		this.registerComponent(new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>")
-				.setClickListener(but -> this.getStage().display(new GiveAchievement())));
+		// the side buttons
+		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .2), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
+						.addHoverText("Home Page").doesDrawHoverText(true)
+						.setClickListener(but -> this.getStage().display(new Home())));
+
+		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .35), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
+						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
+						.setClickListener(but -> this.getStage().display(new Roster())));
+
+		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .5), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(false)
+						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.setClickListener(but -> this.getStage().display(new ManageStudents())));
+
+		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .65), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
+						.addHoverText("Give Items").doesDrawHoverText(true)
+						.setClickListener(but -> this.getStage().display(new GiveItem())));
+
+		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
+						.addHoverText("Award Achievements").doesDrawHoverText(true)
+						.setClickListener(but -> this.getStage().display(new GiveAchievement())));
 
 		this.registerComponent(
 				new Button((int) (this.width * .5), (int) (this.height * .2), 150, 20, "Teleport to Student")
@@ -95,8 +116,11 @@ public class ManageStudents extends Show {
 				new Button((int) (this.width * .675), (int) (this.height * .4), 60, 20, "Unmute")
 						.setClickListener(but -> unmuteStudent()));
 		
-		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .5), 150, 20, "Teleport Students to me")
+		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .6), 150, 20, "Teleport Students to me")
 				.setClickListener(but -> teleportStudentsToMe()));
+		
+		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .5), 150, 20, "Check Student Inventory")
+				.setClickListener(but -> checkStudentInventory()));
 		
 		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .7), 150, 20, "Clear Student Roster")
 				.setClickListener(but -> {
@@ -104,8 +128,8 @@ public class ManageStudents extends Show {
 				}));
 
 		// The background
-		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
+		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),
+				(int) (this.height * .8), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void textChanged(TextBox textbox, String previousText) {
@@ -140,6 +164,11 @@ public class ManageStudents extends Show {
 		for (String student : TeacherMod.roster) { //evidently this works for multi world teleportation...
 			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayName());
 		}
+	}
+	
+	private void checkStudentInventory() {
+		if (!selectedEntry.getTitle().isEmpty())
+			teacher.sendChatMessage("/invsee " + selectedEntry.getTitle());
 	}
 	
 	private void muteStudent() {
