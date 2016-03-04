@@ -2,8 +2,10 @@ package com.dyn.instructor.gui;
 
 import java.util.ArrayList;
 import com.dyn.instructor.TeacherMod;
+import com.dyn.server.ServerMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
+import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -14,7 +16,7 @@ import com.rabbit.gui.component.list.entries.StringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 public class Roster extends Show {
@@ -36,16 +38,14 @@ public class Roster extends Show {
 	public void setup() {
 		super.setup();
 
-		userlist.clear();
-		for (String s : MinecraftServer.getServer().getAllUsernames()) {
-			if (!TeacherMod.roster.contains(s)
-					&& !s.equals(TeacherMod.teacher.getDisplayName().getUnformattedText())) {
+		for (String s : ServerMod.usernames) {
+			if (!TeacherMod.roster.contains(s) && !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayName())) {
 				userlist.add(s);
 			}
 		}
-
-		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20,
-				"Roster Management", TextAlignment.CENTER));
+		
+		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20, "Roster Management",
+				TextAlignment.CENTER));
 
 		// The students not on the Roster List for this class
 		ArrayList<ListEntry> ulist = new ArrayList();
@@ -64,8 +64,8 @@ public class Roster extends Show {
 						.setId("rostersearch").setTextChangedListener(
 								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		userDisplayList = new ScrollableDisplayList((int) (this.width * .2), (int) (this.height * .35), this.width / 4,
-				130, 15, ulist);
+		userDisplayList = new ScrollableDisplayList((int) (this.width * .2), (int) (this.height * .35), this.width / 4, 130,
+				15, ulist);
 		userDisplayList.setId("users");
 		this.registerComponent(userDisplayList);
 
@@ -77,8 +77,8 @@ public class Roster extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .55), (int) (this.height * .35),
-				this.width / 4, 130, 15, rlist);
+		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .55), (int) (this.height * .35), this.width / 4, 130,
+				15, rlist);
 		rosterDisplayList.setId("roster");
 		this.registerComponent(rosterDisplayList);
 
@@ -87,30 +87,40 @@ public class Roster extends Show {
 				.setClickListener(but -> addToRoster()));
 		this.registerComponent(new Button(this.width / 2 - 10, (int) (this.height * .6), 20, 20, "<<")
 				.setClickListener(but -> removeFromRoster()));
+		
+		// the side buttons
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .2), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
+								.addHoverText("Home Page").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new Home())));
 
-		this.registerComponent(
-				new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>").setClickListener(but -> {
-					TeacherMod.currentTab = new GiveItem();
-					this.getStage().display(TeacherMod.currentTab);
-				}));
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .35), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(false)
+								.addHoverText("Setup Student Roster").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new Roster())));
 
-		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
-				.setClickListener(but -> {
-					TeacherMod.currentTab = this.getStage().getPrevious();
-					if(TeacherMod.currentTab == null){
-						TeacherMod.currentTab = new Home();
-					}
-					this.getStage().display(TeacherMod.currentTab);
-				}));
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .5), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+								.addHoverText("Manage Students").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new ManageStudents())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .65), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
+								.addHoverText("Give Items").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new GiveItem())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .8), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
+								.addHoverText("Award Achievements").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new GiveAchievement())));
 
 		// The background
-		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
+		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),
+				(int) (this.height * .8), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void addToRoster() {
 		if (selectedList.getId() == "users") {
-			System.out.println("moving user " + selectedEntry.getTitle() + " from user list to roster");
 			TeacherMod.roster.add(selectedEntry.getTitle());
 			selectedEntry.setSelected(false);
 			rosterDisplayList.add(selectedEntry);
@@ -120,7 +130,6 @@ public class Roster extends Show {
 
 	private void removeFromRoster() {
 		if (selectedList.getId() == "roster") {
-			System.out.println("moving user " + selectedEntry.getTitle() + " from roster to user list");
 			TeacherMod.roster.remove(selectedEntry.getTitle());
 			selectedEntry.setSelected(false);
 			rosterDisplayList.remove(selectedEntry);
@@ -132,7 +141,7 @@ public class Roster extends Show {
 		if (textbox.getId() == "usersearch") {
 			userDisplayList.clear();
 			for (String student : userlist) {
-				if (student.contains(textbox.getText())) {
+				if(student.contains(textbox.getText())){
 					userDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
@@ -140,7 +149,7 @@ public class Roster extends Show {
 		} else if (textbox.getId() == "rostersearch") {
 			rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
-				if (student.contains(textbox.getText())) {
+				if(student.contains(textbox.getText())){
 					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}

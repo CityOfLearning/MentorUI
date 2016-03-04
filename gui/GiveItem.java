@@ -6,6 +6,7 @@ import java.util.List;
 import com.dyn.instructor.TeacherMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
+import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -16,6 +17,7 @@ import com.rabbit.gui.component.list.entries.StringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
+import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
@@ -23,7 +25,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryNamespaced;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameData;
 
 public class GiveItem extends Show {
 
@@ -49,21 +50,32 @@ public class GiveItem extends Show {
 		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20, "Give Items",
 				TextAlignment.CENTER));
 
-		this.registerComponent(new Button((int) (this.width * .2) - 10, (int) (this.height * .1), 30, 20, "<<")
-				.setClickListener(but -> {
-					TeacherMod.currentTab = this.getStage().getPrevious();
-					if(TeacherMod.currentTab == null){
-						TeacherMod.currentTab = new Roster();
-					}
-					this.getStage().display(TeacherMod.currentTab);
-				}));
+		// the side buttons
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .2), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
+								.addHoverText("Home Page").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new Home())));
 
-		this.registerComponent(
-				new Button((int) (this.width * .75), (int) (this.height * .1), 30, 20, ">>").setClickListener(but -> {
-					TeacherMod.currentTab = new ManageStudents();
-					this.getStage().display(TeacherMod.currentTab);
-				}));
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .35), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
+								.addHoverText("Setup Student Roster").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new Roster())));
 
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .5), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+								.addHoverText("Manage Students").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new ManageStudents())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .65), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(false)
+								.addHoverText("Give Items").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new GiveItem())));
+
+				this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .8), 30, 30,
+						new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
+								.addHoverText("Award Achievements").doesDrawHoverText(true)
+								.setClickListener(but -> this.getStage().display(new GiveAchievement())));
+		
 		// get all the items in the registry
 		RegistryNamespaced blockRegistry = GameData.getBlockRegistry();
 		Iterator iterator = blockRegistry.iterator();
@@ -112,8 +124,9 @@ public class GiveItem extends Show {
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
-					dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					dslist.add(new StringEntry(
+							is.getDisplayName(), (StringEntry entry, DisplayList dlist, int mouseX,
+									int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
@@ -127,8 +140,8 @@ public class GiveItem extends Show {
 						.setId("itemsearch").setTextChangedListener(
 								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		itemDisplayList = new ScrollableDisplayList((int) (this.width * .5), (int) (this.height * .35), this.width / 3,
-				100, 15, dslist);
+		itemDisplayList = new ScrollableDisplayList((int) (this.width * .5), (int) (this.height * .35),
+				this.width / 3, 100, 15, dslist);
 		itemDisplayList.setId("itms");
 
 		this.registerComponent(itemDisplayList);
@@ -141,9 +154,8 @@ public class GiveItem extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayName().getUnformattedText(),
-				(StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX,
-						mouseY)));
+		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayName().getUnformattedText(), (StringEntry entry,
+				DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
 				this.width / 3, 100, 15, rlist);
@@ -166,10 +178,10 @@ public class GiveItem extends Show {
 
 		this.registerComponent(new Button((int) (this.width * .8) - 10, (int) (this.height * .8), 30, 20, "Give")
 				.setClickListener(but -> giveItem()));
-
+		
 		// The background
-		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .05), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .9), new ResourceLocation("dyn", "textures/gui/background.png")));
+		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),
+				(int) (this.height * .8), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void textChanged(TextBox textbox, String previousText) {
@@ -220,7 +232,6 @@ public class GiveItem extends Show {
 		}
 		Item tItem = null;
 		ItemStack itmSt = null;
-		System.out.println(itemBox.getText());
 		for (Item i : itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
@@ -240,13 +251,12 @@ public class GiveItem extends Show {
 				}
 			}
 		}
-		System.out.println(userBox.getText() + ", " + tItem + ", " + amountBox.getText() + ", " + itmSt);
 		if (tItem == null)
 			return;
 		String itemMod = "";
 		if (itmSt != null)
 			itemMod = " " + itmSt.getItemDamage();
-		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + userBox.getText() + " "
-				+ Item.getIdFromItem(tItem) + " " + amountBox.getText() + " " + itemMod);
+		Minecraft.getMinecraft().thePlayer.sendChatMessage(
+				"/give " + userBox.getText() + " " + Item.getIdFromItem(tItem) + " " + amountBox.getText() + " " + itemMod);
 	}
 }
