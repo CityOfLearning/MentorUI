@@ -36,6 +36,15 @@ public class GiveAchievement extends Show {
 		this.title = "Teacher Gui";
 	}
 
+	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+		if (list.getId() == "itms") {
+			this.selectedAchievement = entry;
+		} else if (list.getId() == "roster") {
+			this.selectedUser = entry;
+		}
+
+	}
+
 	@Override
 	public void setup() {
 		super.setup();
@@ -69,60 +78,60 @@ public class GiveAchievement extends Show {
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> this.getStage().display(new GiveAchievement())));
 
-		this.registerComponent(
-				new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20, "Search for User")
-						.setId("usersearch").setTextChangedListener(
-								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-		this.registerComponent(
-				new TextBox((int) (this.width * .55), (int) (this.height * .25), this.width / 4, 20, "Search Achievements")
-						.setId("achsearch").setTextChangedListener(
-								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
+		this.registerComponent(new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20,
+				"Search for User").setId("usersearch").setTextChangedListener(
+						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
+		this.registerComponent(new TextBox((int) (this.width * .55), (int) (this.height * .25), this.width / 4, 20,
+				"Search Achievements").setId("achsearch").setTextChangedListener(
+						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
 
-		List<ListEntry> dslist = new ArrayList();
+		List<ListEntry> dslist = new ArrayList<ListEntry>();
 
 		for (AchievementPlus a : AchievementHandler.getAllAchievements()) {
 			dslist.add(new StringEntry(a.getName(), (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		achDisplayList = new ScrollableDisplayList((int) (this.width * .5), (int) (this.height * .35), this.width / 3,
-				100, 15, dslist);
-		achDisplayList.setId("itms");
+		this.achDisplayList = new ScrollableDisplayList((int) (this.width * .5), (int) (this.height * .35),
+				this.width / 3, 100, 15, dslist);
+		this.achDisplayList.setId("itms");
 
-		this.registerComponent(achDisplayList);
+		this.registerComponent(this.achDisplayList);
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList();
+		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : TeacherMod.roster) {
 			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
+		this.rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
 				this.width / 3, 100, 15, rlist);
-		rosterDisplayList.setId("roster");
-		this.registerComponent(rosterDisplayList);
+		this.rosterDisplayList.setId("roster");
+		this.registerComponent(this.rosterDisplayList);
 
 		// we need a way to get the players DYN account too if possible...
 		this.registerComponent(
 				new Button((int) (this.width * .55), (int) (this.height * .8), this.width / 4, 20, "Award to Player")
 						.setClickListener(but -> {
-							if (selectedUser != null && selectedAchievement != null
-									&& !selectedUser.getTitle().isEmpty()
-									&& !selectedAchievement.getTitle().isEmpty()) {
-								PacketDispatcher.sendToServer(
-										new MentorGivingAchievementMessage(selectedUser.getTitle(), AchievementHandler
-												.findAchievementByName(selectedAchievement.getTitle()).getId()));
+							if ((this.selectedUser != null) && (this.selectedAchievement != null)
+									&& !this.selectedUser.getTitle().isEmpty()
+									&& !this.selectedAchievement.getTitle().isEmpty()) {
+								PacketDispatcher
+										.sendToServer(new MentorGivingAchievementMessage(this.selectedUser.getTitle(),
+												AchievementHandler
+														.findAchievementByName(this.selectedAchievement.getTitle())
+														.getId()));
 							}
 						}));
 
 		this.registerComponent(
 				new Button((int) (this.width * .2), (int) (this.height * .8), this.width / 4, 20, "Achievement Info")
 						.setClickListener(but -> {
-							if (selectedAchievement != null) {
+							if (this.selectedAchievement != null) {
 								this.getStage().display(new Info(
-										AchievementHandler.findAchievementByName(selectedAchievement.getTitle())));
+										AchievementHandler.findAchievementByName(this.selectedAchievement.getTitle())));
 							}
 						}));
 
@@ -134,30 +143,23 @@ public class GiveAchievement extends Show {
 
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "achsearch") {
-			achDisplayList.clear();
+			this.achDisplayList.clear();
 			for (AchievementPlus a : AchievementHandler.getAllAchievements()) {
 				if (a.getName().contains(textbox.getText().toLowerCase())) {
-					achDisplayList.add(new StringEntry(a.getName(), (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					this.achDisplayList.add(new StringEntry(a.getName(),
+							(StringEntry entry, DisplayList dlist, int mouseX,
+									int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "usersearch") {
-			rosterDisplayList.clear();
+			this.rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					this.rosterDisplayList.add(new StringEntry(student,
+							(StringEntry entry, DisplayList dlist, int mouseX,
+									int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
-	}
-
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
-		if (list.getId() == "itms") {
-			selectedAchievement = entry;
-		} else if (list.getId() == "roster") {
-			selectedUser = entry;
-		}
-
 	}
 }

@@ -1,6 +1,7 @@
 package com.dyn.instructor.gui;
 
 import java.util.ArrayList;
+
 import com.dyn.instructor.TeacherMod;
 import com.dyn.server.ServerMod;
 import com.rabbit.gui.background.DefaultBackground;
@@ -23,25 +24,44 @@ import net.minecraft.util.ResourceLocation;
 public class ManageStudents extends Show {
 
 	private EntityPlayerSP teacher;
-	private boolean isCreative;
 	private StringEntry selectedEntry;
 	private ScrollableDisplayList rosterDisplayList;
-	private ArrayList<String> userlist = new ArrayList();
+	private ArrayList<String> userlist = new ArrayList<String>();
 
 	public ManageStudents() {
 		this.setBackground(new DefaultBackground());
 		this.title = "Teacher Gui Roster Management";
 	}
 
+	private void checkStudentInventory() {
+		if (this.selectedEntry != null) {
+			if (!this.selectedEntry.getTitle().isEmpty()) {
+				this.teacher.sendChatMessage("/invsee " + this.selectedEntry.getTitle());
+			}
+		}
+	}
+
+	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+		this.selectedEntry = entry;
+	}
+
+	private void muteStudent() {
+		if (this.selectedEntry != null) {
+			if (!this.selectedEntry.getTitle().isEmpty()) {
+				this.teacher.sendChatMessage("/mute " + this.selectedEntry.getTitle());
+			}
+		}
+	}
+
 	@Override
 	public void setup() {
 		super.setup();
-		
-		teacher = Minecraft.getMinecraft().thePlayer;
+
+		this.teacher = Minecraft.getMinecraft().thePlayer;
 
 		for (String s : ServerMod.usernames) {
-			if (!TeacherMod.roster.contains(s) && s != Minecraft.getMinecraft().thePlayer.getDisplayName().getUnformattedText()) {
-				userlist.add(s);
+			if (!TeacherMod.roster.contains(s) && (s != Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+				this.userlist.add(s);
 			}
 		}
 
@@ -49,30 +69,29 @@ public class ManageStudents extends Show {
 				"Roster Management", TextAlignment.CENTER));
 
 		// The students not on the Roster List for this class
-		ArrayList<ListEntry> ulist = new ArrayList();
+		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
 
-		for (String s : userlist) {
+		for (String s : this.userlist) {
 			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		this.registerComponent(
-				new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20, "Search for User")
-						.setId("rostersearch").setTextChangedListener(
-								(TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
+		this.registerComponent(new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20,
+				"Search for User").setId("rostersearch").setTextChangedListener(
+						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList();
+		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : TeacherMod.roster) {
 			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
+		this.rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
 				this.width / 3, 100, 15, rlist);
-		rosterDisplayList.setId("roster");
-		this.registerComponent(rosterDisplayList);
+		this.rosterDisplayList.setId("roster");
+		this.registerComponent(this.rosterDisplayList);
 
 		// the side buttons
 		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .2), 30, 30,
@@ -102,82 +121,85 @@ public class ManageStudents extends Show {
 
 		this.registerComponent(
 				new Button((int) (this.width * .5), (int) (this.height * .2), 150, 20, "Teleport to Student")
-						.setClickListener(but -> teleportToStudent()));
+						.setClickListener(but -> this.teleportToStudent()));
 
 		this.registerComponent(
 				new Button((int) (this.width * .5), (int) (this.height * .3), 150, 20, "Teleport Student to Me")
-						.setClickListener(but -> teleportStudentTo()));
-		
-		this.registerComponent(
-				new Button((int) (this.width * .525), (int) (this.height * .4), 60, 20, "Mute")
-						.setClickListener(but -> muteStudent()));
+						.setClickListener(but -> this.teleportStudentTo()));
+
+		this.registerComponent(new Button((int) (this.width * .525), (int) (this.height * .4), 60, 20, "Mute")
+				.setClickListener(but -> this.muteStudent()));
+
+		this.registerComponent(new Button((int) (this.width * .675), (int) (this.height * .4), 60, 20, "Unmute")
+				.setClickListener(but -> this.unmuteStudent()));
 
 		this.registerComponent(
-				new Button((int) (this.width * .675), (int) (this.height * .4), 60, 20, "Unmute")
-						.setClickListener(but -> unmuteStudent()));
-		
-		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .6), 150, 20, "Teleport Students to me")
-				.setClickListener(but -> teleportStudentsToMe()));
-		
-		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .5), 150, 20, "Check Student Inventory")
-				.setClickListener(but -> checkStudentInventory()));
-		
-		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .7), 150, 20, "Clear Student Roster")
-				.setClickListener(but -> {
-					TeacherMod.roster.clear();
-				}));
+				new Button((int) (this.width * .5), (int) (this.height * .6), 150, 20, "Teleport Students to me")
+						.setClickListener(but -> this.teleportStudentsToMe()));
+
+		this.registerComponent(
+				new Button((int) (this.width * .5), (int) (this.height * .5), 150, 20, "Check Student Inventory")
+						.setClickListener(but -> this.checkStudentInventory()));
+
+		this.registerComponent(
+				new Button((int) (this.width * .5), (int) (this.height * .7), 150, 20, "Clear Student Roster")
+						.setClickListener(but -> {
+							TeacherMod.roster.clear();
+						}));
 
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),
 				(int) (this.height * .8), new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
+	private void teleportStudentsToMe() {
+		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
+		/// Player2 is the person that Player1 is teleporting to
+		for (String student : TeacherMod.roster) { // evidently this works
+															// for multi world
+															// teleportation...
+			this.teacher.sendChatMessage("/tp " + student + " " + this.teacher.getDisplayNameString());
+		}
+	}
+
+	private void teleportStudentTo() {
+		if (this.selectedEntry != null) {
+			if (!this.selectedEntry.getTitle().isEmpty()) {
+				System.out.println("/tp " + this.selectedEntry.getTitle() + " " + this.teacher.getDisplayNameString());
+				this.teacher.sendChatMessage(
+						"/tp " + this.selectedEntry.getTitle() + " " + this.teacher.getDisplayNameString());
+			}
+		}
+	}
+
+	private void teleportToStudent() {
+		if (this.selectedEntry != null) {
+			if (!this.selectedEntry.getTitle().isEmpty()) {
+				this.teacher.sendChatMessage(
+						"/tp " + this.teacher.getDisplayNameString() + " " + this.selectedEntry.getTitle());
+			}
+		}
+	}
+
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "rostersearch") {
-			rosterDisplayList.clear();
+			this.rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
 				if (student.contains(textbox.getText())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					this.rosterDisplayList.add(new StringEntry(student,
+							(StringEntry entry, DisplayList dlist, int mouseX,
+									int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
 	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
-		selectedEntry = entry;
-	}
-
-	private void teleportStudentTo() {
-		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/tp " + selectedEntry.getTitle() + " " + teacher.getDisplayName());
-	}
-
-	private void teleportToStudent() {
-		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/tp " + teacher.getDisplayName() + " " + selectedEntry.getTitle());
-	}
-	
-	private void teleportStudentsToMe() {
-		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
-		/// Player2 is the person that Player1 is teleporting to
-		for (String student : TeacherMod.roster) { //evidently this works for multi world teleportation...
-			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayName());
+	private void unmuteStudent() {
+		if (this.selectedEntry != null) {
+			if (!this.selectedEntry.getTitle().isEmpty()) {
+				this.teacher.sendChatMessage("/unmute " + this.selectedEntry.getTitle());
+			}
 		}
 	}
-	
-	private void checkStudentInventory() {
-		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/invsee " + selectedEntry.getTitle());
-	}
-	
-	private void muteStudent() {
-		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/mute " + selectedEntry.getTitle());
-	}
 
-	private void unmuteStudent() {
-		if (!selectedEntry.getTitle().isEmpty())
-			teacher.sendChatMessage("/unmute " + selectedEntry.getTitle());
-	}
 }
