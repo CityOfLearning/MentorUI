@@ -23,8 +23,7 @@ public class Home extends Show {
 		this.title = "Teacher Gui";
 	}
 
-	private float mapClamp(float value, float inputMin, float inputMax, float outputMin,
-			float outputMax) {
+	private float mapClamp(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
 		float outVal = ((((value - inputMin) / (inputMax - inputMin)) * (outputMax - outputMin)) + outputMin);
 		return Math.max(outputMin, Math.min(outputMax, outVal));
 	}
@@ -74,9 +73,8 @@ public class Home extends Show {
 				"Set the Time of Day", TextAlignment.CENTER));
 
 		this.registerComponent(new Slider((this.width / 6) + 15, (int) (this.height * .8), 120, 20, 10)
-				.setProgressChangedListener((Slider s, float pos) -> this.sliderChanged(s, pos))
-				.setProgress(this.mapClamp((Minecraft.getMinecraft().theWorld.getWorldTime() + 6000) % 24000, 0, 24000,
-						0, 1))
+				.setProgressChangedListener((Slider s, float pos) -> this.sliderChanged(s, pos)).setProgress(this
+						.mapClamp((Minecraft.getMinecraft().theWorld.getWorldTime() + 6000) % 24000, 0, 24000, 0, 1))
 				.setId("tod"));
 
 		// speed slider
@@ -84,8 +82,7 @@ public class Home extends Show {
 				"Set your movement speed", TextAlignment.CENTER));
 
 		this.registerComponent(new Slider((int) ((this.width * .5) + 15), (int) (this.height * .8), 120, 20, 10)
-				.setProgressChangedListener((Slider s, float pos) -> this.sliderChanged(s, pos))
-				.setId("speed"));
+				.setProgressChangedListener((Slider s, float pos) -> this.sliderChanged(s, pos)).setId("speed"));
 
 		// The background
 		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),

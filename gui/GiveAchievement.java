@@ -78,9 +78,10 @@ public class GiveAchievement extends Show {
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> this.getStage().display(new GiveAchievement())));
 
-		this.registerComponent(new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20,
-				"Search for User").setId("usersearch").setTextChangedListener(
-						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
+		this.registerComponent(
+				new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20, "Search for User")
+						.setId("usersearch").setTextChangedListener(
+								(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
 		this.registerComponent(new TextBox((int) (this.width * .55), (int) (this.height * .25), this.width / 4, 20,
 				"Search Achievements").setId("achsearch").setTextChangedListener(
 						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
@@ -102,8 +103,8 @@ public class GiveAchievement extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : TeacherMod.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> this
+					.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
 		this.rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
@@ -146,18 +147,16 @@ public class GiveAchievement extends Show {
 			this.achDisplayList.clear();
 			for (AchievementPlus a : AchievementHandler.getAllAchievements()) {
 				if (a.getName().contains(textbox.getText().toLowerCase())) {
-					this.achDisplayList.add(new StringEntry(a.getName(),
-							(StringEntry entry, DisplayList dlist, int mouseX,
-									int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+					this.achDisplayList.add(new StringEntry(a.getName(), (StringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "usersearch") {
 			this.rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					this.rosterDisplayList.add(new StringEntry(student,
-							(StringEntry entry, DisplayList dlist, int mouseX,
-									int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+					this.rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}

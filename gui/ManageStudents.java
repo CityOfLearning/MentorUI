@@ -72,20 +72,21 @@ public class ManageStudents extends Show {
 		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
 
 		for (String s : this.userlist) {
-			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> this
+					.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		this.registerComponent(new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20,
-				"Search for User").setId("rostersearch").setTextChangedListener(
-						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
+		this.registerComponent(
+				new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20, "Search for User")
+						.setId("rostersearch").setTextChangedListener(
+								(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
 
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : TeacherMod.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> this
+					.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
 		this.rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
@@ -156,8 +157,8 @@ public class ManageStudents extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : TeacherMod.roster) { // evidently this works
-															// for multi world
-															// teleportation...
+													// for multi world
+													// teleportation...
 			this.teacher.sendChatMessage("/tp " + student + " " + this.teacher.getDisplayNameString());
 		}
 	}
@@ -165,7 +166,6 @@ public class ManageStudents extends Show {
 	private void teleportStudentTo() {
 		if (this.selectedEntry != null) {
 			if (!this.selectedEntry.getTitle().isEmpty()) {
-				System.out.println("/tp " + this.selectedEntry.getTitle() + " " + this.teacher.getDisplayNameString());
 				this.teacher.sendChatMessage(
 						"/tp " + this.selectedEntry.getTitle() + " " + this.teacher.getDisplayNameString());
 			}
@@ -186,9 +186,8 @@ public class ManageStudents extends Show {
 			this.rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
 				if (student.contains(textbox.getText())) {
-					this.rosterDisplayList.add(new StringEntry(student,
-							(StringEntry entry, DisplayList dlist, int mouseX,
-									int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+					this.rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}

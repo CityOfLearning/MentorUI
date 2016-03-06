@@ -75,16 +75,18 @@ public class Roster extends Show {
 		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
 
 		for (String s : this.userlist) {
-			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> this
+					.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		this.registerComponent(new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20,
-				"Search for User").setId("usersearch").setTextChangedListener(
-						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
-		this.registerComponent(new TextBox((int) (this.width * .55), (int) (this.height * .25), this.width / 4, 20,
-				"Search for User").setId("rostersearch").setTextChangedListener(
-						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
+		this.registerComponent(
+				new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20, "Search for User")
+						.setId("usersearch").setTextChangedListener(
+								(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
+		this.registerComponent(
+				new TextBox((int) (this.width * .55), (int) (this.height * .25), this.width / 4, 20, "Search for User")
+						.setId("rostersearch").setTextChangedListener(
+								(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
 
 		this.userDisplayList = new ScrollableDisplayList((int) (this.width * .2), (int) (this.height * .35),
 				this.width / 4, 130, 15, ulist);
@@ -95,8 +97,8 @@ public class Roster extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : TeacherMod.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> this
+					.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
 		this.rosterDisplayList = new ScrollableDisplayList((int) (this.width * .55), (int) (this.height * .35),
@@ -146,17 +148,16 @@ public class Roster extends Show {
 			this.userDisplayList.clear();
 			for (String student : this.userlist) {
 				if (student.contains(textbox.getText())) {
-					this.userDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist,
-							int mouseX, int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+					this.userDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+							int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "rostersearch") {
 			this.rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
 				if (student.contains(textbox.getText())) {
-					this.rosterDisplayList.add(new StringEntry(student,
-							(StringEntry entry, DisplayList dlist, int mouseX,
-									int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+					this.rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}

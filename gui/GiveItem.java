@@ -83,8 +83,6 @@ public class GiveItem extends Show {
 		if (itmSt != null) {
 			itemMod = " " + itmSt.getItemDamage();
 		}
-		System.out.println("/give " + this.userBox.getText() + " " + GameRegistry.findUniqueIdentifierFor(tItem) + " "
-				+ this.amountBox.getText() + " " + itemMod);
 		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + this.userBox.getText() + " "
 				+ GameRegistry.findUniqueIdentifierFor(tItem) + " " + this.amountBox.getText() + " " + itemMod);
 	}
