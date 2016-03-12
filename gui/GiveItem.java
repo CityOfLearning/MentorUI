@@ -197,7 +197,7 @@ public class GiveItem extends Show {
 					.entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayName().getUnformattedText(),
+		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(),
 				(StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> this.entryClicked(entry, dlist,
 						mouseX, mouseY)));
 

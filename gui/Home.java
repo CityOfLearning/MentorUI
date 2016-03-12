@@ -1,6 +1,12 @@
 package com.dyn.instructor.gui;
 
+import com.dyn.achievements.handlers.AchievementHandler;
+import com.dyn.server.ServerMod;
+import com.dyn.server.packets.PacketDispatcher;
+import com.dyn.server.packets.client.TeacherSettingsMessage;
+import com.dyn.server.packets.server.HaveServerWriteAchievementsMessage;
 import com.rabbit.gui.background.DefaultBackground;
+import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBox;
 import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.Slider;
@@ -11,6 +17,7 @@ import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
 public class Home extends Show {
@@ -68,6 +75,9 @@ public class Home extends Show {
 				new CheckBox((int) (this.width * .55), (int) (this.height * .22), "Set Creative Mode", this.isCreative)
 						.setStatusChangedListener(btn -> this.toggleCreative()));
 
+		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .4), 150, 20, "Write Out Achievements")
+				.setClickListener(but -> PacketDispatcher.sendToServer(new HaveServerWriteAchievementsMessage())));
+		
 		// time of day
 		this.registerComponent(new TextLabel(this.width / 6, (int) (this.height * .75), this.width / 3, 20,
 				"Set the Time of Day", TextAlignment.CENTER));
