@@ -24,9 +24,9 @@ public class Client implements Proxy {
 	public void init() {
 		FMLCommonHandler.instance().bus().register(this);
 
-		this.teacherKey = new KeyBinding("key.toggle.teacherui", Keyboard.KEY_K, "key.categories.toggle");
+		teacherKey = new KeyBinding("key.toggle.teacherui", Keyboard.KEY_M, "key.categories.toggle");
 
-		ClientRegistry.registerKeyBinding(this.teacherKey);
+		ClientRegistry.registerKeyBinding(teacherKey);
 	}
 
 	@SubscribeEvent
@@ -35,7 +35,7 @@ public class Client implements Proxy {
 		if ((Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
 			return;
 		}
-		if (ServerMod.opped && this.teacherKey.isPressed()) {
+		if (ServerMod.opped && teacherKey.isPressed()) {
 			PacketDispatcher.sendToServer(new RequestUserlistMessage());
 			GuiFoundation.proxy.display(new Home());
 		}

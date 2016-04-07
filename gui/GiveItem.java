@@ -38,39 +38,39 @@ public class GiveItem extends Show {
 	private TextBox amountBox;
 
 	public GiveItem() {
-		this.setBackground(new DefaultBackground());
-		this.title = "Teacher Gui";
+		setBackground(new DefaultBackground());
+		title = "Teacher Gui";
 	}
 
 	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId() == "itms") {
-			this.itemBox.setText(entry.getTitle());
+			itemBox.setText(entry.getTitle());
 		} else if (list.getId() == "roster") {
-			this.userBox.setText(entry.getTitle());
+			userBox.setText(entry.getTitle());
 		}
 
 	}
 
 	private void giveItemToPlayer() {
-		if (this.userBox.getText().isEmpty() || this.itemBox.getText().isEmpty()) {
+		if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
 			return;
 		}
 		Item tItem = null;
 		ItemStack itmSt = null;
-		for (Item i : this.itemList) {
+		for (Item i : itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
 					List<ItemStack> subItem = new ArrayList<ItemStack>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
-						if (is.getDisplayName().contentEquals(this.itemBox.getText())) {
+						if (is.getDisplayName().contentEquals(itemBox.getText())) {
 							tItem = i;
 							itmSt = is;
 						}
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
-					if (is.getDisplayName().contentEquals(this.itemBox.getText())) {
+					if (is.getDisplayName().contentEquals(itemBox.getText())) {
 						tItem = i;
 					}
 				}
@@ -83,42 +83,47 @@ public class GiveItem extends Show {
 		if (itmSt != null) {
 			itemMod = " " + itmSt.getItemDamage();
 		}
-		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + this.userBox.getText() + " "
-				+ GameRegistry.findUniqueIdentifierFor(tItem) + " " + this.amountBox.getText() + " " + itemMod);
+		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + userBox.getText() + " "
+				+ GameRegistry.findUniqueIdentifierFor(tItem) + " " + amountBox.getText() + " " + itemMod);
 	}
 
 	@Override
 	public void setup() {
 		super.setup();
 
-		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20, "Give Items",
-				TextAlignment.CENTER));
+		registerComponent(
+				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Give Items", TextAlignment.CENTER));
 
 		// the side buttons
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .2), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
 						.addHoverText("Home Page").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new Home())));
+						.setClickListener(but -> getStage().display(new Home())));
 
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .35), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
 						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new Roster())));
+						.setClickListener(but -> getStage().display(new Roster())));
 
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .5), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new ManageStudents())));
+						.setClickListener(but -> getStage().display(new ManageStudents())));
 
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .65), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(false)
 						.addHoverText("Give Items").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new GiveItem())));
+						.setClickListener(but -> getStage().display(new GiveItem())));
 
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new GiveAchievement())));
+						.setClickListener(but -> getStage().display(new GiveAchievement())));
+		
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(true)
+						.addHoverText("Check Achievements").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
 
 		// get all the items in the registry
 		RegistryNamespaced blockRegistry = GameData.getBlockRegistry();
@@ -143,108 +148,102 @@ public class GiveItem extends Show {
 		}
 
 		for (Item i : blockList) {
-			if (!this.itemList.contains(i)) {
-				this.itemList.add(i);
+			if (!itemList.contains(i)) {
+				itemList.add(i);
 			}
 		}
 		for (Item i : itemsList) {
-			if (!this.itemList.contains(i)) {
-				this.itemList.add(i);
+			if (!itemList.contains(i)) {
+				itemList.add(i);
 			}
 		}
 
-		this.itemList.remove(null);
+		itemList.remove(null);
 
 		ArrayList<ListEntry> dslist = new ArrayList<ListEntry>();
 
-		for (Item i : this.itemList) {
+		for (Item i : itemList) {
 			if (i != null) {
 				if (i.getHasSubtypes()) {
 					List<ItemStack> subItem = new ArrayList<ItemStack>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
 						dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
-								int mouseX, int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+								int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
 					dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}
 
-		this.registerComponent(
-				new TextBox((int) (this.width * .2), (int) (this.height * .25), this.width / 4, 20, "Search for User")
-						.setId("usersearch").setTextChangedListener(
-								(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
-		this.registerComponent(
-				new TextBox((int) (this.width * .55), (int) (this.height * .25), this.width / 4, 20, "Search for Item")
-						.setId("itemsearch").setTextChangedListener(
-								(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText)));
+		registerComponent(new TextBox((int) (width * .2), (int) (height * .25), width / 4, 20, "Search for User")
+				.setId("usersearch")
+				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
+		registerComponent(new TextBox((int) (width * .55), (int) (height * .25), width / 4, 20, "Search for Item")
+				.setId("itemsearch")
+				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		this.itemDisplayList = new ScrollableDisplayList((int) (this.width * .5), (int) (this.height * .35),
-				this.width / 3, 100, 15, dslist);
-		this.itemDisplayList.setId("itms");
+		itemDisplayList = new ScrollableDisplayList((int) (width * .5), (int) (height * .35), width / 3, 100, 15,
+				dslist);
+		itemDisplayList.setId("itms");
 
-		this.registerComponent(this.itemDisplayList);
+		registerComponent(itemDisplayList);
 
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : TeacherMod.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> this
-					.entryClicked(entry, dlist, mouseX, mouseY)));
+			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(),
-				(StringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> this.entryClicked(entry, dlist,
-						mouseX, mouseY)));
+		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (StringEntry entry,
+				DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 
-		this.rosterDisplayList = new ScrollableDisplayList((int) (this.width * .15), (int) (this.height * .35),
-				this.width / 3, 100, 15, rlist);
-		this.rosterDisplayList.setId("roster");
-		this.registerComponent(this.rosterDisplayList);
+		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
+				rlist);
+		rosterDisplayList.setId("roster");
+		registerComponent(rosterDisplayList);
 
-		this.userBox = new TextBox((int) (this.width * .15), (int) (this.height * .8), this.width / 4, 20, "User")
-				.setId("user").setTextChangedListener(
-						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText));
-		this.registerComponent(this.userBox);
+		userBox = new TextBox((int) (width * .15), (int) (height * .8), width / 4, 20, "User").setId("user")
+				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
+		registerComponent(userBox);
 
-		this.amountBox = new TextBox((int) (this.width * .45) - 16, (int) (this.height * .8), 30, 20, "Amt")
-				.setId("amt").setTextChangedListener(
-						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText));
-		this.registerComponent(this.amountBox);
+		amountBox = new TextBox((int) (width * .45) - 16, (int) (height * .8), 30, 20, "Amt").setId("amt")
+				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
+		registerComponent(amountBox);
 
-		this.itemBox = new TextBox((int) (this.width * .5), (int) (this.height * .8), this.width / 4, 20, "Item")
-				.setId("item").setTextChangedListener(
-						(TextBox textbox, String previousText) -> this.textChanged(textbox, previousText));
-		this.registerComponent(this.itemBox);
+		itemBox = new TextBox((int) (width * .5), (int) (height * .8), width / 4, 20, "Item").setId("item")
+				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
+		registerComponent(itemBox);
 
-		this.registerComponent(new Button((int) (this.width * .8) - 10, (int) (this.height * .8), 30, 20, "Give")
-				.setClickListener(but -> this.giveItemToPlayer()));
+		registerComponent(new Button((int) (width * .8) - 10, (int) (height * .8), 30, 20, "Give")
+				.setClickListener(but -> giveItemToPlayer()));
 
 		// The background
-		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .8), new ResourceLocation("dyn", "textures/gui/background.png")));
+		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
+				new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "itemsearch") {
-			this.itemDisplayList.clear();
-			for (Item i : this.itemList) {
+			itemDisplayList.clear();
+			for (Item i : itemList) {
 				ItemStack is = new ItemStack(i);
 				if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
-					this.itemDisplayList.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
-							int mouseX, int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+					itemDisplayList.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "usersearch") {
-			this.rosterDisplayList.clear();
+			rosterDisplayList.clear();
 			for (String student : TeacherMod.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					this.rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist,
-							int mouseX, int mouseY) -> this.entryClicked(entry, dlist, mouseX, mouseY)));
+					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "amt") {

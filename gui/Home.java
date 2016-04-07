@@ -1,9 +1,6 @@
 package com.dyn.instructor.gui;
 
-import com.dyn.achievements.handlers.AchievementHandler;
-import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.client.TeacherSettingsMessage;
 import com.dyn.server.packets.server.HaveServerWriteAchievementsMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
@@ -17,7 +14,6 @@ import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
 public class Home extends Show {
@@ -26,8 +22,8 @@ public class Home extends Show {
 	private boolean isCreative;
 
 	public Home() {
-		this.setBackground(new DefaultBackground());
-		this.title = "Teacher Gui";
+		setBackground(new DefaultBackground());
+		title = "Teacher Gui";
 	}
 
 	private float mapClamp(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
@@ -39,64 +35,69 @@ public class Home extends Show {
 	public void setup() {
 		super.setup();
 
-		this.teacher = Minecraft.getMinecraft().thePlayer;
-		this.isCreative = this.teacher.capabilities.isCreativeMode;
+		teacher = Minecraft.getMinecraft().thePlayer;
+		isCreative = teacher.capabilities.isCreativeMode;
 
-		this.registerComponent(new TextLabel(this.width / 3, (int) (this.height * .1), this.width / 3, 20,
-				"Teacher Control", TextAlignment.CENTER));
+		registerComponent(
+				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Teacher Control", TextAlignment.CENTER));
 
 		// the side buttons
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .2), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(false)
 						.addHoverText("Home Page").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new Home())));
+						.setClickListener(but -> getStage().display(new Home())));
 
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .35), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
 						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new Roster())));
+						.setClickListener(but -> getStage().display(new Roster())));
 
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .5), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new ManageStudents())));
+						.setClickListener(but -> getStage().display(new ManageStudents())));
 
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .65), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new GiveItem())));
+						.setClickListener(but -> getStage().display(new GiveItem())));
 
-		this.registerComponent(new PictureButton((int) (this.width * .03), (int) (this.height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
-						.setClickListener(but -> this.getStage().display(new GiveAchievement())));
-
-		this.registerComponent(
-				new CheckBox((int) (this.width * .55), (int) (this.height * .22), "Set Creative Mode", this.isCreative)
-						.setStatusChangedListener(btn -> this.toggleCreative()));
-
-		this.registerComponent(new Button((int) (this.width * .5), (int) (this.height * .4), 150, 20, "Write Out Achievements")
-				.setClickListener(but -> PacketDispatcher.sendToServer(new HaveServerWriteAchievementsMessage())));
+						.setClickListener(but -> getStage().display(new GiveAchievement())));
 		
-		// time of day
-		this.registerComponent(new TextLabel(this.width / 6, (int) (this.height * .75), this.width / 3, 20,
-				"Set the Time of Day", TextAlignment.CENTER));
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(true)
+						.addHoverText("Check Achievements").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
 
-		this.registerComponent(new Slider((this.width / 6) + 15, (int) (this.height * .8), 120, 20, 10)
-				.setProgressChangedListener((Slider s, float pos) -> this.sliderChanged(s, pos)).setProgress(this
-						.mapClamp((Minecraft.getMinecraft().theWorld.getWorldTime() + 6000) % 24000, 0, 24000, 0, 1))
+		registerComponent(new CheckBox((int) (width * .55), (int) (height * .22), "Set Creative Mode", isCreative)
+				.setStatusChangedListener(btn -> toggleCreative()));
+
+		registerComponent(new Button((int) (width * .5), (int) (height * .4), 150, 20, "Write Out Achievements")
+				.setClickListener(but -> PacketDispatcher.sendToServer(new HaveServerWriteAchievementsMessage())));
+
+		// time of day
+		registerComponent(new TextLabel(width / 6, (int) (height * .75), width / 3, 20, "Set the Time of Day",
+				TextAlignment.CENTER));
+
+		registerComponent(new Slider((width / 6) + 15, (int) (height * .8), 120, 20, 10)
+				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos))
+				.setProgress(
+						mapClamp((Minecraft.getMinecraft().theWorld.getWorldTime() + 6000) % 24000, 0, 24000, 0, 1))
 				.setId("tod"));
 
 		// speed slider
-		this.registerComponent(new TextLabel((int) (this.width * .5), (int) (this.height * .75), this.width / 3, 20,
+		registerComponent(new TextLabel((int) (width * .5), (int) (height * .75), width / 3, 20,
 				"Set your movement speed", TextAlignment.CENTER));
 
-		this.registerComponent(new Slider((int) ((this.width * .5) + 15), (int) (this.height * .8), 120, 20, 10)
-				.setProgressChangedListener((Slider s, float pos) -> this.sliderChanged(s, pos)).setId("speed"));
+		registerComponent(new Slider((int) ((width * .5) + 15), (int) (height * .8), 120, 20, 10)
+				.setProgressChangedListener((Slider s, float pos) -> sliderChanged(s, pos)).setId("speed"));
 
 		// The background
-		this.registerComponent(new Picture(this.width / 8, (int) (this.height * .15), (int) (this.width * (6.0 / 8.0)),
-				(int) (this.height * .8), new ResourceLocation("dyn", "textures/gui/background.png")));
+		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
+				new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
 	private void sliderChanged(Slider s, float pos) {
@@ -108,15 +109,15 @@ public class Home extends Show {
 			if (sTime < 0) {
 				sTime += 24000;
 			}
-			this.teacher.sendChatMessage("/time set " + sTime);
+			teacher.sendChatMessage("/time set " + sTime);
 		}
 		if (s.getId() == "speed") { // speed has to be an integer value
-			this.teacher.sendChatMessage("/speed " + (int) (1 + (pos * 3)));
+			teacher.sendChatMessage("/speed " + (int) (1 + (pos * 3)));
 		}
 	}
 
 	private void toggleCreative() {
-		this.teacher.sendChatMessage("/gamemode " + (this.isCreative ? "0" : "1"));
-		this.isCreative = !this.isCreative;
+		teacher.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
+		isCreative = !isCreative;
 	}
 }
