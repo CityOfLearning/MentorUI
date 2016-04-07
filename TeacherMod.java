@@ -2,13 +2,11 @@ package com.dyn.instructor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
 import com.dyn.achievements.achievement.Requirements;
-import com.dyn.achievements.achievement.Requirements.BaseRequirement;
 import com.dyn.instructor.proxy.Proxy;
 import com.dyn.instructor.reference.MetaData;
 import com.dyn.instructor.reference.Reference;
@@ -34,6 +32,8 @@ public class TeacherMod {
 	public static Proxy proxy;
 
 	public static Logger logger;
+
+	public static boolean frozen = false;
 
 	@Mod.Metadata(Reference.MOD_ID)
 	public ModMetadata metadata;

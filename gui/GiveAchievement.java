@@ -77,11 +77,16 @@ public class GiveAchievement extends Show {
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(false)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
-		
+
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(true)
 						.addHoverText("Check Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
+
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
+						.addHoverText("Manage Student 2").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudents2())));
 
 		registerComponent(new TextBox((int) (width * .2), (int) (height * .25), width / 4, 20, "Search for User")
 				.setId("usersearch")

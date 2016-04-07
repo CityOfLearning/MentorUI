@@ -15,7 +15,6 @@ import com.rabbit.gui.component.control.DropDown;
 import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
-import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
 import com.rabbit.gui.component.list.entries.StringEntry;
@@ -127,14 +126,16 @@ public class CheckPlayerAchievements extends Show {
 				ulist.add(new StringEntry("give this achievement"));
 			}
 			infoDisplayList.clear();
-			for(ListEntry us:ulist){
+			for (ListEntry us : ulist) {
 				StringEntry se = (StringEntry) us;
 				infoDisplayList.add(se);
 				System.out.println(se.getTitle());
 			}
-			/*infoDisplayList = new ScrollableDisplayList((int) (width * .5), (int) (height * .25), width / 3, 150, 15,
-					ulist);*/
-			
+			/*
+			 * infoDisplayList = new ScrollableDisplayList((int) (width * .5),
+			 * (int) (height * .25), width / 3, 150, 15, ulist);
+			 */
+
 		}
 
 	}
@@ -176,6 +177,11 @@ public class CheckPlayerAchievements extends Show {
 				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(false)
 						.addHoverText("Check Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
+
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
+						.addHoverText("Manage Student 2").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudents2())));
 
 		// The students on the Roster List for this class
 		DropDown<String> rosterDrop = new DropDown<String>((int) (width * .2), (int) (height * .3), width / 4, "Users");
