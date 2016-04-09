@@ -65,15 +65,20 @@ public class GiveAchievement extends Show {
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
-						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
+						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudents2())));
+
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(false)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
@@ -82,11 +87,6 @@ public class GiveAchievement extends Show {
 				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(true)
 						.addHoverText("Check Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
-						.addHoverText("Manage Student 2").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
 
 		registerComponent(new TextBox((int) (width * .2), (int) (height * .25), width / 4, 20, "Search for User")
 				.setId("usersearch")

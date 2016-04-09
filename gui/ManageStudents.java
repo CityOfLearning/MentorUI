@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import com.dyn.instructor.TeacherMod;
 import com.dyn.server.ServerMod;
+import com.dyn.server.packets.PacketDispatcher;
+import com.dyn.server.packets.server.FeedPlayerMessage;
+import com.dyn.server.packets.server.RemoveEffectsMessage;
+import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -45,15 +49,19 @@ public class ManageStudents extends Show {
 		selectedEntry = entry;
 	}
 
-	private void feedStudents() {
-		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayNameString());
+	private void feedStudent() {
+		if (selectedEntry != null) {
+			if (!selectedEntry.getTitle().isEmpty()) {
+				PacketDispatcher.sendToServer(new FeedPlayerMessage(selectedEntry.getTitle()));
+			}
 		}
 	}
 
-	private void healStudents() {
-		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/heal " + student);
+	private void healStudent() {
+		if (selectedEntry != null) {
+			if (!selectedEntry.getTitle().isEmpty()) {
+				teacher.sendChatMessage("/heal " + selectedEntry.getTitle());
+			}
 		}
 	}
 
@@ -118,15 +126,20 @@ public class ManageStudents extends Show {
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(false)
-						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
+						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudents2())));
+
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
@@ -136,11 +149,7 @@ public class ManageStudents extends Show {
 						.addHoverText("Check Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
-						.addHoverText("Manage Student 2").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
-
+		// GUI main section
 		registerComponent(new Button((int) (width * .5), (int) (height * .2), 150, 20, "Teleport to Student")
 				.setClickListener(but -> teleportToStudent()));
 
@@ -153,36 +162,40 @@ public class ManageStudents extends Show {
 		registerComponent(new Button((int) (width * .675), (int) (height * .4), 60, 20, "Unmute")
 				.setClickListener(but -> unmuteStudent()));
 
-		registerComponent(new Button((int) (width * .5), (int) (height * .6), 150, 20, "Teleport Students to me")
-				.setClickListener(but -> teleportStudentsToMe()));
-
 		registerComponent(new Button((int) (width * .5), (int) (height * .5), 150, 20, "Check Student Inventory")
 				.setClickListener(but -> checkStudentInventory()));
 
-		registerComponent(new Button((int) (width * .5), (int) (height * .7), 150, 20, "Clear Student Roster")
+		registerComponent(
+				new Button((int) (width * .525), (int) (height * .6), 60, 20, "Freeze").setClickListener(but -> {
+					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
+						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), true));
+					}
+				}));
+
+		registerComponent(
+				new Button((int) (width * .675), (int) (height * .6), 60, 20, "Unfreeze").setClickListener(but -> {
+					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
+						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), false));
+					}
+				}));
+		
+		registerComponent(new Button((int) (width * .5), (int) (height * .7), 150, 20, "Remove Effects")
+				.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 				.setClickListener(but -> {
-					TeacherMod.roster.clear();
+					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
+						PacketDispatcher.sendToServer(new RemoveEffectsMessage(selectedEntry.getTitle()));
+					}
 				}));
 
 		registerComponent(new Button((int) (width * .525), (int) (height * .8), 60, 20, "Heal")
-				.setClickListener(but -> healStudents()));
+				.setClickListener(but -> healStudent()));
 
 		registerComponent(new Button((int) (width * .675), (int) (height * .8), 60, 20, "Feed")
-				.setClickListener(but -> feedStudents()));
+				.setClickListener(but -> feedStudent()));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				new ResourceLocation("dyn", "textures/gui/background.png")));
-	}
-
-	private void teleportStudentsToMe() {
-		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
-		/// Player2 is the person that Player1 is teleporting to
-		for (String student : TeacherMod.roster) { // evidently this works
-													// for multi world
-													// teleportation...
-			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayNameString());
-		}
 	}
 
 	private void teleportStudentTo() {

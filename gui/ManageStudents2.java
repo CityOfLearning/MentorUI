@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.dyn.instructor.TeacherMod;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
+import com.dyn.server.packets.server.FeedPlayerMessage;
+import com.dyn.server.packets.server.RemoveEffectsMessage;
 import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
@@ -26,17 +28,11 @@ import net.minecraft.util.ResourceLocation;
 public class ManageStudents2 extends Show {
 
 	private EntityPlayerSP teacher;
-	private StringEntry selectedEntry;
-	private ScrollableDisplayList rosterDisplayList;
 	private ArrayList<String> userlist = new ArrayList<String>();
 
 	public ManageStudents2() {
 		setBackground(new DefaultBackground());
 		title = "Teacher Gui Roster Management";
-	}
-
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
-		selectedEntry = entry;
 	}
 
 	@Override
@@ -53,31 +49,7 @@ public class ManageStudents2 extends Show {
 
 		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Roster Management",
 				TextAlignment.CENTER));
-
-		// The students not on the Roster List for this class
-		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
-
-		for (String s : userlist) {
-			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
-		}
-
-		registerComponent(new TextBox((int) (width * .2), (int) (height * .25), width / 4, 20, "Search for User")
-				.setId("rostersearch")
-				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-
-		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
-
-		for (String s : TeacherMod.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
-		}
-
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
-				rlist);
-		rosterDisplayList.setId("roster");
-		registerComponent(rosterDisplayList);
+		;
 
 		// the side buttons
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
@@ -92,15 +64,20 @@ public class ManageStudents2 extends Show {
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
-						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(false)
+						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudents2())));
+
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
@@ -110,69 +87,83 @@ public class ManageStudents2 extends Show {
 						.addHoverText("Check Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(false)
-						.addHoverText("Manage Student 2").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
+		// GUI main section
+		registerComponent(new Button((int) (width * .525), (int) (height * .2), 135, 20, "Teleport Students to me")
+				.setClickListener(but -> teleportStudentsToMe()));
 
-		/*
-		 * registerComponent(new Button((int) (width * .5), (int) (height * .2),
-		 * 150, 20, "Teleport to Student") .setClickListener(but ->
-		 * teleportToStudent()));
-		 * 
-		 * registerComponent(new Button((int) (width * .5), (int) (height * .3),
-		 * 150, 20, "Teleport Student to Me") .setClickListener(but ->
-		 * teleportStudentTo()));
-		 */
+		registerComponent(new Button((int) (width * .15), (int) (height * .2), 135, 20, "Freeze Students")
+				.setClickListener(but -> freezeUnfreezeStudents(true)));
 
-		registerComponent(
-				new Button((int) (width * .525), (int) (height * .4), 60, 20, "Freeze").setClickListener(but -> {
-					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), true));
-					}
+		registerComponent(new Button((int) (width * .15), (int) (height * .3), 135, 20, "Unfreeze Students")
+				.setClickListener(but -> freezeUnfreezeStudents(false)));
+
+		registerComponent(new Button((int) (width * .525), (int) (height * .3), 135, 20, "Heal Students")
+				.setClickListener(but -> healStudents()));
+
+		registerComponent(new Button((int) (width * .525), (int) (height * .4), 135, 20, "Feed Students")
+				.setClickListener(but -> feedStudents()));
+
+		registerComponent(new Button((int) (width * .15), (int) (height * .4), 135, 20, "Mute Students")
+				.setClickListener(but -> muteStudents()));
+
+		registerComponent(new Button((int) (width * .15), (int) (height * .5), 135, 20, "Unmute Students")
+				.setClickListener(but -> unmuteStudents()));
+
+		registerComponent(new Button((int) (width * .525), (int) (height * .5), 135, 20, "Remove Effects")
+				.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
+				.setClickListener(but -> removeEffects()));
+
+		registerComponent(new Button((int) (width * .525), (int) (height * .8), 135, 20, "Clear Student Roster")
+				.setClickListener(but -> {
+					TeacherMod.roster.clear();
 				}));
-
-		registerComponent(
-				new Button((int) (width * .675), (int) (height * .4), 60, 20, "Unfreeze").setClickListener(but -> {
-					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), false));
-					}
-				}));
-
-		/*
-		 * registerComponent(new Button((int) (width * .5), (int) (height * .6),
-		 * 150, 20, "Teleport Students to me") .setClickListener(but ->
-		 * teleportStudentsToMe()));
-		 * 
-		 * registerComponent(new Button((int) (width * .5), (int) (height * .5),
-		 * 150, 20, "Check Student Inventory") .setClickListener(but ->
-		 * checkStudentInventory()));
-		 * 
-		 * registerComponent(new Button((int) (width * .5), (int) (height * .7),
-		 * 150, 20, "Clear Student Roster") .setClickListener(but -> {
-		 * TeacherMod.roster.clear(); }));
-		 * 
-		 * registerComponent(new Button((int) (width * .525), (int) (height *
-		 * .8), 60, 20, "Heal") .setClickListener(but -> healStudents()));
-		 * 
-		 * registerComponent(new Button((int) (width * .675), (int) (height *
-		 * .8), 60, 20, "Feed") .setClickListener(but -> feedStudents()));
-		 */
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
-	private void textChanged(TextBox textbox, String previousText) {
-		if (textbox.getId() == "rostersearch") {
-			rosterDisplayList.clear();
-			for (String student : TeacherMod.roster) {
-				if (student.contains(textbox.getText())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
-				}
-			}
+	private void freezeUnfreezeStudents(boolean state) {
+		for (String student : TeacherMod.roster) {
+			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student, state));
+		}
+	}
+
+	private void feedStudents() {
+		for (String student : TeacherMod.roster) {
+			PacketDispatcher.sendToServer(new FeedPlayerMessage(student));
+		}
+	}
+
+	private void healStudents() {
+		for (String student : TeacherMod.roster) {
+			teacher.sendChatMessage("/heal " + student);
+		}
+	}
+
+	private void muteStudents() {
+		for (String student : TeacherMod.roster) {
+			teacher.sendChatMessage("/mute " + student);
+		}
+	}
+
+	private void unmuteStudents() {
+		for (String student : TeacherMod.roster) {
+			teacher.sendChatMessage("/unmute " + student);
+		}
+	}
+
+	private void removeEffects() {
+		for (String student : TeacherMod.roster) {
+			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student));
+		}
+	}
+
+	private void teleportStudentsToMe() {
+		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
+		/// Player2 is the person that Player1 is teleporting to
+		for (String student : TeacherMod.roster) {
+			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayNameString());
 		}
 	}
 }

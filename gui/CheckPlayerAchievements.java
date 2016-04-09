@@ -144,8 +144,8 @@ public class CheckPlayerAchievements extends Show {
 	public void setup() {
 		super.setup();
 
-		registerComponent(
-				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Give Items", TextAlignment.CENTER));
+		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Check Achievement Progress",
+				TextAlignment.CENTER));
 
 		// the side buttons
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
@@ -160,15 +160,20 @@ public class CheckPlayerAchievements extends Show {
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
-						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
+						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudents2())));
+
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
@@ -177,11 +182,6 @@ public class CheckPlayerAchievements extends Show {
 				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(false)
 						.addHoverText("Check Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
-						.addHoverText("Manage Student 2").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
 
 		// The students on the Roster List for this class
 		DropDown<String> rosterDrop = new DropDown<String>((int) (width * .2), (int) (height * .3), width / 4, "Users");

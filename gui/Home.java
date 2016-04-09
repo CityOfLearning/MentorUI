@@ -54,15 +54,20 @@ public class Home extends Show {
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
-						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
+						.addHoverText("Manage Students").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudents2())));
+
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
 						.addHoverText("Award Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
@@ -72,11 +77,7 @@ public class Home extends Show {
 						.addHoverText("Check Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
 
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
-						.addHoverText("Manage Student 2").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
-
+		// gui main area
 		registerComponent(new CheckBox((int) (width * .55), (int) (height * .22), "Set Creative Mode", isCreative)
 				.setStatusChangedListener(btn -> toggleCreative()));
 
@@ -117,7 +118,7 @@ public class Home extends Show {
 			teacher.sendChatMessage("/time set " + sTime);
 		}
 		if (s.getId() == "speed") { // speed has to be an integer value
-			teacher.sendChatMessage("/speed " + (int) (1 + (pos * 3)));
+			teacher.sendChatMessage("/speed " + (int) (1 + (pos * 10)));
 		}
 	}
 
