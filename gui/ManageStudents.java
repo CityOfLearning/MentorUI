@@ -178,7 +178,7 @@ public class ManageStudents extends Show {
 						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle(), false));
 					}
 				}));
-		
+
 		registerComponent(new Button((int) (width * .5), (int) (height * .7), 150, 20, "Remove Effects")
 				.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 				.setClickListener(but -> {

@@ -11,13 +11,8 @@ import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
-import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
-import com.rabbit.gui.component.list.DisplayList;
-import com.rabbit.gui.component.list.ScrollableDisplayList;
-import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -33,6 +28,36 @@ public class ManageStudents2 extends Show {
 	public ManageStudents2() {
 		setBackground(new DefaultBackground());
 		title = "Teacher Gui Roster Management";
+	}
+
+	private void feedStudents() {
+		for (String student : TeacherMod.roster) {
+			PacketDispatcher.sendToServer(new FeedPlayerMessage(student));
+		}
+	}
+
+	private void freezeUnfreezeStudents(boolean state) {
+		for (String student : TeacherMod.roster) {
+			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student, state));
+		}
+	}
+
+	private void healStudents() {
+		for (String student : TeacherMod.roster) {
+			teacher.sendChatMessage("/heal " + student);
+		}
+	}
+
+	private void muteStudents() {
+		for (String student : TeacherMod.roster) {
+			teacher.sendChatMessage("/mute " + student);
+		}
+	}
+
+	private void removeEffects() {
+		for (String student : TeacherMod.roster) {
+			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student));
+		}
 	}
 
 	@Override
@@ -123,47 +148,17 @@ public class ManageStudents2 extends Show {
 				new ResourceLocation("dyn", "textures/gui/background.png")));
 	}
 
-	private void freezeUnfreezeStudents(boolean state) {
+	private void teleportStudentsToMe() {
+		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
+		/// Player2 is the person that Player1 is teleporting to
 		for (String student : TeacherMod.roster) {
-			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student, state));
-		}
-	}
-
-	private void feedStudents() {
-		for (String student : TeacherMod.roster) {
-			PacketDispatcher.sendToServer(new FeedPlayerMessage(student));
-		}
-	}
-
-	private void healStudents() {
-		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/heal " + student);
-		}
-	}
-
-	private void muteStudents() {
-		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/mute " + student);
+			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayNameString());
 		}
 	}
 
 	private void unmuteStudents() {
 		for (String student : TeacherMod.roster) {
 			teacher.sendChatMessage("/unmute " + student);
-		}
-	}
-
-	private void removeEffects() {
-		for (String student : TeacherMod.roster) {
-			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student));
-		}
-	}
-
-	private void teleportStudentsToMe() {
-		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
-		/// Player2 is the person that Player1 is teleporting to
-		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayNameString());
 		}
 	}
 }
