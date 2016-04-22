@@ -138,6 +138,12 @@ public class ManageStudents2 extends Show {
 				.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 				.setClickListener(but -> removeEffects()));
 
+		registerComponent(new Button((int) (width * .15), (int) (height * .6), 135, 20, "Set to Creative mode")
+				.setClickListener(but -> switchMode(1)));
+
+		registerComponent(new Button((int) (width * .525), (int) (height * .6), 135, 20, "Set to Survival mode")
+				.setClickListener(but -> switchMode(0)));
+
 		registerComponent(new Button((int) (width * .525), (int) (height * .8), 135, 20, "Clear Student Roster")
 				.setClickListener(but -> {
 					TeacherMod.roster.clear();
@@ -146,6 +152,12 @@ public class ManageStudents2 extends Show {
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				new ResourceLocation("dyn", "textures/gui/background.png")));
+	}
+
+	private void switchMode(int mode) {
+		for (String student : TeacherMod.roster) {
+			teacher.sendChatMessage("/gamemode " + mode + " " + student);
+		}
 	}
 
 	private void teleportStudentsToMe() {

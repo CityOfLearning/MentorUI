@@ -83,8 +83,9 @@ public class GiveItem extends Show {
 		if (itmSt != null) {
 			itemMod = " " + itmSt.getItemDamage();
 		}
+		String amt = amountBox.getText() == null ? "1" : amountBox.getText();
 		Minecraft.getMinecraft().thePlayer.sendChatMessage("/give " + userBox.getText() + " "
-				+ GameRegistry.findUniqueIdentifierFor(tItem) + " " + amountBox.getText() + " " + itemMod);
+				+ GameRegistry.findUniqueIdentifierFor(tItem) + " " + amt + " " + itemMod);
 	}
 
 	@Override
@@ -237,10 +238,25 @@ public class GiveItem extends Show {
 		if (textbox.getId() == "itemsearch") {
 			itemDisplayList.clear();
 			for (Item i : itemList) {
-				ItemStack is = new ItemStack(i);
-				if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
-					itemDisplayList.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
-							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+				if (i != null) {
+					if (i.getHasSubtypes()) {
+						List<ItemStack> subItem = new ArrayList<ItemStack>();
+						i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
+						for (ItemStack is : subItem) {
+							if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
+								itemDisplayList
+										.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+												int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+							}
+						}
+					} else {
+						ItemStack is = new ItemStack(i);
+						if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
+							itemDisplayList
+									.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+											int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+						}
+					}
 				}
 			}
 		} else if (textbox.getId() == "usersearch") {

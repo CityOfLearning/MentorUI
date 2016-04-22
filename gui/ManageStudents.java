@@ -193,9 +193,19 @@ public class ManageStudents extends Show {
 		registerComponent(new Button((int) (width * .675), (int) (height * .8), 60, 20, "Feed")
 				.setClickListener(but -> feedStudent()));
 
+		registerComponent(new Button((int) (width * .175), (int) (height * .8), 60, 20, "Creative")
+				.setClickListener(but -> switchMode(1)));
+
+		registerComponent(new Button((int) (width * .325), (int) (height * .8), 60, 20, "Survival")
+				.setClickListener(but -> switchMode(0)));
+
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				new ResourceLocation("dyn", "textures/gui/background.png")));
+	}
+
+	private void switchMode(int mode) {
+		teacher.sendChatMessage("/gamemode " + mode + " " + selectedEntry.getTitle());
 	}
 
 	private void teleportStudentTo() {
