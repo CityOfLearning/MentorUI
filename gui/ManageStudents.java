@@ -205,7 +205,9 @@ public class ManageStudents extends Show {
 	}
 
 	private void switchMode(int mode) {
-		teacher.sendChatMessage("/gamemode " + mode + " " + selectedEntry.getTitle());
+		if (selectedEntry != null) {
+			teacher.sendChatMessage("/gamemode " + mode + " " + selectedEntry.getTitle());
+		}
 	}
 
 	private void teleportStudentTo() {
