@@ -32,31 +32,31 @@ public class ManageStudents2 extends Show {
 
 	private void feedStudents() {
 		for (String student : TeacherMod.roster) {
-			PacketDispatcher.sendToServer(new FeedPlayerMessage(student));
+			PacketDispatcher.sendToServer(new FeedPlayerMessage(student.split("-")[0]));
 		}
 	}
 
 	private void freezeUnfreezeStudents(boolean state) {
 		for (String student : TeacherMod.roster) {
-			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student, state));
+			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student.split("-")[0], state));
 		}
 	}
 
 	private void healStudents() {
 		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/heal " + student);
+			teacher.sendChatMessage("/heal " + student.split("-")[0]);
 		}
 	}
 
 	private void muteStudents() {
 		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/mute " + student);
+			teacher.sendChatMessage("/mute " + student.split("-")[0]);
 		}
 	}
 
 	private void removeEffects() {
 		for (String student : TeacherMod.roster) {
-			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student));
+			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student.split("-")[0]));
 		}
 	}
 
@@ -156,7 +156,7 @@ public class ManageStudents2 extends Show {
 
 	private void switchMode(int mode) {
 		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/gamemode " + mode + " " + student);
+			teacher.sendChatMessage("/gamemode " + mode + " " + student.split("-")[0]);
 		}
 	}
 
@@ -164,13 +164,13 @@ public class ManageStudents2 extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/tp " + student + " " + teacher.getDisplayNameString());
+			teacher.sendChatMessage("/tp " + student.split("-")[0] + " " + teacher.getDisplayNameString());
 		}
 	}
 
 	private void unmuteStudents() {
 		for (String student : TeacherMod.roster) {
-			teacher.sendChatMessage("/unmute " + student);
+			teacher.sendChatMessage("/unmute " + student.split("-")[0]);
 		}
 	}
 }

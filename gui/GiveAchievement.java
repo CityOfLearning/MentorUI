@@ -126,7 +126,7 @@ public class GiveAchievement extends Show {
 				.setClickListener(but -> {
 					if ((selectedUser != null) && (selectedAchievement != null) && !selectedUser.getTitle().isEmpty()
 							&& !selectedAchievement.getTitle().isEmpty()) {
-						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle(),
+						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle().split("-")[0],
 								AchievementManager.findAchievementByName(selectedAchievement.getTitle()).getId()));
 					}
 				}));
