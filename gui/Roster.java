@@ -3,6 +3,7 @@ package com.dyn.instructor.gui;
 import java.util.ArrayList;
 
 import com.dyn.instructor.TeacherMod;
+import com.dyn.names.manager.NamesManager;
 import com.dyn.server.ServerMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
@@ -34,7 +35,7 @@ public class Roster extends Show {
 	}
 
 	private void addToRoster() {
-		if (selectedList.getId() == "users") {
+		if (selectedList.getId() == "users" && !TeacherMod.roster.contains(selectedEntry.getTitle())) {
 			TeacherMod.roster.add(selectedEntry.getTitle());
 			selectedEntry.setSelected(false);
 			rosterDisplayList.add(selectedEntry);
@@ -49,7 +50,7 @@ public class Roster extends Show {
 	}
 
 	private void removeFromRoster() {
-		if (selectedList.getId() == "roster") {
+		if (selectedList.getId() == "roster" && TeacherMod.roster.contains(selectedEntry.getTitle())) {
 			TeacherMod.roster.remove(selectedEntry.getTitle());
 			selectedEntry.setSelected(false);
 			rosterDisplayList.remove(selectedEntry);
@@ -62,8 +63,10 @@ public class Roster extends Show {
 		super.setup();
 
 		for (String s : ServerMod.usernames) {
-			if (!TeacherMod.roster.contains(s)
+			if (!TeacherMod.roster.contains(s + "-" + NamesManager.getDYNUsername(s))
 					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+				//Erin added this!!!!!!!!!
+				s += "-" + NamesManager.getDYNUsername(s);
 				userlist.add(s);
 			}
 		}
@@ -79,14 +82,14 @@ public class Roster extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		registerComponent(new TextBox((int) (width * .2), (int) (height * .25), width / 4, 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .15), (int) (height * .25), (int)(width / 3.3), 20, "Search for User")
 				.setId("usersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-		registerComponent(new TextBox((int) (width * .55), (int) (height * .25), width / 4, 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .55), (int) (height * .25), (int)(width / 3.3), 20, "Search for User")
 				.setId("rostersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		userDisplayList = new ScrollableDisplayList((int) (width * .2), (int) (height * .35), width / 4, 130, 15,
+		userDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), (int)(width / 3.3), 130, 15,
 				ulist);
 		userDisplayList.setId("users");
 		registerComponent(userDisplayList);
@@ -94,12 +97,12 @@ public class Roster extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : TeacherMod.roster) {
+		for (String s : TeacherMod.roster) {			
 			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .55), (int) (height * .35), width / 4, 130, 15,
+		rosterDisplayList = new ScrollableDisplayList((int) (width * .55), (int) (height * .35), (int)(width / 3.3), 130, 15,
 				rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);

@@ -38,15 +38,15 @@ public class CheckPlayerAchievements extends Show {
 		// lets pull up the achievement info when the selection is clicked
 		if (dropdown.getId().equals("roster")) {
 			user = selected;
-			PacketDispatcher.sendToServer(new RequestUserAchievementsProgressMessage(user));
+			PacketDispatcher.sendToServer(new RequestUserAchievementsProgressMessage(user.split("-")[0]));
 		} else if (!user.isEmpty() && dropdown.getId().equals("achs")) {
-			AchievementPlus ach = AchievementManager.findAchievementByName(selected);
+			AchievementPlus ach = AchievementManager.findAchievementByName(selected.split("-")[0]);
 			ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
 
 			if (ach.hasRequirementOfType(RequirementType.CRAFT)) {
 				ulist.add(new StringEntry("-Craft-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.CRAFT)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -55,7 +55,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.SMELT)) {
 				ulist.add(new StringEntry("-Smelt-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.SMELT)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -64,7 +64,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.PICKUP)) {
 				ulist.add(new StringEntry("-Pickup-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.PICKUP)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -73,7 +73,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.STAT)) {
 				ulist.add(new StringEntry("-Special-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.STAT)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -82,7 +82,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.KILL)) {
 				ulist.add(new StringEntry("-Kill-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.KILL)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -91,7 +91,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.BREW)) {
 				ulist.add(new StringEntry("-Brew-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.BREW)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -100,7 +100,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.PLACE)) {
 				ulist.add(new StringEntry("-Place-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.PLACE)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -108,7 +108,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.BREAK)) {
 				ulist.add(new StringEntry("-Break-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.BREAK)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -116,7 +116,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.LOCATION)) {
 				ulist.add(new StringEntry("-Location-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected)
+			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
 					.getRequirementsByType(RequirementType.LOCATION)) {
 				ulist.add(new StringEntry((r.getTotalAquired() > 0 ? "[X]-" : "[ ]-") + r.getRequirementEntityName()));
 			}
