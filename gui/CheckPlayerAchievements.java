@@ -1,4 +1,4 @@
-package com.dyn.instructor.gui;
+package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,8 @@ import com.dyn.achievements.achievement.AchievementPlus;
 import com.dyn.achievements.achievement.RequirementType;
 import com.dyn.achievements.achievement.Requirements.BaseRequirement;
 import com.dyn.achievements.handlers.AchievementManager;
-import com.dyn.instructor.TeacherMod;
+import com.dyn.mentor.MentorUI;
+import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserAchievementsProgressMessage;
 import com.rabbit.gui.background.DefaultBackground;
@@ -38,15 +39,15 @@ public class CheckPlayerAchievements extends Show {
 		// lets pull up the achievement info when the selection is clicked
 		if (dropdown.getId().equals("roster")) {
 			user = selected;
-			PacketDispatcher.sendToServer(new RequestUserAchievementsProgressMessage(user.split("-")[0]));
+			PacketDispatcher.sendToServer(new RequestUserAchievementsProgressMessage(user));
 		} else if (!user.isEmpty() && dropdown.getId().equals("achs")) {
-			AchievementPlus ach = AchievementManager.findAchievementByName(selected.split("-")[0]);
+			AchievementPlus ach = AchievementManager.findAchievementByName(selected);
 			ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
 
 			if (ach.hasRequirementOfType(RequirementType.CRAFT)) {
 				ulist.add(new StringEntry("-Craft-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.CRAFT)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -55,7 +56,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.SMELT)) {
 				ulist.add(new StringEntry("-Smelt-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.SMELT)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -64,7 +65,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.PICKUP)) {
 				ulist.add(new StringEntry("-Pickup-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.PICKUP)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -73,7 +74,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.STAT)) {
 				ulist.add(new StringEntry("-Special-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.STAT)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -82,7 +83,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.KILL)) {
 				ulist.add(new StringEntry("-Kill-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.KILL)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -91,7 +92,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.BREW)) {
 				ulist.add(new StringEntry("-Brew-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.BREW)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -100,7 +101,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.PLACE)) {
 				ulist.add(new StringEntry("-Place-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.PLACE)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -108,7 +109,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.BREAK)) {
 				ulist.add(new StringEntry("-Break-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.BREAK)) {
 				ulist.add(new StringEntry(
 						r.getRequirementEntityName() + " - " + r.getTotalAquired() + "/" + r.getTotalNeeded()));
@@ -116,7 +117,7 @@ public class CheckPlayerAchievements extends Show {
 			if (ach.hasRequirementOfType(RequirementType.LOCATION)) {
 				ulist.add(new StringEntry("-Location-"));
 			}
-			for (BaseRequirement r : TeacherMod.userAchievementProgress.get(selected.split("-")[0])
+			for (BaseRequirement r : ServerMod.userAchievementProgress.get(selected)
 					.getRequirementsByType(RequirementType.LOCATION)) {
 				ulist.add(new StringEntry((r.getTotalAquired() > 0 ? "[X]-" : "[ ]-") + r.getRequirementEntityName()));
 			}
@@ -161,17 +162,22 @@ public class CheckPlayerAchievements extends Show {
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents())));
+						.setClickListener(but -> getStage().display(new ManageStudent())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
+						.setClickListener(but -> getStage().display(new ManageStudents())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
+
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(true)
+						.addHoverText("Remove Items").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new RemoveItem())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
@@ -186,7 +192,7 @@ public class CheckPlayerAchievements extends Show {
 		// The students on the Roster List for this class
 		DropDown<String> rosterDrop = new DropDown<String>((int) (width * .2), (int) (height * .3), width / 4, "Users");
 
-		for (String s : TeacherMod.roster) {
+		for (String s : MentorUI.roster) {
 			rosterDrop.add(s, s);
 		}
 		rosterDrop.setItemSelectedListener(

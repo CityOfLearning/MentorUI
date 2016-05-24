@@ -1,4 +1,4 @@
-package com.dyn.instructor.reference;
+package com.dyn.mentor.reference;
 
 import java.util.Arrays;
 

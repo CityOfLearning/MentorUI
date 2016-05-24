@@ -1,9 +1,8 @@
-package com.dyn.instructor.gui;
+package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
-import com.dyn.instructor.TeacherMod;
-import com.dyn.names.manager.NamesManager;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.ServerMod;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
@@ -35,11 +34,13 @@ public class Roster extends Show {
 	}
 
 	private void addToRoster() {
-		if (selectedList.getId() == "users" && !TeacherMod.roster.contains(selectedEntry.getTitle())) {
-			TeacherMod.roster.add(selectedEntry.getTitle());
-			selectedEntry.setSelected(false);
-			rosterDisplayList.add(selectedEntry);
-			userDisplayList.remove(selectedEntry);
+		if ((selectedEntry != null) && (selectedList != null)) {
+			if (selectedList.getId() == "users") {
+				MentorUI.roster.add(selectedEntry.getTitle());
+				selectedEntry.setSelected(false);
+				rosterDisplayList.add(selectedEntry);
+				userDisplayList.remove(selectedEntry);
+			}
 		}
 	}
 
@@ -50,11 +51,13 @@ public class Roster extends Show {
 	}
 
 	private void removeFromRoster() {
-		if (selectedList.getId() == "roster" && TeacherMod.roster.contains(selectedEntry.getTitle())) {
-			TeacherMod.roster.remove(selectedEntry.getTitle());
-			selectedEntry.setSelected(false);
-			rosterDisplayList.remove(selectedEntry);
-			userDisplayList.add(selectedEntry);
+		if ((selectedEntry != null) && (selectedList != null)) {
+			if (selectedList.getId() == "roster") {
+				MentorUI.roster.remove(selectedEntry.getTitle());
+				selectedEntry.setSelected(false);
+				rosterDisplayList.remove(selectedEntry);
+				userDisplayList.add(selectedEntry);
+			}
 		}
 	}
 
@@ -63,10 +66,7 @@ public class Roster extends Show {
 		super.setup();
 
 		for (String s : ServerMod.usernames) {
-			if (!TeacherMod.roster.contains(s + "-" + NamesManager.getDYNUsername(s))
-					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
-				//Erin added this!!!!!!!!!
-				s += "-" + NamesManager.getDYNUsername(s);
+			if (!MentorUI.roster.contains(s) && !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
 				userlist.add(s);
 			}
 		}
@@ -82,14 +82,14 @@ public class Roster extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		registerComponent(new TextBox((int) (width * .15), (int) (height * .25), (int)(width / 3.3), 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .2), (int) (height * .25), width / 4, 20, "Search for User")
 				.setId("usersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-		registerComponent(new TextBox((int) (width * .55), (int) (height * .25), (int)(width / 3.3), 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .55), (int) (height * .25), width / 4, 20, "Search for User")
 				.setId("rostersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		userDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), (int)(width / 3.3), 130, 15,
+		userDisplayList = new ScrollableDisplayList((int) (width * .2), (int) (height * .35), width / 4, 130, 15,
 				ulist);
 		userDisplayList.setId("users");
 		registerComponent(userDisplayList);
@@ -97,12 +97,12 @@ public class Roster extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : TeacherMod.roster) {			
+		for (String s : MentorUI.roster) {
 			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .55), (int) (height * .35), (int)(width / 3.3), 130, 15,
+		rosterDisplayList = new ScrollableDisplayList((int) (width * .55), (int) (height * .35), width / 4, 130, 15,
 				rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
@@ -127,17 +127,22 @@ public class Roster extends Show {
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents())));
+						.setClickListener(but -> getStage().display(new ManageStudent())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
+						.setClickListener(but -> getStage().display(new ManageStudents())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
+
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(true)
+						.addHoverText("Remove Items").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new RemoveItem())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
@@ -165,7 +170,7 @@ public class Roster extends Show {
 			}
 		} else if (textbox.getId() == "rostersearch") {
 			rosterDisplayList.clear();
-			for (String student : TeacherMod.roster) {
+			for (String student : MentorUI.roster) {
 				if (student.contains(textbox.getText())) {
 					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));

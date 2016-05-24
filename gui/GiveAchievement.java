@@ -1,4 +1,4 @@
-package com.dyn.instructor.gui;
+package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import com.dyn.achievements.achievement.AchievementPlus;
 import com.dyn.achievements.gui.Info;
 import com.dyn.achievements.handlers.AchievementManager;
-import com.dyn.instructor.TeacherMod;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorGivingAchievementMessage;
 import com.rabbit.gui.background.DefaultBackground;
@@ -66,17 +66,22 @@ public class GiveAchievement extends Show {
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents())));
+						.setClickListener(but -> getStage().display(new ManageStudent())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
+						.setClickListener(but -> getStage().display(new ManageStudents())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
+
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(true)
+						.addHoverText("Remove Items").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new RemoveItem())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(false)
@@ -111,7 +116,7 @@ public class GiveAchievement extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : TeacherMod.roster) {
+		for (String s : MentorUI.roster) {
 			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
@@ -126,7 +131,7 @@ public class GiveAchievement extends Show {
 				.setClickListener(but -> {
 					if ((selectedUser != null) && (selectedAchievement != null) && !selectedUser.getTitle().isEmpty()
 							&& !selectedAchievement.getTitle().isEmpty()) {
-						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle().split("-")[0],
+						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle(),
 								AchievementManager.findAchievementByName(selectedAchievement.getTitle()).getId()));
 					}
 				}));
@@ -156,7 +161,7 @@ public class GiveAchievement extends Show {
 			}
 		} else if (textbox.getId() == "usersearch") {
 			rosterDisplayList.clear();
-			for (String student : TeacherMod.roster) {
+			for (String student : MentorUI.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
 					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));

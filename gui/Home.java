@@ -1,7 +1,8 @@
-package com.dyn.instructor.gui;
+package com.dyn.mentor.gui;
 
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.HaveServerWriteAchievementsMessage;
+import com.dyn.server.packets.server.MentorCommandMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBox;
@@ -13,12 +14,10 @@ import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.ResourceLocation;
 
 public class Home extends Show {
 
-	private EntityPlayerSP teacher;
 	private boolean isCreative;
 
 	public Home() {
@@ -35,8 +34,7 @@ public class Home extends Show {
 	public void setup() {
 		super.setup();
 
-		teacher = Minecraft.getMinecraft().thePlayer;
-		isCreative = teacher.capabilities.isCreativeMode;
+		isCreative = Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode;
 
 		registerComponent(
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Teacher Control", TextAlignment.CENTER));
@@ -55,17 +53,22 @@ public class Home extends Show {
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents())));
+						.setClickListener(but -> getStage().display(new ManageStudent())));
 
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents2())));
+						.setClickListener(but -> getStage().display(new ManageStudents())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
 						.addHoverText("Give Items").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new GiveItem())));
+
+		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(true)
+						.addHoverText("Remove Items").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new RemoveItem())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
@@ -115,15 +118,15 @@ public class Home extends Show {
 			if (sTime < 0) {
 				sTime += 24000;
 			}
-			teacher.sendChatMessage("/time set " + sTime);
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/time set " + sTime));
 		}
 		if (s.getId() == "speed") { // speed has to be an integer value
-			teacher.sendChatMessage("/speed " + (int) (1 + (pos * 10)));
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/speed " + (int) (1 + (pos * 10))));
 		}
 	}
 
 	private void toggleCreative() {
-		teacher.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
+		PacketDispatcher.sendToServer(new MentorCommandMessage("/gamemode " + (isCreative ? "0" : "1")));
 		isCreative = !isCreative;
 	}
 }

@@ -1,15 +1,11 @@
-package com.dyn.instructor;
+package com.dyn.mentor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
-
-import com.dyn.achievements.achievement.Requirements;
-import com.dyn.instructor.proxy.Proxy;
-import com.dyn.instructor.reference.MetaData;
-import com.dyn.instructor.reference.Reference;
+import com.dyn.DYNServerMod;
+import com.dyn.mentor.proxy.Proxy;
+import com.dyn.mentor.reference.MetaData;
+import com.dyn.mentor.reference.Reference;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -20,20 +16,15 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION)
-public class TeacherMod {
+public class MentorUI {
 
 	public static ArrayList<String> roster = new ArrayList<String>();
-	public static Map<String, Requirements> userAchievementProgress = new HashMap<String, Requirements>();
 
 	@Mod.Instance(Reference.MOD_ID)
-	public static TeacherMod instance;
+	public static MentorUI instance;
 
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static Proxy proxy;
-
-	public static Logger logger;
-
-	public static boolean frozen = false;
 
 	@Mod.Metadata(Reference.MOD_ID)
 	public ModMetadata metadata;
@@ -52,13 +43,11 @@ public class TeacherMod {
 	public void preInit(FMLPreInitializationEvent event) {
 		metadata = MetaData.init(metadata);
 
-		logger = event.getModLog();
-
 		Configuration configs = new Configuration(event.getSuggestedConfigurationFile());
 		try {
 			configs.load();
 		} catch (RuntimeException e) {
-			logger.warn(e);
+			DYNServerMod.logger.warn(e);
 		}
 
 		proxy.init();
