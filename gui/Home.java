@@ -2,13 +2,9 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
-import com.dyn.admin.AdminUI;
-import com.dyn.admin.gui.UsernamesAndPasswords;
+import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.HaveServerWriteAchievementsMessage;
 import com.rabbit.gui.background.DefaultBackground;
-import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBox;
 import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.Slider;
@@ -23,6 +19,9 @@ import com.rabbit.gui.show.Show;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.ResourceLocation;
+
+import com.dyn.server.packets.PacketDispatcher;
+import com.dyn.server.packets.server.MentorCommandMessage;
 
 public class Home extends Show {
 
@@ -147,15 +146,15 @@ public class Home extends Show {
 			if (sTime < 0) {
 				sTime += 24000;
 			}
-			teacher.sendChatMessage("/time set " + sTime);
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/time set " + sTime));
 		}
 		if (s.getId() == "speed") { // speed has to be an integer value
-			teacher.sendChatMessage("/speed " + (int) (1 + (pos * 10)));
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/speed " + (int) (1 + (pos * 10))));
 		}
 	}
 
 	private void toggleCreative() {
-		teacher.sendChatMessage("/gamemode " + (isCreative ? "0" : "1"));
+		PacketDispatcher.sendToServer(new MentorCommandMessage("/gamemode " + (isCreative ? "0" : "1")));
 		isCreative = !isCreative;
 	}
 }

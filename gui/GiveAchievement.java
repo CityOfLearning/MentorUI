@@ -6,7 +6,7 @@ import java.util.List;
 import com.dyn.achievements.achievement.AchievementPlus;
 import com.dyn.achievements.gui.Info;
 import com.dyn.achievements.handlers.AchievementManager;
-import com.dyn.admin.gui.UsernamesAndPasswords;
+import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorGivingAchievementMessage;

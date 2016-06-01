@@ -2,11 +2,12 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
-import com.dyn.admin.gui.UsernamesAndPasswords;
+import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
+import com.dyn.server.packets.server.MentorCommandMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
 import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.rabbit.gui.background.DefaultBackground;
@@ -41,7 +42,7 @@ public class ManageStudent extends Show {
 	private void checkStudentInventory() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/invsee " + selectedEntry.getTitle().split("-")[0]);
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/invsee " + selectedEntry.getTitle().split("-")[0]));
 			}
 		}
 	}
@@ -61,7 +62,7 @@ public class ManageStudent extends Show {
 	private void healStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/heal " + selectedEntry.getTitle().split("-")[0]);
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/heal " + selectedEntry.getTitle().split("-")[0]));
 			}
 		}
 	}
@@ -69,7 +70,7 @@ public class ManageStudent extends Show {
 	private void muteStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/mute " + selectedEntry.getTitle().split("-")[0]);
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/mute " + selectedEntry.getTitle().split("-")[0]));
 			}
 		}
 	}
@@ -181,7 +182,7 @@ public class ManageStudent extends Show {
 		registerComponent(
 				new Button((int) (width * .525), (int) (height * .6), 60, 20, "Freeze").setClickListener(but -> {
 					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-						teacher.sendChatMessage("/p user " + selectedEntry.getTitle() + " group add _FROZEN_");
+						PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + selectedEntry.getTitle() + " group add _FROZEN_"));
 						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle().split("-")[0], true));
 					}
 				}));
@@ -189,7 +190,7 @@ public class ManageStudent extends Show {
 		registerComponent(
 				new Button((int) (width * .675), (int) (height * .6), 60, 20, "Unfreeze").setClickListener(but -> {
 					if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-						teacher.sendChatMessage("/p user " + selectedEntry.getTitle() + " group remove _FROZEN_");
+						PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + selectedEntry.getTitle() + " group remove _FROZEN_"));
 						PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(selectedEntry.getTitle().split("-")[0], false));
 					}
 				}));
@@ -221,14 +222,14 @@ public class ManageStudent extends Show {
 
 	private void switchMode(int mode) {
 		if (selectedEntry != null) {
-			teacher.sendChatMessage("/gamemode " + mode + " " + selectedEntry.getTitle().split("-")[0]);
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/gamemode " + mode + " " + selectedEntry.getTitle().split("-")[0]));
 		}
 	}
 
 	private void teleportStudentTo() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/tp " + selectedEntry.getTitle().split("-")[0] + " " + teacher.getDisplayNameString());
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/tp " + selectedEntry.getTitle().split("-")[0] + " " + teacher.getDisplayNameString()));
 			}
 		}
 	}
@@ -236,7 +237,7 @@ public class ManageStudent extends Show {
 	private void teleportToStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/tp " + teacher.getDisplayNameString() + " " + selectedEntry.getTitle().split("-")[0]);
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/tp " + teacher.getDisplayNameString() + " " + selectedEntry.getTitle().split("-")[0]));
 			}
 		}
 	}
@@ -256,7 +257,7 @@ public class ManageStudent extends Show {
 	private void unmuteStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				teacher.sendChatMessage("/unmute " + selectedEntry.getTitle().split("-")[0]);
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/unmute " + selectedEntry.getTitle().split("-")[0]));
 			}
 		}
 	}

@@ -2,7 +2,7 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
-import com.dyn.admin.gui.UsernamesAndPasswords;
+import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
 import com.dyn.names.manager.NamesManager;
 import com.dyn.server.ServerMod;
@@ -38,11 +38,14 @@ public class Roster extends Show {
 	}
 
 	private void addToRoster() {
-		if (selectedList.getId() == "users" && !MentorUI.roster.contains(selectedEntry.getTitle())) {
-			MentorUI.roster.add(selectedEntry.getTitle());
-			selectedEntry.setSelected(false);
-			rosterDisplayList.add(selectedEntry);
-			userDisplayList.remove(selectedEntry);
+		if ((selectedEntry != null) && (selectedList != null))
+		{
+			if (selectedList.getId() == "users" && !MentorUI.roster.contains(selectedEntry.getTitle())) {
+				MentorUI.roster.add(selectedEntry.getTitle());
+				selectedEntry.setSelected(false);
+				rosterDisplayList.add(selectedEntry);
+				userDisplayList.remove(selectedEntry);
+			}
 		}
 		numberOfStudentsOnRoster.setText("Roster Count: " + MentorUI.roster.size());
 	}
@@ -54,11 +57,14 @@ public class Roster extends Show {
 	}
 
 	private void removeFromRoster() {
-		if (selectedList.getId() == "roster" && MentorUI.roster.contains(selectedEntry.getTitle())) {
-			MentorUI.roster.remove(selectedEntry.getTitle());
-			selectedEntry.setSelected(false);
-			rosterDisplayList.remove(selectedEntry);
-			userDisplayList.add(selectedEntry);
+		if ((selectedEntry != null) && (selectedList != null))
+		{
+			if (selectedList.getId() == "roster" && MentorUI.roster.contains(selectedEntry.getTitle())) {
+				MentorUI.roster.remove(selectedEntry.getTitle());
+				selectedEntry.setSelected(false);
+				rosterDisplayList.remove(selectedEntry);
+				userDisplayList.add(selectedEntry);
+			}
 		}
 		numberOfStudentsOnRoster.setText("Roster Count: " + MentorUI.roster.size());
 	}

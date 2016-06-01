@@ -2,11 +2,12 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
-import com.dyn.admin.gui.UsernamesAndPasswords;
+import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
+import com.dyn.server.packets.server.MentorCommandMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
 import com.dyn.server.packets.server.RequestFreezePlayerMessage;
 import com.rabbit.gui.background.DefaultBackground;
@@ -39,19 +40,27 @@ public class ManageStudents extends Show {
 
 	private void freezeUnfreezeStudents(boolean state) {
 		for (String student : MentorUI.roster) {
+			if(state)
+			{
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + student.split("-")[0] + " group add _FROZEN_"));		
+			} 
+			else 
+			{		
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + student.split("-")[0] + " group remove _FROZEN_"));		
+			}
 			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student.split("-")[0], state));
 		}
 	}
 
 	private void healStudents() {
 		for (String student : MentorUI.roster) {
-			teacher.sendChatMessage("/heal " + student.split("-")[0]);
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/heal " + student.split("-")[0]));
 		}
 	}
 
 	private void muteStudents() {
 		for (String student : MentorUI.roster) {
-			teacher.sendChatMessage("/mute " + student.split("-")[0]);
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/mute " + student.split("-")[0]));
 		}
 	}
 
@@ -167,7 +176,7 @@ public class ManageStudents extends Show {
 
 	private void switchMode(int mode) {
 		for (String student : MentorUI.roster) {
-			teacher.sendChatMessage("/gamemode " + mode + " " + student.split("-")[0]);
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/gamemode " + mode + " " + student.split("-")[0]));
 		}
 	}
 
@@ -175,13 +184,13 @@ public class ManageStudents extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : MentorUI.roster) {
-			teacher.sendChatMessage("/tp " + student.split("-")[0] + " " + teacher.getDisplayNameString());
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/tp " + student.split("-")[0] + " " + teacher.getDisplayNameString()));
 		}
 	}
 
 	private void unmuteStudents() {
 		for (String student : MentorUI.roster) {
-			teacher.sendChatMessage("/unmute " + student.split("-")[0]);
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/unmute " + student.split("-")[0]));
 		}
 	}
 }
