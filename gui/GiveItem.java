@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.dyn.mentor.MentorUI;
+import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorCommandMessage;
+import com.dyn.mentor.MentorUI;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -26,8 +27,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 
 public class GiveItem extends Show {
 
@@ -82,21 +83,11 @@ public class GiveItem extends Show {
 		}
 		String itemMod = "";
 		if (itmSt != null) {
-			itemMod = "" + itmSt.getItemDamage();
+			itemMod = " " + itmSt.getItemDamage();
 		}
-		String amt;
-		if (!((amountBox.getText() == null) || amountBox.getText().isEmpty())) {
-			try {
-				int amount = Math.abs(Integer.parseInt(amountBox.getText())) % 65;
-				amt = "" + amount;
-			} catch (NumberFormatException nfe) {
-				amt = "1";
-			}
-		} else {
-			amt = "1";
-		}
-		PacketDispatcher.sendToServer(new MentorCommandMessage(
-				"/give " + userBox.getText() + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
+		String amt = (amountBox.getText() == null) || (amountBox.getText().isEmpty()) ? "1" : amountBox.getText();
+		PacketDispatcher.sendToServer(new MentorCommandMessage("/give " + userBox.getText().split("-")[0] + " "
+				+ tItem.getRegistryName() + " " + amt + " " + itemMod));
 	}
 
 	@Override
@@ -126,6 +117,11 @@ public class GiveItem extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
+		
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(false)

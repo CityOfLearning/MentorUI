@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.dyn.mentor.MentorUI;
+import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorCommandMessage;
+import com.dyn.mentor.MentorUI;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -42,18 +43,18 @@ public class RemoveItem extends Show {
 		setBackground(new DefaultBackground());
 		title = "Teacher Gui";
 	}
-
-	private void clearAllPlayerInventorys() {
-		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + student));
-		}
-	}
-
-	private void clearPlayerInventory() {
-		if (!userBox.getText().isEmpty()) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + userBox.getText()));
-		}
-	}
+	
+	private void clearAllPlayerInventorys() {		
+		for (String student : MentorUI.roster) {		
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + student.split("-")[0]));		
+		}		
+ 	}		
+ 		
+ 	private void clearPlayerInventory() {		
+ 		if (!userBox.getText().isEmpty()) {		
+ 			PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + userBox.getText().split("-")[0]));		
+ 		}		
+ 	}
 
 	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId() == "itms") {
@@ -107,8 +108,7 @@ public class RemoveItem extends Show {
 		} else {
 			amt = "1";
 		}
-		PacketDispatcher.sendToServer(new MentorCommandMessage(
-				"/clear " + userBox.getText() + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
+		PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + userBox.getText().split("-")[0] + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
 
 	}
 
@@ -139,6 +139,11 @@ public class RemoveItem extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
+		
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
@@ -257,15 +262,15 @@ public class RemoveItem extends Show {
 
 		registerComponent(new Button((int) (width * .7875) - 10, (int) (height * .725), 40, 20, "Remove")
 				.setClickListener(but -> removeItemFromPlayer()));
-
-		registerComponent(new Button((int) (width * .175) - 10, (int) (height * .825), 100, 20, "Clear Roster Inv")
-				.setClickListener(but -> clearAllPlayerInventorys()));
-
-		registerComponent(new Button((int) (width * .4225) - 10, (int) (height * .825), 90, 20, "Clear Player Inv")
-				.setClickListener(but -> clearPlayerInventory()));
-
-		registerComponent(new Button((int) (width * .645) - 10, (int) (height * .825), 102, 20, "Remove Roster Item")
-				.setClickListener(but -> removeItemFromPlayer()));
+		
+		registerComponent(new Button((int) (width * .175) - 10, (int) (height * .825), 100, 20, "Clear Roster Inv")		
+				 .setClickListener(but -> clearAllPlayerInventorys()));		
+				 		
+		registerComponent(new Button((int) (width * .4225) - 10, (int) (height * .825), 90, 20, "Clear Player Inv")		
+				 .setClickListener(but -> clearPlayerInventory()));		
+				 	
+		registerComponent(new Button((int) (width * .645) - 10, (int) (height * .825), 102, 20, "Remove Roster Item")		
+				 .setClickListener(but -> removeItemFromPlayer()));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),

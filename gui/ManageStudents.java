@@ -2,6 +2,7 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
+import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
@@ -23,7 +24,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class ManageStudents extends Show {
 
-	private EntityPlayerSP mentor;
+	private EntityPlayerSP teacher;
 	private ArrayList<String> userlist = new ArrayList<String>();
 
 	public ManageStudents() {
@@ -33,37 +34,39 @@ public class ManageStudents extends Show {
 
 	private void feedStudents() {
 		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new FeedPlayerMessage(student));
+			PacketDispatcher.sendToServer(new FeedPlayerMessage(student.split("-")[0]));
 		}
 	}
 
 	private void freezeUnfreezeStudents(boolean state) {
 		for (String student : MentorUI.roster) {
-			if (state) {
-				PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + student + " group add _FROZEN_"));
-			} else {
-				PacketDispatcher
-						.sendToServer(new MentorCommandMessage("/p user " + student + " group remove _FROZEN_"));
+			if(state)
+			{
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + student.split("-")[0] + " group add _FROZEN_"));		
+			} 
+			else 
+			{		
+				PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + student.split("-")[0] + " group remove _FROZEN_"));		
 			}
-			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student, state));
+			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student.split("-")[0], state));
 		}
 	}
 
 	private void healStudents() {
 		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/heal " + student));
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/heal " + student.split("-")[0]));
 		}
 	}
 
 	private void muteStudents() {
 		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/mute " + student));
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/mute " + student.split("-")[0]));
 		}
 	}
 
 	private void removeEffects() {
 		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student));
+			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student.split("-")[0]));
 		}
 	}
 
@@ -71,7 +74,7 @@ public class ManageStudents extends Show {
 	public void setup() {
 		super.setup();
 
-		mentor = Minecraft.getMinecraft().thePlayer;
+		teacher = Minecraft.getMinecraft().thePlayer;
 
 		for (String s : ServerMod.usernames) {
 			if (!MentorUI.roster.contains(s) && (s != Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
@@ -103,6 +106,11 @@ public class ManageStudents extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(false)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
+		
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
@@ -168,7 +176,7 @@ public class ManageStudents extends Show {
 
 	private void switchMode(int mode) {
 		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/gamemode " + mode + " " + student));
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/gamemode " + mode + " " + student.split("-")[0]));
 		}
 	}
 
@@ -176,14 +184,13 @@ public class ManageStudents extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : MentorUI.roster) {
-			PacketDispatcher
-					.sendToServer(new MentorCommandMessage("/tp " + student + " " + mentor.getDisplayNameString()));
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/tp " + student.split("-")[0] + " " + teacher.getDisplayNameString()));
 		}
 	}
 
 	private void unmuteStudents() {
 		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/unmute " + student));
+			PacketDispatcher.sendToServer(new MentorCommandMessage("/unmute " + student.split("-")[0]));
 		}
 	}
 }
