@@ -2,8 +2,12 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
+import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
+import com.dyn.names.manager.NamesManager;
 import com.dyn.server.ServerMod;
+import com.dyn.server.packets.PacketDispatcher;
+import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -16,7 +20,6 @@ import com.rabbit.gui.component.list.entries.ListEntry;
 import com.rabbit.gui.component.list.entries.StringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
@@ -27,6 +30,7 @@ public class Roster extends Show {
 	private ScrollableDisplayList userDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
 	private ArrayList<String> userlist = new ArrayList<String>();
+	TextLabel numberOfStudentsOnRoster;
 
 	public Roster() {
 		setBackground(new DefaultBackground());
@@ -34,14 +38,13 @@ public class Roster extends Show {
 	}
 
 	private void addToRoster() {
-		if ((selectedEntry != null) && (selectedList != null)) {
-			if (selectedList.getId() == "users") {
-				MentorUI.roster.add(selectedEntry.getTitle());
-				selectedEntry.setSelected(false);
-				rosterDisplayList.add(selectedEntry);
-				userDisplayList.remove(selectedEntry);
-			}
+		if (selectedList.getId() == "users" && !MentorUI.roster.contains(selectedEntry.getTitle())) {
+			MentorUI.roster.add(selectedEntry.getTitle());
+			selectedEntry.setSelected(false);
+			rosterDisplayList.add(selectedEntry);
+			userDisplayList.remove(selectedEntry);
 		}
+		numberOfStudentsOnRoster.setText("Roster Count: " + MentorUI.roster.size());
 	}
 
 	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -51,14 +54,18 @@ public class Roster extends Show {
 	}
 
 	private void removeFromRoster() {
-		if ((selectedEntry != null) && (selectedList != null)) {
-			if (selectedList.getId() == "roster") {
-				MentorUI.roster.remove(selectedEntry.getTitle());
-				selectedEntry.setSelected(false);
-				rosterDisplayList.remove(selectedEntry);
-				userDisplayList.add(selectedEntry);
-			}
+		if (selectedList.getId() == "roster" && MentorUI.roster.contains(selectedEntry.getTitle())) {
+			MentorUI.roster.remove(selectedEntry.getTitle());
+			selectedEntry.setSelected(false);
+			rosterDisplayList.remove(selectedEntry);
+			userDisplayList.add(selectedEntry);
 		}
+		numberOfStudentsOnRoster.setText("Roster Count: " + MentorUI.roster.size());
+	}
+	
+	private void updateUserList(){
+		PacketDispatcher.sendToServer(new RequestUserlistMessage());
+		getStage().display(new Roster());
 	}
 
 	@Override
@@ -66,7 +73,10 @@ public class Roster extends Show {
 		super.setup();
 
 		for (String s : ServerMod.usernames) {
-			if (!MentorUI.roster.contains(s) && !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+			if (!MentorUI.roster.contains(s + "-" + NamesManager.getDYNUsername(s))
+					&& !s.equals(Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
+				//Erin added this!!!!!!!!!
+				s += "-" + NamesManager.getDYNUsername(s);
 				userlist.add(s);
 			}
 		}
@@ -82,14 +92,14 @@ public class Roster extends Show {
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		registerComponent(new TextBox((int) (width * .2), (int) (height * .25), width / 4, 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .15), (int) (height * .25), (int)(width / 3.3), 20, "Search for User")
 				.setId("usersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-		registerComponent(new TextBox((int) (width * .55), (int) (height * .25), width / 4, 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .55), (int) (height * .25), (int)(width / 3.3), 20, "Search for User")
 				.setId("rostersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		userDisplayList = new ScrollableDisplayList((int) (width * .2), (int) (height * .35), width / 4, 130, 15,
+		userDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), (int)(width / 3.3), 130, 15,
 				ulist);
 		userDisplayList.setId("users");
 		registerComponent(userDisplayList);
@@ -97,21 +107,28 @@ public class Roster extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : MentorUI.roster) {
+		for (String s : MentorUI.roster) {			
 			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .55), (int) (height * .35), width / 4, 130, 15,
+		rosterDisplayList = new ScrollableDisplayList((int) (width * .55), (int) (height * .35), (int)(width / 3.3), 130, 15,
 				rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
 
 		// Buttons
-		registerComponent(
-				new Button((width / 2) - 10, (int) (height * .4), 20, 20, ">>").setClickListener(but -> addToRoster()));
+		registerComponent(new Button((width / 2) - 10, (int) (height * .4), 20, 20, ">>")
+				.setClickListener(but -> addToRoster()));
+		
 		registerComponent(new Button((width / 2) - 10, (int) (height * .6), 20, 20, "<<")
 				.setClickListener(but -> removeFromRoster()));
+		
+		registerComponent(new Button((width / 2) - 10, (int) (height * .8), 20, 20, "<>")
+				.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+		
+		numberOfStudentsOnRoster = new TextLabel((int)(width * .5) + 20, (int)(height * .2), 90, 20, "Roster Count: " + MentorUI.roster.size(), TextAlignment.LEFT);
+		registerComponent(numberOfStudentsOnRoster);
 
 		// the side buttons
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
@@ -133,6 +150,11 @@ public class Roster extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
+		
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)

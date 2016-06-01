@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.dyn.admin.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.MentorCommandMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -43,18 +42,6 @@ public class RemoveItem extends Show {
 		title = "Teacher Gui";
 	}
 
-	private void clearAllPlayerInventorys() {
-		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + student));
-		}
-	}
-
-	private void clearPlayerInventory() {
-		if (!userBox.getText().isEmpty()) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + userBox.getText()));
-		}
-	}
-
 	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId() == "itms") {
 			itemBox.setText(entry.getTitle());
@@ -64,7 +51,7 @@ public class RemoveItem extends Show {
 
 	}
 
-	private void removeItemFromPlayer() {
+	private void giveItemToPlayer() {
 		if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
 			return;
 		}
@@ -107,8 +94,8 @@ public class RemoveItem extends Show {
 		} else {
 			amt = "1";
 		}
-		PacketDispatcher.sendToServer(new MentorCommandMessage(
-				"/clear " + userBox.getText() + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
+		Minecraft.getMinecraft().thePlayer.sendChatMessage(
+				"/clear " + userBox.getText().split("-")[0] + " " + tItem.getRegistryName() + " " + amt + " " + itemMod);
 
 	}
 
@@ -139,6 +126,11 @@ public class RemoveItem extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
+		
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
+				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
+						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
@@ -214,14 +206,14 @@ public class RemoveItem extends Show {
 			}
 		}
 
-		registerComponent(new TextBox((int) (width * .2), (int) (height * .175), width / 4, 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .2), (int) (height * .25), width / 4, 20, "Search for User")
 				.setId("usersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
-		registerComponent(new TextBox((int) (width * .55), (int) (height * .175), width / 4, 20, "Search for Item")
+		registerComponent(new TextBox((int) (width * .55), (int) (height * .25), width / 4, 20, "Search for Item")
 				.setId("itemsearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-		itemDisplayList = new ScrollableDisplayList((int) (width * .5), (int) (height * .275), width / 3, 100, 15,
+		itemDisplayList = new ScrollableDisplayList((int) (width * .5), (int) (height * .35), width / 3, 100, 15,
 				dslist);
 		itemDisplayList.setId("itms");
 
@@ -238,34 +230,25 @@ public class RemoveItem extends Show {
 		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (StringEntry entry,
 				DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .275), width / 3, 100, 15,
+		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
 				rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
 
-		userBox = new TextBox((int) (width * .15), (int) (height * .725), width / 4, 20, "User").setId("user")
+		userBox = new TextBox((int) (width * .15), (int) (height * .8), width / 4, 20, "User").setId("user")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
 		registerComponent(userBox);
 
-		amountBox = new TextBox((int) (width * .45) - 16, (int) (height * .725), 30, 20, "Amt").setId("amt")
+		amountBox = new TextBox((int) (width * .45) - 16, (int) (height * .8), 30, 20, "Amt").setId("amt")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
 		registerComponent(amountBox);
 
-		itemBox = new TextBox((int) (width * .5), (int) (height * .725), width / 4, 20, "Item").setId("item")
+		itemBox = new TextBox((int) (width * .5), (int) (height * .8), width / 4, 20, "Item").setId("item")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
 		registerComponent(itemBox);
 
-		registerComponent(new Button((int) (width * .7875) - 10, (int) (height * .725), 40, 20, "Remove")
-				.setClickListener(but -> removeItemFromPlayer()));
-
-		registerComponent(new Button((int) (width * .175) - 10, (int) (height * .825), 100, 20, "Clear Roster Inv")
-				.setClickListener(but -> clearAllPlayerInventorys()));
-
-		registerComponent(new Button((int) (width * .4225) - 10, (int) (height * .825), 90, 20, "Clear Player Inv")
-				.setClickListener(but -> clearPlayerInventory()));
-
-		registerComponent(new Button((int) (width * .645) - 10, (int) (height * .825), 102, 20, "Remove Roster Item")
-				.setClickListener(but -> removeItemFromPlayer()));
+		registerComponent(new Button((int) (width * .8) - 10, (int) (height * .8), 30, 20, "Clear")
+				.setClickListener(but -> giveItemToPlayer()));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
