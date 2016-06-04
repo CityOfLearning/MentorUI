@@ -1,9 +1,12 @@
 package com.dyn.instructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
+import com.dyn.achievements.achievement.Requirements;
 import com.dyn.instructor.proxy.Proxy;
 import com.dyn.instructor.reference.MetaData;
 import com.dyn.instructor.reference.Reference;
@@ -20,19 +23,20 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class TeacherMod {
 
 	public static ArrayList<String> roster = new ArrayList<String>();
+	public static Map<String, Requirements> userAchievementProgress = new HashMap<String, Requirements>();
 
-	
-	  @Mod.Instance(Reference.MOD_ID)
-	  public static TeacherMod instance;
-	  
-	  @Mod.Metadata(Reference.MOD_ID)
-		public ModMetadata metadata;
-	 
+	@Mod.Instance(Reference.MOD_ID)
+	public static TeacherMod instance;
 
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static Proxy proxy;
 
 	public static Logger logger;
+
+	public static boolean frozen = false;
+
+	@Mod.Metadata(Reference.MOD_ID)
+	public ModMetadata metadata;
 
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
@@ -46,8 +50,8 @@ public class TeacherMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		this.metadata = MetaData.init(this.metadata);
-		
+		metadata = MetaData.init(metadata);
+
 		logger = event.getModLog();
 
 		Configuration configs = new Configuration(event.getSuggestedConfigurationFile());
