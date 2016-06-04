@@ -1,6 +1,11 @@
-package com.dyn.instructor.proxy;
+package com.dyn.mentor.proxy;
 
 public class Server implements Proxy {
+
+	@Override
+	public void init() {
+
+	}
 
 	/**
 	 * @see forge.reference.proxy.Proxy#renderGUI()
@@ -8,11 +13,6 @@ public class Server implements Proxy {
 	@Override
 	public void renderGUI() {
 		// Actions on render GUI for the server (logging)
-
-	}
-
-	@Override
-	public void init() {
 
 	}
 }
