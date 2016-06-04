@@ -2,8 +2,9 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
-import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
+import com.dyn.server.packets.PacketDispatcher;
+import com.dyn.server.packets.server.MentorCommandMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.CheckBox;
 import com.rabbit.gui.component.control.PictureButton;
@@ -17,21 +18,16 @@ import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.ResourceLocation;
-
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.MentorCommandMessage;
 
 public class Home extends Show {
 
-	private EntityPlayerSP teacher;
 	private boolean isCreative;
 	private ScrollableDisplayList rosterDisplayList;
 
 	public Home() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui";
+		title = "Mentor Gui";
 	}
 
 	private float mapClamp(float value, float inputMin, float inputMax, float outputMin, float outputMax) {
@@ -43,8 +39,7 @@ public class Home extends Show {
 	public void setup() {
 		super.setup();
 
-		teacher = Minecraft.getMinecraft().thePlayer;
-		isCreative = teacher.capabilities.isCreativeMode;
+		isCreative = Minecraft.getMinecraft().thePlayer.capabilities.isCreativeMode;
 
 		registerComponent(
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Teacher Control", TextAlignment.CENTER));
@@ -69,7 +64,7 @@ public class Home extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -98,22 +93,23 @@ public class Home extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : MentorUI.roster) {			
+		for (String s : MentorUI.roster) {
 			rlist.add(new StringEntry(s));
 		}
-		
-		rosterDisplayList = new ScrollableDisplayList((int) (width * .35), (int) (height * .3), (int)(width / 3.3), 100, 15,
-				rlist);
+
+		rosterDisplayList = new ScrollableDisplayList((int) (width * .35), (int) (height * .3), (int) (width / 3.3),
+				100, 15, rlist);
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
-		
-		
+
 		// gui main area
 		registerComponent(new CheckBox((int) (width * .4), (int) (height * .22), "Set Creative Mode", isCreative)
 				.setStatusChangedListener(btn -> toggleCreative()));
 
-		//registerComponent(new Button((int) (width * .2), (int) (height * .2), 150, 20, "Write Out Achievements")
-		//		.setClickListener(but -> PacketDispatcher.sendToServer(new HaveServerWriteAchievementsMessage())));
+		// registerComponent(new Button((int) (width * .2), (int) (height * .2),
+		// 150, 20, "Write Out Achievements")
+		// .setClickListener(but -> PacketDispatcher.sendToServer(new
+		// HaveServerWriteAchievementsMessage())));
 
 		// time of day
 		registerComponent(new TextLabel(width / 6, (int) (height * .75), width / 3, 20, "Set the Time of Day",

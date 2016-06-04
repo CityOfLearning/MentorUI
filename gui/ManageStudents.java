@@ -2,7 +2,6 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
-import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
 import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
@@ -19,17 +18,15 @@ import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.ResourceLocation;
 
 public class ManageStudents extends Show {
 
-	private EntityPlayerSP teacher;
 	private ArrayList<String> userlist = new ArrayList<String>();
 
 	public ManageStudents() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui Roster Management";
+		title = "Mentor Gui Roster Management";
 	}
 
 	private void feedStudents() {
@@ -40,13 +37,12 @@ public class ManageStudents extends Show {
 
 	private void freezeUnfreezeStudents(boolean state) {
 		for (String student : MentorUI.roster) {
-			if(state)
-			{
-				PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + student.split("-")[0] + " group add _FROZEN_"));		
-			} 
-			else 
-			{		
-				PacketDispatcher.sendToServer(new MentorCommandMessage("/p user " + student.split("-")[0] + " group remove _FROZEN_"));		
+			if (state) {
+				PacketDispatcher.sendToServer(
+						new MentorCommandMessage("/p user " + student.split("-")[0] + " group add _FROZEN_"));
+			} else {
+				PacketDispatcher.sendToServer(
+						new MentorCommandMessage("/p user " + student.split("-")[0] + " group remove _FROZEN_"));
 			}
 			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student.split("-")[0], state));
 		}
@@ -73,8 +69,6 @@ public class ManageStudents extends Show {
 	@Override
 	public void setup() {
 		super.setup();
-
-		teacher = Minecraft.getMinecraft().thePlayer;
 
 		for (String s : ServerMod.usernames) {
 			if (!MentorUI.roster.contains(s) && (s != Minecraft.getMinecraft().thePlayer.getDisplayNameString())) {
@@ -106,7 +100,7 @@ public class ManageStudents extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(false)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -184,7 +178,8 @@ public class ManageStudents extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/tp " + student.split("-")[0] + " " + teacher.getDisplayNameString()));
+			PacketDispatcher.sendToServer(new MentorCommandMessage(
+					"/tp " + student.split("-")[0] + " " + Minecraft.getMinecraft().thePlayer.getDisplayNameString()));
 		}
 	}
 

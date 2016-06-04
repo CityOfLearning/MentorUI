@@ -6,7 +6,6 @@ import java.util.List;
 import com.dyn.achievements.achievement.AchievementPlus;
 import com.dyn.achievements.gui.Info;
 import com.dyn.achievements.handlers.AchievementManager;
-import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorGivingAchievementMessage;
@@ -34,7 +33,7 @@ public class GiveAchievement extends Show {
 
 	public GiveAchievement() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui";
+		title = "Mentor Gui";
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -73,7 +72,7 @@ public class GiveAchievement extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -137,7 +136,8 @@ public class GiveAchievement extends Show {
 				.setClickListener(but -> {
 					if ((selectedUser != null) && (selectedAchievement != null) && !selectedUser.getTitle().isEmpty()
 							&& !selectedAchievement.getTitle().isEmpty()) {
-						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(selectedUser.getTitle().split("-")[0],
+						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(
+								selectedUser.getTitle().split("-")[0],
 								AchievementManager.findAchievementByName(selectedAchievement.getTitle()).getId()));
 					}
 				}));
@@ -161,16 +161,16 @@ public class GiveAchievement extends Show {
 			achDisplayList.clear();
 			for (AchievementPlus a : AchievementManager.getAllAchievements()) {
 				if (a.getName().contains(textbox.getText().toLowerCase())) {
-					achDisplayList.add(new SelectStringEntry(a.getName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					achDisplayList.add(new SelectStringEntry(a.getName(), (SelectStringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		} else if (textbox.getId() == "usersearch") {
 			rosterDisplayList.clear();
 			for (String student : MentorUI.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
-							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
+							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
 		}

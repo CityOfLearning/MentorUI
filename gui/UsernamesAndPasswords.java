@@ -2,7 +2,6 @@ package com.dyn.mentor.gui;
 
 import java.util.ArrayList;
 
-import com.dyn.mentor.gui.UsernamesAndPasswords;
 import com.dyn.mentor.MentorUI;
 import com.dyn.names.manager.NamesManager;
 import com.dyn.server.database.DBManager;
@@ -21,19 +20,19 @@ import net.minecraft.util.ResourceLocation;
 public class UsernamesAndPasswords extends Show {
 
 	private ScrollableDisplayList userNamesAndPasswords;
-	
+
 	public UsernamesAndPasswords() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui Usernames and Passwords";
+		title = "Mentor Gui Usernames and Passwords";
 	}
-	
+
 	@Override
 	public void setup() {
 		super.setup();
 
 		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Usernames and Passwords",
 				TextAlignment.CENTER));
-		
+
 		ArrayList<ListEntry> list = new ArrayList<ListEntry>();
 
 		for (String s : MentorUI.roster) {
@@ -41,12 +40,12 @@ public class UsernamesAndPasswords extends Show {
 			String dynpassword = DBManager.getPasswordFromDYNUsername(dynusername);
 			list.add(new StringEntry(dynusername + " : " + dynpassword));
 		}
-		
-		userNamesAndPasswords = new ScrollableDisplayList((int) (width * .35), (int) (height * .25), (int)(width / 3), 150, 15, list);
+
+		userNamesAndPasswords = new ScrollableDisplayList((int) (width * .35), (int) (height * .25), width / 3, 150, 15,
+				list);
 		userNamesAndPasswords.setId("usernamesandpasswords");
 		registerComponent(userNamesAndPasswords);
-		
-		
+
 		// the side buttons
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
@@ -67,7 +66,7 @@ public class UsernamesAndPasswords extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(false)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
@@ -92,8 +91,6 @@ public class UsernamesAndPasswords extends Show {
 				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(true)
 						.addHoverText("Check Achievements").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
-
-
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),

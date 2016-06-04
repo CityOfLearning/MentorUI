@@ -33,7 +33,7 @@ public class CheckPlayerAchievements extends Show {
 
 	public CheckPlayerAchievements() {
 		setBackground(new DefaultBackground());
-		title = "Teacher Gui";
+		title = "Mentor Gui";
 	}
 
 	private void entrySelected(DropDown<String> dropdown, String selected) {
@@ -168,7 +168,7 @@ public class CheckPlayerAchievements extends Show {
 				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
 						.addHoverText("Manage Students").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudents())));
-		
+
 		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
