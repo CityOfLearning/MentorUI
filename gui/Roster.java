@@ -17,7 +17,7 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 import net.minecraft.client.Minecraft;
@@ -25,7 +25,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class Roster extends Show {
 
-	private StringEntry selectedEntry;
+	private SelectStringEntry selectedEntry;
 	private DisplayList selectedList;
 	private ScrollableDisplayList userDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
@@ -50,7 +50,7 @@ public class Roster extends Show {
 		numberOfStudentsOnRoster.setText("Roster Count: " + MentorUI.roster.size());
 	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		selectedEntry = entry;
 		selectedList = list;
 
@@ -94,7 +94,7 @@ public class Roster extends Show {
 		ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
 
 		for (String s : userlist) {
-			ulist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			ulist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -114,7 +114,7 @@ public class Roster extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : MentorUI.roster) {			
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -192,7 +192,7 @@ public class Roster extends Show {
 			userDisplayList.clear();
 			for (String student : userlist) {
 				if (student.contains(textbox.getText())) {
-					userDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					userDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
@@ -200,7 +200,7 @@ public class Roster extends Show {
 			rosterDisplayList.clear();
 			for (String student : MentorUI.roster) {
 				if (student.contains(textbox.getText())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}

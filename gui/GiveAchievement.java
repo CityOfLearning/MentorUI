@@ -19,7 +19,7 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -29,15 +29,15 @@ public class GiveAchievement extends Show {
 
 	private ScrollableDisplayList achDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
-	private StringEntry selectedUser;
-	private StringEntry selectedAchievement;
+	private SelectStringEntry selectedUser;
+	private SelectStringEntry selectedAchievement;
 
 	public GiveAchievement() {
 		setBackground(new DefaultBackground());
 		title = "Teacher Gui";
 	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId() == "achs") {
 			selectedAchievement = entry;
 		} else if (list.getId() == "roster") {
@@ -109,7 +109,7 @@ public class GiveAchievement extends Show {
 		List<ListEntry> dslist = new ArrayList<ListEntry>();
 
 		for (AchievementPlus a : AchievementManager.getAllAchievements()) {
-			dslist.add(new StringEntry(a.getName(), (StringEntry entry, DisplayList dlist, int mouseX,
+			dslist.add(new SelectStringEntry(a.getName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -123,7 +123,7 @@ public class GiveAchievement extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : MentorUI.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -161,7 +161,7 @@ public class GiveAchievement extends Show {
 			achDisplayList.clear();
 			for (AchievementPlus a : AchievementManager.getAllAchievements()) {
 				if (a.getName().contains(textbox.getText().toLowerCase())) {
-					achDisplayList.add(new StringEntry(a.getName(), (StringEntry entry, DisplayList dlist, int mouseX,
+					achDisplayList.add(new SelectStringEntry(a.getName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
@@ -169,7 +169,7 @@ public class GiveAchievement extends Show {
 			rosterDisplayList.clear();
 			for (String student : MentorUI.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}

@@ -17,7 +17,7 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
-import com.rabbit.gui.component.list.entries.StringEntry;
+import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
 
@@ -56,7 +56,7 @@ public class RemoveItem extends Show {
  		}		
  	}
 
-	private void entryClicked(StringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId() == "itms") {
 			itemBox.setText(entry.getTitle());
 		} else if (list.getId() == "roster") {
@@ -208,12 +208,12 @@ public class RemoveItem extends Show {
 					List<ItemStack> subItem = new ArrayList<ItemStack>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
-						dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+						dslist.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist,
 								int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
-					dslist.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist, int mouseX,
+					dslist.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
@@ -236,11 +236,11 @@ public class RemoveItem extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (String s : MentorUI.roster) {
-			rlist.add(new StringEntry(s, (StringEntry entry, DisplayList dlist, int mouseX,
+			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
-		rlist.add(new StringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (StringEntry entry,
+		rlist.add(new SelectStringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (SelectStringEntry entry,
 				DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .275), width / 3, 100, 15,
@@ -288,7 +288,7 @@ public class RemoveItem extends Show {
 						for (ItemStack is : subItem) {
 							if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 								itemDisplayList
-										.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+										.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist,
 												int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 							}
 						}
@@ -296,7 +296,7 @@ public class RemoveItem extends Show {
 						ItemStack is = new ItemStack(i);
 						if (is.getDisplayName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 							itemDisplayList
-									.add(new StringEntry(is.getDisplayName(), (StringEntry entry, DisplayList dlist,
+									.add(new SelectStringEntry(is.getDisplayName(), (SelectStringEntry entry, DisplayList dlist,
 											int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 						}
 					}
@@ -306,7 +306,7 @@ public class RemoveItem extends Show {
 			rosterDisplayList.clear();
 			for (String student : MentorUI.roster) {
 				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new StringEntry(student, (StringEntry entry, DisplayList dlist, int mouseX,
+					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist, int mouseX,
 							int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}

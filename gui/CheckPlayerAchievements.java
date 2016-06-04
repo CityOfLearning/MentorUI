@@ -131,7 +131,6 @@ public class CheckPlayerAchievements extends Show {
 			for (ListEntry us : ulist) {
 				StringEntry se = (StringEntry) us;
 				infoDisplayList.add(se);
-				System.out.println(se.getTitle());
 			}
 			/*
 			 * infoDisplayList = new ScrollableDisplayList((int) (width * .5),
