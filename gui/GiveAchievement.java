@@ -12,6 +12,7 @@ import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorGivingAchievementMessage;
 import com.dyn.server.packets.server.RequestUserAchievementsProgressMessage;
+import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.PictureButton;
@@ -142,6 +143,11 @@ public class GiveAchievement extends Show {
 			}
 		}
 	}
+	
+	private void updateUserList(){
+		PacketDispatcher.sendToServer(new RequestUserlistMessage());
+		getStage().display(new GiveAchievement());
+	}
 
 	@Override
 	public void setup() {
@@ -177,12 +183,15 @@ public class GiveAchievement extends Show {
 						.setClickListener(but -> getStage().display(new GiveAchievement())));
 
 
-		registerComponent(new TextBox((int) (width * .2), (int) (height * .2), width / 4, 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .235), (int) (height * .2), width / 4, 20, "Search for User")
 				.setId("usersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 		registerComponent(new TextBox((int) (width * .2), (int) (height * .55), width / 4, 20, "Search Achievements")
 				.setId("achsearch")
-				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
+				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));		
+		
+		registerComponent(new Button((int)(width * .15), (int) (height * .2), 20, 20, "<>")
+				.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
 
 		List<ListEntry> dslist = new ArrayList<ListEntry>();
 
