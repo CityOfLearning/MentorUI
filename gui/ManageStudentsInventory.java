@@ -6,9 +6,11 @@ import java.util.List;
 
 import com.dyn.mentor.MentorUI;
 import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.MentorCommandMessage;
+import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.server.packets.server.ServerCommandMessage;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
+import com.rabbit.gui.component.control.CheckBox;
 import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.control.TextBox;
 import com.rabbit.gui.component.display.Picture;
@@ -29,29 +31,43 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 
-public class RemoveItem extends Show {
-
+public class ManageStudentsInventory extends Show {
 	private ScrollableDisplayList itemDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
 	private ArrayList<Item> itemList = new ArrayList<Item>();
 	private TextBox userBox;
 	private TextBox itemBox;
 	private TextBox amountBox;
+	private boolean affectAllStudents;
+	private Button checkButton;
 
-	public RemoveItem() {
+	public ManageStudentsInventory() {
 		setBackground(new DefaultBackground());
 		title = "Mentor Gui";
+		affectAllStudents = false;
 	}
 
-	private void clearAllPlayerInventorys() {
-		for (String student : MentorUI.roster) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + student.split("-")[0]));
+	private void checkBoxChanged() {
+		affectAllStudents = !affectAllStudents;
+		checkButton.setIsEnabled(!affectAllStudents);
+	}
+
+	private void checkStudentInventory() {
+		if (!userBox.getText().isEmpty()) {
+			if (!userBox.getText().isEmpty()) {
+				PacketDispatcher.sendToServer(new ServerCommandMessage("/invsee " + userBox.getText().split("-")[0]));
+			}
 		}
 	}
 
 	private void clearPlayerInventory() {
-		if (!userBox.getText().isEmpty()) {
-			PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + userBox.getText().split("-")[0]));
+		// Clear all students inventory
+		if (affectAllStudents) {
+			for (String student : MentorUI.roster) {
+				PacketDispatcher.sendToServer(new ServerCommandMessage("/clear " + student.split("-")[0]));
+			}
+		} else if (!userBox.getText().isEmpty()) {
+			PacketDispatcher.sendToServer(new ServerCommandMessage("/clear " + userBox.getText().split("-")[0]));
 		}
 	}
 
@@ -64,10 +80,56 @@ public class RemoveItem extends Show {
 
 	}
 
-	private void removeItemFromPlayer() {
-		if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
+	private void giveItem(String student) {
+		Item tItem = null;
+		ItemStack itmSt = null;
+		for (Item i : itemList) {
+			if (i != null) {
+				if (i.getHasSubtypes()) {
+					List<ItemStack> subItem = new ArrayList<ItemStack>();
+					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
+					for (ItemStack is : subItem) {
+						if (is.getDisplayName().contentEquals(itemBox.getText())) {
+							tItem = i;
+							itmSt = is;
+						}
+					}
+				} else {
+					ItemStack is = new ItemStack(i);
+					if (is.getDisplayName().contentEquals(itemBox.getText())) {
+						tItem = i;
+					}
+				}
+			}
+		}
+		if (tItem == null) {
 			return;
 		}
+		String itemMod = "";
+		if (itmSt != null) {
+			itemMod = " " + itmSt.getItemDamage();
+		}
+		String amt = (amountBox.getText() == null) || (amountBox.getText().isEmpty()) ? "1" : amountBox.getText();
+		PacketDispatcher.sendToServer(new ServerCommandMessage(
+				"/give " + student.split("-")[0] + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
+	}
+
+	private void giveItemToPlayer() {
+		if (affectAllStudents) {
+			for (String student : MentorUI.roster) {
+				giveItem(student);
+			}
+		}
+
+		else {
+			if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
+				return;
+			}
+			giveItem(userBox.getText());
+		}
+	}
+
+	private void removeItem(String student) {
 		Item tItem = null;
 		ItemStack itmSt = null;
 		for (Item i : itemList) {
@@ -107,63 +169,56 @@ public class RemoveItem extends Show {
 		} else {
 			amt = "1";
 		}
-		PacketDispatcher.sendToServer(new MentorCommandMessage("/clear " + userBox.getText().split("-")[0] + " "
-				+ tItem.getRegistryName() + " " + amt + " " + itemMod));
+		PacketDispatcher.sendToServer(new ServerCommandMessage(
+				"/clear " + student.split("-")[0] + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
+	}
 
+	private void removeItemFromPlayer() {
+
+		if (affectAllStudents) {
+			for (String student : MentorUI.roster) {
+				removeItem(student);
+			}
+		} else {
+			if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
+				return;
+			}
+			giveItem(userBox.getText());
+		}
 	}
 
 	@Override
 	public void setup() {
 		super.setup();
 
-		registerComponent(
-				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Remove Items", TextAlignment.CENTER));
+		registerComponent(new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage Student Inventory",
+				TextAlignment.CENTER));
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .2), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/nether_star.png")).setIsEnabled(true)
 						.addHoverText("Home Page").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .35), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/ruby.png")).setIsEnabled(true)
 						.addHoverText("Setup Student Roster").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .5), 30, 30,
+		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
 				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
 						.addHoverText("Manage a Student").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .65), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/fish_clownfish_raw.png")).setIsEnabled(true)
-						.addHoverText("Manage Students").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudents())));
-
-		registerComponent(new PictureButton((int) (width * .03), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/cookie.png")).setIsEnabled(true)
-						.addHoverText("See Students' Usernames and Passwords").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new UsernamesAndPasswords())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .35), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(true)
-						.addHoverText("Give Items").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new GiveItem())));
-
-		registerComponent(new PictureButton((int) (width * .9), (int) (height * .5), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/sugar.png")).setIsEnabled(false)
-						.addHoverText("Remove Items").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new RemoveItem())));
-
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .65), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
-						.addHoverText("Award Achievements").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new GiveAchievement())));
+				new ResourceLocation("minecraft", "textures/items/emerald.png")).setIsEnabled(false)
+						.addHoverText("Manage Inventory").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
 		registerComponent(new PictureButton((int) (width * .9), (int) (height * .8), 30, 30,
-				new ResourceLocation("minecraft", "textures/items/book_writable.png")).setIsEnabled(true)
-						.addHoverText("Check Achievements").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new CheckPlayerAchievements())));
+				new ResourceLocation("minecraft", "textures/items/ender_eye.png")).setIsEnabled(true)
+						.addHoverText("Award Achievements").doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
 		// get all the items in the registry
 		FMLControlledNamespacedRegistry<Block> blockRegistry = GameData.getBlockRegistry();
@@ -220,7 +275,7 @@ public class RemoveItem extends Show {
 			}
 		}
 
-		registerComponent(new TextBox((int) (width * .2), (int) (height * .175), width / 4, 20, "Search for User")
+		registerComponent(new TextBox((int) (width * .235), (int) (height * .175), width / 4, 20, "Search for User")
 				.setId("usersearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 		registerComponent(new TextBox((int) (width * .55), (int) (height * .175), width / 4, 20, "Search for Item")
@@ -250,11 +305,14 @@ public class RemoveItem extends Show {
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
 
-		userBox = new TextBox((int) (width * .15), (int) (height * .725), width / 4, 20, "User").setId("user")
+		registerComponent(new Button((int) (width * .15), (int) (height * .175), 20, 20, "<>").addHoverText("Refresh")
+				.doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+
+		userBox = new TextBox((int) (width * .235), (int) (height * .725), width / 4, 20, "User").setId("user")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
 		registerComponent(userBox);
 
-		amountBox = new TextBox((int) (width * .45) - 16, (int) (height * .725), 30, 20, "Amt").setId("amt")
+		amountBox = new TextBox((int) (width * .795) - 10, (int) (height * .725), 25, 20, "Amt").setId("amt")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
 		registerComponent(amountBox);
 
@@ -262,17 +320,23 @@ public class RemoveItem extends Show {
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
 		registerComponent(itemBox);
 
-		registerComponent(new Button((int) (width * .7875) - 10, (int) (height * .725), 40, 20, "Remove")
-				.setClickListener(but -> removeItemFromPlayer()));
+		registerComponent(new CheckBox((int) (width * .15), (int) (height * .74), "All", affectAllStudents)
+				.setStatusChangedListener(but -> checkBoxChanged()));
 
-		registerComponent(new Button((int) (width * .175) - 10, (int) (height * .825), 100, 20, "Clear Roster Inv")
-				.setClickListener(but -> clearAllPlayerInventorys()));
+		checkButton = new Button((int) (width * .175) - 10, (int) (height * .825), 50, 20, "Look");
+		checkButton.addHoverText("Look at inventory").setClickListener(but -> checkStudentInventory())
+				.doesDrawHoverText(true);
+		registerComponent(checkButton);
 
-		registerComponent(new Button((int) (width * .4225) - 10, (int) (height * .825), 90, 20, "Clear Player Inv")
-				.setClickListener(but -> clearPlayerInventory()));
+		registerComponent(new Button((int) (width * .314) - 10, (int) (height * .825), 50, 20, "Clear")
+				.setClickListener(but -> clearPlayerInventory()).addHoverText("Clear Inventory")
+				.doesDrawHoverText(true));
 
-		registerComponent(new Button((int) (width * .645) - 10, (int) (height * .825), 102, 20, "Remove Roster Item")
-				.setClickListener(but -> removeItemFromPlayer()));
+		registerComponent(new Button((int) (width * .6) - 10, (int) (height * .825), 50, 20, "Give")
+				.addHoverText("Give Item").doesDrawHoverText(true).setClickListener(but -> giveItemToPlayer()));
+
+		registerComponent(new Button((int) (width * .739) - 10, (int) (height * .825), 50, 20, "Remove")
+				.setClickListener(but -> removeItemFromPlayer()).addHoverText("Remove Item").doesDrawHoverText(true));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
@@ -323,5 +387,10 @@ public class RemoveItem extends Show {
 				textbox.setText("");
 			}
 		}
+	}
+
+	private void updateUserList() {
+		PacketDispatcher.sendToServer(new RequestUserlistMessage());
+		getStage().display(new ManageStudentsInventory());
 	}
 }

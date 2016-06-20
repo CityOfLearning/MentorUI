@@ -9,7 +9,7 @@ public class MetaData {
 		metadata.modId = Reference.MOD_ID;
 		metadata.name = Reference.MOD_NAME;
 		metadata.description = "A control panel for teachers and mentors so that they don't have to know command line scripts";
-		metadata.url = "https://github.com/Digital-Youth-Network/MentorUI";
+		metadata.url = "https://github.com/Digital-Youth-Network/TeacherUI";
 		metadata.version = Reference.VERSION;
 		metadata.authorList = Arrays.asList("Dom Amato");
 		metadata.credits = "";
