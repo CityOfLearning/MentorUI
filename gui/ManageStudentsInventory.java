@@ -72,6 +72,11 @@ public class ManageStudentsInventory extends Show {
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
+		for (ListEntry listEntry : list.getContent()) {
+			if (!listEntry.equals(entry)) {
+				listEntry.setSelected(false);
+			}
+		}
 		if (list.getId() == "itms") {
 			itemBox.setText(entry.getTitle());
 		} else if (list.getId() == "roster") {
@@ -183,7 +188,7 @@ public class ManageStudentsInventory extends Show {
 			if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
 				return;
 			}
-			giveItem(userBox.getText());
+			removeItem(userBox.getText());
 		}
 	}
 

@@ -42,6 +42,11 @@ public class MonitorAchievements extends Show {
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
+		for (ListEntry listEntry : list.getContent()) {
+			if (!listEntry.equals(entry)) {
+				listEntry.setSelected(false);
+			}
+		}
 		if (list.getId() == "achs") {
 			selectedAchievement = entry;
 		} else if (list.getId() == "roster") {

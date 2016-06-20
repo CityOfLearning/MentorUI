@@ -66,6 +66,11 @@ public class ManageStudent extends Show {
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
+		for (ListEntry listEntry : list.getContent()) {
+			if (!listEntry.equals(entry)) {
+				listEntry.setSelected(false);
+			}
+		}
 		selectedEntry = entry;
 		usernameAndPassword();
 	}
