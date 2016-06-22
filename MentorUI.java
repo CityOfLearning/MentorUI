@@ -6,6 +6,8 @@ import com.dyn.DYNServerMod;
 import com.dyn.mentor.proxy.Proxy;
 import com.dyn.mentor.reference.MetaData;
 import com.dyn.mentor.reference.Reference;
+import com.dyn.server.ServerMod;
+import com.dyn.server.utils.PlayerLevel;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -31,7 +33,9 @@ public class MentorUI {
 
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
-
+		if(ServerMod.status == PlayerLevel.MENTOR){
+			proxy.init();
+		}
 	}
 
 	@Mod.EventHandler
@@ -50,6 +54,5 @@ public class MentorUI {
 			DYNServerMod.logger.warn(e);
 		}
 
-		proxy.init();
 	}
 }
