@@ -2,8 +2,8 @@ package com.dyn.mentor.proxy;
 
 import org.lwjgl.input.Keyboard;
 
+import com.dyn.DYNServerMod;
 import com.dyn.mentor.gui.Home;
-import com.dyn.server.ServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.dyn.server.utils.PlayerLevel;
@@ -36,7 +36,7 @@ public class Client implements Proxy {
 		if ((Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
 			return;
 		}
-		if ((ServerMod.status == PlayerLevel.MENTOR) && mentorKey.isPressed()) {
+		if ((DYNServerMod.status == PlayerLevel.MENTOR) && mentorKey.isPressed()) {
 			PacketDispatcher.sendToServer(new RequestUserlistMessage());
 			GuiFoundation.proxy.display(new Home());
 		}
