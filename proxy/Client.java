@@ -6,7 +6,7 @@ import com.dyn.DYNServerMod;
 import com.dyn.mentor.gui.Home;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserlistMessage;
-import com.dyn.server.utils.PlayerLevel;
+import com.dyn.utils.PlayerLevel;
 import com.rabbit.gui.GuiFoundation;
 
 import net.minecraft.client.Minecraft;

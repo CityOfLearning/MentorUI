@@ -4,7 +4,7 @@ import com.dyn.DYNServerMod;
 import com.dyn.mentor.proxy.Proxy;
 import com.dyn.mentor.reference.MetaData;
 import com.dyn.mentor.reference.Reference;
-import com.dyn.server.utils.PlayerLevel;
+import com.dyn.utils.PlayerLevel;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModMetadata;

@@ -10,6 +10,7 @@ import com.dyn.DYNServerMod;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.dyn.server.packets.server.ServerCommandMessage;
+import com.dyn.utils.CCOLPlayerInfo;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBox;
@@ -56,7 +57,7 @@ public class ManageStudentsInventory extends Show {
 	private void checkStudentInventory() {
 		if (!userBox.getText().isEmpty()) {
 			if (!userBox.getText().isEmpty()) {
-				PacketDispatcher.sendToServer(new ServerCommandMessage("/invsee " + userBox.getText().split("-")[0]));
+				PacketDispatcher.sendToServer(new ServerCommandMessage("/invsee " + DYNServerMod.mcusername2ccolname.inverse().get(userBox.getText())));
 			}
 		}
 	}
@@ -64,11 +65,11 @@ public class ManageStudentsInventory extends Show {
 	private void clearPlayerInventory() {
 		// Clear all students inventory
 		if (affectAllStudents) {
-			for (String student : DYNServerMod.roster) {
-				PacketDispatcher.sendToServer(new ServerCommandMessage("/clear " + student.split("-")[0]));
+			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+				PacketDispatcher.sendToServer(new ServerCommandMessage("/clear " + student.getMinecraftUsername()));
 			}
 		} else if (!userBox.getText().isEmpty()) {
-			PacketDispatcher.sendToServer(new ServerCommandMessage("/clear " + userBox.getText().split("-")[0]));
+			PacketDispatcher.sendToServer(new ServerCommandMessage("/clear " + DYNServerMod.mcusername2ccolname.inverse().get(userBox.getText())));
 		}
 	}
 
@@ -117,13 +118,13 @@ public class ManageStudentsInventory extends Show {
 		}
 		String amt = (amountBox.getText() == null) || (amountBox.getText().isEmpty()) ? "1" : amountBox.getText();
 		PacketDispatcher.sendToServer(new ServerCommandMessage(
-				"/give " + student.split("-")[0] + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
+				"/give " + student + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
 	}
 
 	private void giveItemToPlayer() {
 		if (affectAllStudents) {
-			for (String student : DYNServerMod.roster) {
-				giveItem(student);
+			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+				giveItem(student.getMinecraftUsername());
 			}
 		}
 
@@ -176,14 +177,14 @@ public class ManageStudentsInventory extends Show {
 			amt = "1";
 		}
 		PacketDispatcher.sendToServer(new ServerCommandMessage(
-				"/clear " + student.split("-")[0] + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
+				"/clear " + student + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
 	}
 
 	private void removeItemFromPlayer() {
 
 		if (affectAllStudents) {
-			for (String student : DYNServerMod.roster) {
-				removeItem(student);
+			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+				removeItem(student.getMinecraftUsername());
 			}
 		} else {
 			if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
@@ -201,29 +202,29 @@ public class ManageStudentsInventory extends Show {
 				TextAlignment.CENTER));
 
 		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
 				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
 				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
 				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
 						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
 				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(false).addHoverText("Manage Inventory")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
 
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getFirst()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getSecond()), 30, 30,
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
 				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
@@ -299,8 +300,8 @@ public class ManageStudentsInventory extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (String s : DYNServerMod.roster) {
-			rlist.add(new SelectStringEntry(s, (SelectStringEntry entry, DisplayList dlist, int mouseX,
+		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
 					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 		}
 
@@ -313,9 +314,9 @@ public class ManageStudentsInventory extends Show {
 		rosterDisplayList.setId("roster");
 		registerComponent(rosterDisplayList);
 
-		registerComponent(
-				new PictureButton((int) (width * .15), (int) (height * .175), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+//		registerComponent(
+//				new PictureButton((int) (width * .15), (int) (height * .175), 20, 20, DYNServerConstants.REFRESH_IMAGE)
+//						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
 
 		userBox = new TextBox((int) (width * .235), (int) (height * .725), width / 4, 20, "User").setId("user")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));
@@ -379,9 +380,9 @@ public class ManageStudentsInventory extends Show {
 			}
 		} else if (textbox.getId() == "usersearch") {
 			rosterDisplayList.clear();
-			for (String student : DYNServerMod.roster) {
-				if (student.toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new SelectStringEntry(student, (SelectStringEntry entry, DisplayList dlist,
+			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+				if (student.getCCOLName().toLowerCase().contains(textbox.getText().toLowerCase())) {
+					rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
 							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 				}
 			}
@@ -398,8 +399,7 @@ public class ManageStudentsInventory extends Show {
 		}
 	}
 
-	private void updateUserList() {
-		PacketDispatcher.sendToServer(new RequestUserlistMessage());
-		getStage().display(new ManageStudentsInventory());
-	}
+//	private void updateUserList() {
+//		PacketDispatcher.sendToServer(new RequestUserlistMessage());
+//	}
 }
