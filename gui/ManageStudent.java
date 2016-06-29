@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.names.manager.NamesManager;
 import com.dyn.server.database.DBManager;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
@@ -78,7 +77,29 @@ public class ManageStudent extends Show {
 				isStudentInCreative = DYNServerMod.playerStatus.get("mode").getAsBoolean();
 			}
 		};
+
 		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener);
+
+		BooleanChangeListener rosterlistener = event -> {
+			if (event.getDispatcher().getFlag()) {
+				rosterDisplayList.clear();
+				for (CCOLPlayerInfo student : DYNServerMod.roster) {
+					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
+						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(),
+								(SelectStringEntry entry, DisplayList dlist, int mouseX,
+										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					} else {
+						rosterDisplayList
+								.add(new SelectStringEntry(student.getCCOLName(),
+										(SelectStringEntry entry, DisplayList dlist, int mouseX,
+												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
+														.setIsEnabled(false));
+					}
+				}
+			}
+		};
+
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener);
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -87,7 +108,8 @@ public class ManageStudent extends Show {
 				listEntry.setSelected(false);
 			}
 		}
-		PacketDispatcher.sendToServer(new RequestUserStatusMessage(DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
+		PacketDispatcher.sendToServer(
+				new RequestUserStatusMessage(DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 		selectedEntry = entry;
 		usernameAndPassword();
 	}
@@ -95,7 +117,8 @@ public class ManageStudent extends Show {
 	private void feedStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				PacketDispatcher.sendToServer(new FeedPlayerMessage(DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
+				PacketDispatcher.sendToServer(new FeedPlayerMessage(
+						DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 			}
 		}
 	}
@@ -104,14 +127,16 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (isFrozen) {
 				PacketDispatcher.sendToServer(new ServerCommandMessage(
-						"/p user " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle()) + " group add _FROZEN_"));
+						"/p user " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())
+								+ " group add _FROZEN_"));
 			} else {
 				PacketDispatcher.sendToServer(new ServerCommandMessage(
-						"/p user " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle()) + " group remove _FROZEN_"));
+						"/p user " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())
+								+ " group remove _FROZEN_"));
 			}
 
-			PacketDispatcher
-					.sendToServer(new RequestFreezePlayerMessage(DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle()), isFrozen));
+			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(
+					DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle()), isFrozen));
 
 			isFrozen = !isFrozen;
 			if (isFrozen) {
@@ -133,8 +158,8 @@ public class ManageStudent extends Show {
 	private void healStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				PacketDispatcher
-						.sendToServer(new ServerCommandMessage("/heal " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
+				PacketDispatcher.sendToServer(new ServerCommandMessage(
+						"/heal " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 			}
 		}
 	}
@@ -142,11 +167,11 @@ public class ManageStudent extends Show {
 	private void muteUnmuteStudent() {
 		if (selectedEntry != null) {
 			if (isMuted) {
-				PacketDispatcher
-						.sendToServer(new ServerCommandMessage("/mute " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
+				PacketDispatcher.sendToServer(new ServerCommandMessage(
+						"/mute " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 			} else {
-				PacketDispatcher
-						.sendToServer(new ServerCommandMessage("/unmute " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
+				PacketDispatcher.sendToServer(new ServerCommandMessage(
+						"/unmute " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 			}
 
 			isMuted = !isMuted;
@@ -183,8 +208,13 @@ public class ManageStudent extends Show {
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
+				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
+						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			} else {
+				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
+						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)).setIsEnabled(false));
+			}
 		}
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .35), width / 3, 100, 15,
@@ -221,9 +251,10 @@ public class ManageStudent extends Show {
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
 
 		// GUI main section
-//		registerComponent(
-//				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-//						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+		registerComponent(
+				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
@@ -238,7 +269,7 @@ public class ManageStudent extends Show {
 		registerComponent(muteButton);
 
 		modeButton = new CheckBoxButton((int) (width * .55), (int) (height * .5), (int) (width / 3.3), 20,
-				"Toggle Creative", false);
+				"   Toggle Creative", false);
 		modeButton.setIsEnabled(true).addHoverText(modeText).doesDrawHoverText(true)
 				.setClickListener(but -> switchMode());
 		registerComponent(modeButton);
@@ -265,8 +296,8 @@ public class ManageStudent extends Show {
 						.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 						.setClickListener(but -> {
 							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-								PacketDispatcher
-										.sendToServer(new RemoveEffectsMessage(DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
+								PacketDispatcher.sendToServer(new RemoveEffectsMessage(
+										DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 							}
 						}));
 
@@ -284,8 +315,8 @@ public class ManageStudent extends Show {
 
 	private void switchMode() {
 		if (selectedEntry != null) {
-			PacketDispatcher.sendToServer(new ServerCommandMessage(
-					"/gamemode " + (isStudentInCreative ? "0 " : "1 ") + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
+			PacketDispatcher.sendToServer(new ServerCommandMessage("/gamemode " + (isStudentInCreative ? "0 " : "1 ")
+					+ DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 			isStudentInCreative = !isStudentInCreative;
 			if (isStudentInCreative) {
 				modeText = "Survival Mode";
@@ -307,7 +338,8 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
 				PacketDispatcher.sendToServer(new ServerCommandMessage(
-						"/tp " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle()) + " " + mentor.getDisplayNameString()));
+						"/tp " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle()) + " "
+								+ mentor.getDisplayNameString()));
 			}
 		}
 	}
@@ -315,8 +347,8 @@ public class ManageStudent extends Show {
 	private void teleportToStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				PacketDispatcher.sendToServer(new ServerCommandMessage(
-						"/tp " + mentor.getDisplayNameString() + " " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
+				PacketDispatcher.sendToServer(new ServerCommandMessage("/tp " + mentor.getDisplayNameString() + " "
+						+ DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 			}
 		}
 	}
@@ -325,28 +357,33 @@ public class ManageStudent extends Show {
 		if (textbox.getId() == "rostersearch") {
 			rosterDisplayList.clear();
 			for (CCOLPlayerInfo student : DYNServerMod.roster) {
-				if (student.getCCOLName().contains(textbox.getText())) {
-					rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
-							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+				if (student.getCCOLName().toLowerCase().contains(textbox.getText().toLowerCase())) {
+					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
+						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(),
+								(SelectStringEntry entry, DisplayList dlist, int mouseX,
+										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					} else {
+						rosterDisplayList
+								.add(new SelectStringEntry(student.getCCOLName(),
+										(SelectStringEntry entry, DisplayList dlist, int mouseX,
+												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
+														.setIsEnabled(false));
+					}
 				}
 			}
 		}
 	}
 
-//	private void updateUserList() {
-//		PacketDispatcher.sendToServer(new RequestUserlistMessage());
-//	}
-
 	private void usernameAndPassword() {
 		if (selectedEntry != null) {
 			for (CCOLPlayerInfo student : DYNServerMod.roster) {
-				if(student.getCCOLName().equals(selectedEntry.getTitle())){
+				if (student.getCCOLName().equals(selectedEntry.getTitle())) {
 					JsonObject info = DBManager.getInfoFromUserAccount(student.getUserId());
 					dynUsername = info.get("username").getAsString();
 					dynPassword = info.get("password").getAsString();
 				}
 			}
-			
+
 		} else {
 			dynUsername = "";
 			dynPassword = "";

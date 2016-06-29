@@ -13,6 +13,7 @@ import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.MentorGivingAchievementMessage;
 import com.dyn.server.packets.server.RequestUserAchievementsProgressMessage;
 import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.utils.BooleanChangeListener;
 import com.dyn.utils.CCOLPlayerInfo;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
@@ -38,6 +39,27 @@ public class MonitorAchievements extends Show {
 	public MonitorAchievements() {
 		setBackground(new DefaultBackground());
 		title = "Mentor Gui";
+
+		BooleanChangeListener rosterlistener = event -> {
+			if (event.getDispatcher().getFlag()) {
+				rosterDisplayList.clear();
+				for (CCOLPlayerInfo student : DYNServerMod.roster) {
+					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
+						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(),
+								(SelectStringEntry entry, DisplayList dlist, int mouseX,
+										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					} else {
+						rosterDisplayList
+								.add(new SelectStringEntry(student.getCCOLName(),
+										(SelectStringEntry entry, DisplayList dlist, int mouseX,
+												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
+														.setIsEnabled(false));
+					}
+				}
+			}
+		};
+
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener);
 	}
 
 	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -50,8 +72,8 @@ public class MonitorAchievements extends Show {
 			selectedAchievement = entry;
 		} else if (list.getId() == "roster") {
 			selectedUser = entry;
-			PacketDispatcher
-					.sendToServer(new RequestUserAchievementsProgressMessage(DYNServerMod.mcusername2ccolname.inverse().get(selectedUser.getTitle())));
+			PacketDispatcher.sendToServer(new RequestUserAchievementsProgressMessage(
+					DYNServerMod.mcusername2ccolname.inverse().get(selectedUser.getTitle())));
 		}
 
 		if ((selectedUser != null) && (selectedAchievement != null)) {
@@ -192,9 +214,10 @@ public class MonitorAchievements extends Show {
 				.setId("achsearch")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
-//		registerComponent(
-//				new PictureButton((int) (width * .15), (int) (height * .2), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-//						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(but -> updateUserList()));
+		registerComponent(
+				new PictureButton((int) (width * .15), (int) (height * .2), 20, 20, DYNServerConstants.REFRESH_IMAGE)
+						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		List<ListEntry> dslist = new ArrayList<ListEntry>();
 
@@ -212,9 +235,14 @@ public class MonitorAchievements extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
-		for (CCOLPlayerInfo user : DYNServerMod.roster) {
-			rlist.add(new SelectStringEntry(user.getCCOLName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
-					int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
+				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
+						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			} else {
+				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
+						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)).setIsEnabled(false));
+			}
 		}
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .3), width / 3, 50, 15,
@@ -259,14 +287,19 @@ public class MonitorAchievements extends Show {
 			rosterDisplayList.clear();
 			for (CCOLPlayerInfo student : DYNServerMod.roster) {
 				if (student.getCCOLName().toLowerCase().contains(textbox.getText().toLowerCase())) {
-					rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
-							int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
+						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(),
+								(SelectStringEntry entry, DisplayList dlist, int mouseX,
+										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+					} else {
+						rosterDisplayList
+								.add(new SelectStringEntry(student.getCCOLName(),
+										(SelectStringEntry entry, DisplayList dlist, int mouseX,
+												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
+														.setIsEnabled(false));
+					}
 				}
 			}
 		}
 	}
-
-//	private void updateUserList() {
-//		PacketDispatcher.sendToServer(new RequestUserlistMessage());
-//	}
 }

@@ -3,7 +3,6 @@ package com.dyn.mentor.gui;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -176,7 +175,8 @@ public class Roster extends Show {
 				"Programs"));
 
 		programs = new DropDown<Integer>((int) (width * .15), (int) (height * .40), (int) (width / 3.3), 20)
-				.setId("program").setItemSelectedListener((DropDown<Integer> dropdown, String selected) -> {
+				.setId("program").setDrawUnicode(true)
+				.setItemSelectedListener((DropDown<Integer> dropdown, String selected) -> {
 					dropdownSelected(dropdown, selected);
 				});
 
@@ -186,13 +186,14 @@ public class Roster extends Show {
 				"Scheduled Programs"));
 
 		scheduledProg = new DropDown<Integer>((int) (width * .15), (int) (height * .55), (int) (width / 3.3), 20)
-				.setId("schedule").setItemSelectedListener((DropDown<Integer> dropdown, String selected) -> {
+				.setId("schedule").setDrawUnicode(true)
+				.setItemSelectedListener((DropDown<Integer> dropdown, String selected) -> {
 					dropdownSelected(dropdown, selected);
 				});
 
 		registerComponent(scheduledProg);
 
-		registerComponent(rosterStatus = new TextLabel((int) (width * .14), (int) (height * .75), (int) (width / 3), 20,
+		registerComponent(rosterStatus = new TextLabel((int) (width * .14), (int) (height * .75), width / 3, 20,
 				Color.black, ""));
 
 		registerComponent(
@@ -202,13 +203,13 @@ public class Roster extends Show {
 								DYNServerMod.roster.addAll(tmpPlayerInfo.values());
 								rosterStatus.setText("Added Students to Roster");
 								Runnable task = () -> {
-									//this blocks and so we gotta thread it
+									// this blocks and so we gotta thread it
 									for (CCOLPlayerInfo player : DYNServerMod.roster) {
 										player.grabMissingData();
 									}
 								};
 								new Thread(task).start();
-								
+
 							}
 						}));
 
