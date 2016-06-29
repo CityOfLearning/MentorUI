@@ -193,20 +193,23 @@ public class Roster extends Show {
 
 		registerComponent(scheduledProg);
 
-		registerComponent(rosterStatus = new TextLabel((int) (width * .14), (int) (height * .75), width / 3, 20,
+		registerComponent(rosterStatus = new TextLabel((int) (width * .145), (int) (height * .75), width / 3, 20,
 				Color.black, ""));
 
 		registerComponent(
 				new Button((int) (width * .15), (int) (height * .8), (int) (width / 3.3), 20, "Set this as my Roster")
 						.setClickListener(but -> {
 							if (tmpPlayerInfo.size() > 0) {
+								but.setIsEnabled(false);
 								DYNServerMod.roster.addAll(tmpPlayerInfo.values());
-								rosterStatus.setText("Added Students to Roster");
+								rosterStatus.setText("Adding Students to Roster");
 								Runnable task = () -> {
 									// this blocks and so we gotta thread it
 									for (CCOLPlayerInfo player : DYNServerMod.roster) {
 										player.grabMissingData();
 									}
+									but.setIsEnabled(true);
+									rosterStatus.setText("Added Students to Roster");
 								};
 								new Thread(task).start();
 
