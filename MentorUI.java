@@ -27,9 +27,8 @@ public class MentorUI {
 
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
-		if (DYNServerMod.status == PlayerLevel.MENTOR) {
+		
 			proxy.init();
-		}
 	}
 
 	@Mod.EventHandler

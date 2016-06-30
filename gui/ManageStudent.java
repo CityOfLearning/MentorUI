@@ -125,6 +125,7 @@ public class ManageStudent extends Show {
 
 	private void freezeUnfreezeStudent() {
 		if (selectedEntry != null) {
+			isFrozen = !isFrozen;
 			if (isFrozen) {
 				PacketDispatcher.sendToServer(new ServerCommandMessage(
 						"/p user " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())
@@ -138,7 +139,6 @@ public class ManageStudent extends Show {
 			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(
 					DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle()), isFrozen));
 
-			isFrozen = !isFrozen;
 			if (isFrozen) {
 				freezeText = "UnFreeze Students";
 				List<String> text = freezeButton.getHoverText();

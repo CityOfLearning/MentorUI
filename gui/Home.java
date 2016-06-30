@@ -91,6 +91,7 @@ public class Home extends Show {
 
 	private void freezeUnfreezeStudents() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			isFrozen = !isFrozen;
 			if (isFrozen) {
 				PacketDispatcher.sendToServer(
 						new ServerCommandMessage("/p user " + student.getMinecraftUsername() + " group add _FROZEN_"));
@@ -101,7 +102,6 @@ public class Home extends Show {
 
 			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student.getMinecraftUsername(), isFrozen));
 		}
-		isFrozen = !isFrozen;
 		if (isFrozen) {
 			freezeText = "UnFreeze Students";
 			List<String> text = freezeButton.getHoverText();
