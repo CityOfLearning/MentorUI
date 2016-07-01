@@ -140,7 +140,12 @@ public class ManageStudentsInventory extends Show {
 		if (itmSt != null) {
 			itemMod = " " + itmSt.getItemDamage();
 		}
-		String amt = (amountBox.getText() == null) || (amountBox.getText().isEmpty()) ? "1" : amountBox.getText();
+		int amt = 0;
+		try{
+			amt = Integer.parseInt(amountBox.getText());
+		} catch(NumberFormatException nfe){
+			amt = 1;
+		}
 		PacketDispatcher.sendToServer(new ServerCommandMessage(
 				"/give " + student + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
 	}
