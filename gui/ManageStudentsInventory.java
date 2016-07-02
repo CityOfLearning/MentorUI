@@ -141,9 +141,9 @@ public class ManageStudentsInventory extends Show {
 			itemMod = " " + itmSt.getItemDamage();
 		}
 		int amt = 0;
-		try{
+		try {
 			amt = Integer.parseInt(amountBox.getText());
-		} catch(NumberFormatException nfe){
+		} catch (NumberFormatException nfe) {
 			amt = 1;
 		}
 		PacketDispatcher.sendToServer(new ServerCommandMessage(

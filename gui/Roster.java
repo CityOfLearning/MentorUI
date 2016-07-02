@@ -23,6 +23,7 @@ import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.DropDown;
 import com.rabbit.gui.component.control.PictureButton;
 import com.rabbit.gui.component.display.Picture;
+import com.rabbit.gui.component.display.ProgressBar;
 import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
@@ -40,6 +41,7 @@ public class Roster extends Show {
 	private ScrollableDisplayList rosterDisplayList;
 	TextLabel numberOfStudentsOnRoster;
 	TextLabel rosterStatus;
+	ProgressBar progBar;
 
 	int selectedOrg;
 	int selectedProgram;
@@ -74,9 +76,6 @@ public class Roster extends Show {
 								programs.add(entryObj.get("name").getAsString(), entryObj.get("id").getAsInt());
 							}
 						}
-						// if(!programs.isEmpty()){
-						// programs.setIsEnabled(true);
-						// }
 					}
 				}
 			};
@@ -106,9 +105,6 @@ public class Roster extends Show {
 								scheduledProg.add(entryObj.get("name").getAsString(), entryObj.get("id").getAsInt());
 							}
 						}
-						// if(!scheduledProg.isEmpty()){
-						// scheduledProg.setIsEnabled(true);
-						// }
 					}
 				}
 			};
@@ -193,8 +189,10 @@ public class Roster extends Show {
 
 		registerComponent(scheduledProg);
 
-		registerComponent(rosterStatus = new TextLabel((int) (width * .145), (int) (height * .75), width / 3, 20,
+		registerComponent(rosterStatus = new TextLabel((int) (width * .145), (int) (height * .65), width / 3, 20,
 				Color.black, ""));
+
+		registerComponent(progBar = new ProgressBar((int) (width * .15), (int) (height * .7), (int) (width / 3.3), 20));
 
 		registerComponent(
 				new Button((int) (width * .15), (int) (height * .8), (int) (width / 3.3), 20, "Set this as my Roster")
@@ -203,12 +201,19 @@ public class Roster extends Show {
 								but.setIsEnabled(false);
 								DYNServerMod.roster.addAll(tmpPlayerInfo.values());
 								rosterStatus.setText("Adding Students to Roster");
+								progBar.getProgressChangedListener().setValue(0);
+
 								Runnable task = () -> {
 									// this blocks and so we gotta thread it
+									progBar.setVisible(true);
+									int progress = 0;
 									for (CCOLPlayerInfo player : DYNServerMod.roster) {
+										progBar.getProgressChangedListener()
+												.setValue(((float) progress++) / DYNServerMod.roster.size());
 										player.grabMissingData();
 									}
 									but.setIsEnabled(true);
+									progBar.setVisible(false);
 									rosterStatus.setText("Added Students to Roster");
 								};
 								new Thread(task).start();

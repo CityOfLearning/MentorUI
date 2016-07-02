@@ -1,13 +1,10 @@
 package com.dyn.mentor;
 
-import com.dyn.DYNServerMod;
 import com.dyn.mentor.proxy.Proxy;
 import com.dyn.mentor.reference.MetaData;
 import com.dyn.mentor.reference.Reference;
-import com.dyn.utils.PlayerLevel;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -21,11 +18,11 @@ public class MentorUI {
 
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static Proxy proxy;
-	
+
 	@Mod.EventHandler
 	public void onInit(FMLInitializationEvent event) {
-		
-			proxy.init();
+
+		proxy.init();
 	}
 
 	@Mod.EventHandler

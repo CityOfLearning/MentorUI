@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.server.database.DBManager;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.FeedPlayerMessage;
 import com.dyn.server.packets.server.RemoveEffectsMessage;
@@ -16,7 +15,6 @@ import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.dyn.server.packets.server.ServerCommandMessage;
 import com.dyn.utils.BooleanChangeListener;
 import com.dyn.utils.CCOLPlayerInfo;
-import com.google.gson.JsonObject;
 import com.rabbit.gui.background.DefaultBackground;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.control.CheckBoxButton;
@@ -67,8 +65,8 @@ public class ManageStudent extends Show {
 		isFrozen = false;
 		isMuted = false;
 		isStudentInCreative = false;
-		dynUsername = "";
-		dynPassword = "";
+		dynUsername = "Username: ";
+		dynPassword = "Password: ";
 
 		BooleanChangeListener listener = event -> {
 			if (event.getDispatcher().getFlag()) {
@@ -89,11 +87,9 @@ public class ManageStudent extends Show {
 								(SelectStringEntry entry, DisplayList dlist, int mouseX,
 										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					} else {
-						rosterDisplayList
-								.add(new SelectStringEntry(student.getCCOLName(),
-										(SelectStringEntry entry, DisplayList dlist, int mouseX,
-												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
-														.setIsEnabled(false));
+						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(), Color.gray,
+								(SelectStringEntry entry, DisplayList dlist, int mouseX,
+										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					}
 				}
 			}
@@ -108,9 +104,9 @@ public class ManageStudent extends Show {
 				listEntry.setSelected(false);
 			}
 		}
+		selectedEntry = entry;
 		PacketDispatcher.sendToServer(
 				new RequestUserStatusMessage(DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
-		selectedEntry = entry;
 		usernameAndPassword();
 	}
 
@@ -212,8 +208,8 @@ public class ManageStudent extends Show {
 				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
 						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 			} else {
-				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
-						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)).setIsEnabled(false));
+				rlist.add(new SelectStringEntry(student.getCCOLName(), Color.GRAY, (SelectStringEntry entry,
+						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 			}
 		}
 
@@ -302,9 +298,9 @@ public class ManageStudent extends Show {
 						}));
 
 		dynUsernameLabel = new TextLabel((int) (width * .15), (int) (height * .8), (int) (width / 2.5), 20, Color.black,
-				"Username: " + dynUsername);
+				dynUsername);
 		dynPasswordLabel = new TextLabel((int) (width * .15), (int) (height * .85), (int) (width / 2.5), 20,
-				Color.black, "Password: " + dynPassword);
+				Color.black, dynPassword);
 		registerComponent(dynUsernameLabel);
 		registerComponent(dynPasswordLabel);
 
@@ -377,16 +373,15 @@ public class ManageStudent extends Show {
 	private void usernameAndPassword() {
 		if (selectedEntry != null) {
 			for (CCOLPlayerInfo student : DYNServerMod.roster) {
-				if (student.getCCOLName().equals(selectedEntry.getTitle())) {
-					JsonObject info = DBManager.getInfoFromUserAccount(student.getUserId());
-					dynUsername = info.get("username").getAsString();
-					dynPassword = info.get("password").getAsString();
+				if (student.getCCOLName().toLowerCase().equals(selectedEntry.getTitle().toLowerCase())) {
+					dynUsernameLabel.setText(dynUsername + student.getUsername());
+					dynPasswordLabel.setText(dynPassword + student.getPassword());
 				}
 			}
 
 		} else {
-			dynUsername = "";
-			dynPassword = "";
+			dynUsernameLabel.setText(dynUsername);
+			dynPasswordLabel.setText(dynPassword);
 		}
 	}
 }
