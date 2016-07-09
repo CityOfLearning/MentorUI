@@ -104,11 +104,14 @@ public class Roster extends Show {
 							JsonObject entryObj = entry.getAsJsonObject();
 							if (entryObj.has("id") && entryObj.has("name") && entryObj.has("start_date")
 									&& entryObj.has("end_date")
-									/*&& LocalDate.parse(entryObj.get("start_date").getAsString())
-											.isBefore(LocalDate.now())*/
-									&& LocalDate.parse(entryObj.get("end_date").getAsString())
-											.compareTo(LocalDate.now()) >= 0) {
-								scheduledProg.add(entryObj.get("name").getAsString(), entryObj.get("id").getAsInt());
+							/*
+							 * && LocalDate.parse(entryObj.get("start_date").
+							 * getAsString()) .isBefore(LocalDate.now())
+							 */
+									&& (LocalDate.parse(entryObj.get("end_date").getAsString())
+											.compareTo(LocalDate.now()) >= 0)) {
+								scheduledProg.add(entryObj.get("claim_code").getAsString() + " - "
+										+ entryObj.get("name").getAsString(), entryObj.get("id").getAsInt());
 							}
 						}
 					}
