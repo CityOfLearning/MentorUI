@@ -71,8 +71,11 @@ public class ManageStudent extends Show {
 		BooleanChangeListener listener = event -> {
 			if (event.getDispatcher().getFlag()) {
 				isFrozen = DYNServerMod.playerStatus.get("frozen").getAsBoolean();
+				freezeButton.setToggle(isFrozen);
 				isMuted = DYNServerMod.playerStatus.get("muted").getAsBoolean();
+				muteButton.setToggle(isMuted);
 				isStudentInCreative = DYNServerMod.playerStatus.get("mode").getAsBoolean();
+				modeButton.setToggle(isStudentInCreative);
 			}
 		};
 
@@ -162,7 +165,7 @@ public class ManageStudent extends Show {
 
 	private void muteUnmuteStudent() {
 		if (selectedEntry != null) {
-			if (isMuted) {
+			if (!isMuted) {
 				PacketDispatcher.sendToServer(new ServerCommandMessage(
 						"/mute " + DYNServerMod.mcusername2ccolname.inverse().get(selectedEntry.getTitle())));
 			} else {
