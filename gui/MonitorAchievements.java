@@ -24,6 +24,8 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
+import com.rabbit.gui.component.list.entries.SelectElementEntry;
+import com.rabbit.gui.component.list.entries.SelectListEntry;
 import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
@@ -33,7 +35,7 @@ public class MonitorAchievements extends Show {
 	private static ScrollableDisplayList infoDisplayList;
 	private ScrollableDisplayList achDisplayList;
 	private ScrollableDisplayList rosterDisplayList;
-	private SelectStringEntry selectedUser;
+	private SelectElementEntry selectedUser;
 	private SelectStringEntry selectedAchievement;
 
 	public MonitorAchievements() {
@@ -45,13 +47,13 @@ public class MonitorAchievements extends Show {
 				rosterDisplayList.clear();
 				for (CCOLPlayerInfo student : DYNServerMod.roster) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
-						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(),
-								(SelectStringEntry entry, DisplayList dlist, int mouseX,
+						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
+								(SelectElementEntry entry, DisplayList dlist, int mouseX,
 										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					} else {
 						rosterDisplayList
-								.add(new SelectStringEntry(student.getCCOLName(),
-										(SelectStringEntry entry, DisplayList dlist, int mouseX,
+								.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
+										(SelectElementEntry entry, DisplayList dlist, int mouseX,
 												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
 														.setIsEnabled(false));
 					}
@@ -62,18 +64,18 @@ public class MonitorAchievements extends Show {
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener);
 	}
 
-	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
 		for (ListEntry listEntry : list.getContent()) {
 			if (!listEntry.equals(entry)) {
 				listEntry.setSelected(false);
 			}
 		}
 		if (list.getId() == "achs") {
-			selectedAchievement = entry;
+			selectedAchievement = (SelectStringEntry) entry;
 		} else if (list.getId() == "roster") {
-			selectedUser = entry;
+			selectedUser = (SelectElementEntry) entry;
 			PacketDispatcher.sendToServer(new RequestUserAchievementsProgressMessage(
-					DYNServerMod.mcusername2ccolname.inverse().get(selectedUser.getTitle())));
+					DYNServerMod.mc_username2ccol_id.inverse().get(selectedUser.getValue())));
 		}
 
 		if ((selectedUser != null) && (selectedAchievement != null)) {
@@ -258,7 +260,7 @@ public class MonitorAchievements extends Show {
 					if ((selectedUser != null) && (selectedAchievement != null) && !selectedUser.getTitle().isEmpty()
 							&& !selectedAchievement.getTitle().isEmpty()) {
 						PacketDispatcher.sendToServer(new MentorGivingAchievementMessage(
-								DYNServerMod.mcusername2ccolname.inverse().get(selectedUser.getTitle()),
+								DYNServerMod.mc_username2ccol_id.inverse().get(selectedUser.getValue()),
 								AchievementManager.findAchievementByName(selectedAchievement.getTitle()).getId()));
 					}
 				}));

@@ -214,7 +214,7 @@ public class Roster extends Show {
 
 								Runnable task = () -> {
 									// this blocks and so we gotta thread it
-									progBar.setVisible(true);
+									
 									int progress = 0;
 									for (CCOLPlayerInfo player : DYNServerMod.roster) {
 										progBar.getProgressChangedListener()
@@ -225,6 +225,7 @@ public class Roster extends Show {
 									progBar.setVisible(false);
 									rosterStatus.setText("Added Students to Roster");
 								};
+								progBar.setVisible(true);
 								new Thread(task).start();
 
 							}

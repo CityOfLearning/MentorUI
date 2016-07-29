@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
@@ -22,6 +23,8 @@ import com.rabbit.gui.component.display.TextLabel;
 import com.rabbit.gui.component.list.DisplayList;
 import com.rabbit.gui.component.list.ScrollableDisplayList;
 import com.rabbit.gui.component.list.entries.ListEntry;
+import com.rabbit.gui.component.list.entries.SelectElementEntry;
+import com.rabbit.gui.component.list.entries.SelectListEntry;
 import com.rabbit.gui.component.list.entries.SelectStringEntry;
 import com.rabbit.gui.render.TextAlignment;
 import com.rabbit.gui.show.Show;
@@ -40,6 +43,8 @@ public class ManageStudentsInventory extends Show {
 	private ArrayList<Item> itemList = new ArrayList<Item>();
 	private TextBox userBox;
 	private TextBox itemBox;
+	private SelectElementEntry userSelected;
+	private SelectStringEntry itemSelected;
 	private TextBox amountBox;
 	private boolean affectAllStudents;
 	private Button checkButton;
@@ -77,11 +82,10 @@ public class ManageStudentsInventory extends Show {
 	}
 
 	private void checkStudentInventory() {
-		if (!userBox.getText().isEmpty()) {
-			if (!userBox.getText().isEmpty()) {
-				PacketDispatcher.sendToServer(new ServerCommandMessage(
-						"/invsee " + DYNServerMod.mcusername2ccolname.inverse().get(userBox.getText())));
-			}
+		if (!userSelected.getTitle().isEmpty()) {
+
+			PacketDispatcher.sendToServer(new ServerCommandMessage(
+					"/invsee " + DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue())));
 		}
 	}
 
@@ -91,22 +95,25 @@ public class ManageStudentsInventory extends Show {
 			for (CCOLPlayerInfo student : DYNServerMod.roster) {
 				PacketDispatcher.sendToServer(new ServerCommandMessage("/clear " + student.getMinecraftUsername()));
 			}
-		} else if (!userBox.getText().isEmpty()) {
+		} else if (!userSelected.getTitle().isEmpty()) {
 			PacketDispatcher.sendToServer(new ServerCommandMessage(
-					"/clear " + DYNServerMod.mcusername2ccolname.inverse().get(userBox.getText())));
+					"/clear " + DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue())));
+			// userBox.getText()
 		}
 	}
 
-	private void entryClicked(SelectStringEntry entry, DisplayList list, int mouseX, int mouseY) {
+	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
 		for (ListEntry listEntry : list.getContent()) {
 			if (!listEntry.equals(entry)) {
 				listEntry.setSelected(false);
 			}
 		}
 		if (list.getId() == "itms") {
-			itemBox.setText(entry.getTitle());
+			itemBox.setText(((SelectStringEntry) entry).getTitle());
+			itemSelected = ((SelectStringEntry) entry);
 		} else if (list.getId() == "roster") {
-			userBox.setText(entry.getTitle());
+			userSelected = (SelectElementEntry) entry;
+			userBox.setText(((SelectElementEntry) entry).getTitle());
 		}
 
 	}
@@ -120,14 +127,14 @@ public class ManageStudentsInventory extends Show {
 					List<ItemStack> subItem = new ArrayList<ItemStack>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
-						if (is.getDisplayName().contentEquals(itemBox.getText())) {
+						if (is.getDisplayName().contentEquals(itemSelected.getTitle())) {
 							tItem = i;
 							itmSt = is;
 						}
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
-					if (is.getDisplayName().contentEquals(itemBox.getText())) {
+					if (is.getDisplayName().contentEquals(itemSelected.getTitle())) {
 						tItem = i;
 					}
 				}
@@ -158,10 +165,11 @@ public class ManageStudentsInventory extends Show {
 		}
 
 		else {
-			if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
+			if (userSelected == null || itemSelected == null) {
 				return;
 			}
-			giveItem(userBox.getText());
+			String student = DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue());
+			giveItem(student == null ? (String) userSelected.getValue() : student);
 		}
 	}
 
@@ -174,14 +182,14 @@ public class ManageStudentsInventory extends Show {
 					List<ItemStack> subItem = new ArrayList<ItemStack>();
 					i.getSubItems(i, CreativeTabs.tabAllSearch, subItem);
 					for (ItemStack is : subItem) {
-						if (is.getDisplayName().contentEquals(itemBox.getText())) {
+						if (is.getDisplayName().contentEquals(itemSelected.getTitle())) {
 							tItem = i;
 							itmSt = is;
 						}
 					}
 				} else {
 					ItemStack is = new ItemStack(i);
-					if (is.getDisplayName().contentEquals(itemBox.getText())) {
+					if (is.getDisplayName().contentEquals(itemSelected.getTitle())) {
 						tItem = i;
 					}
 				}
@@ -216,10 +224,11 @@ public class ManageStudentsInventory extends Show {
 				removeItem(student.getMinecraftUsername());
 			}
 		} else {
-			if (userBox.getText().isEmpty() || itemBox.getText().isEmpty()) {
+			if (userSelected == null || itemSelected == null) {
 				return;
 			}
-			removeItem(userBox.getText());
+			String student = DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue());
+			removeItem(student == null ? (String) userSelected.getValue() : student);
 		}
 	}
 
@@ -331,17 +340,18 @@ public class ManageStudentsInventory extends Show {
 
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
-				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
-						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry,
+						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 			} else {
-				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
-						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)).setIsEnabled(false));
+				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry,
+						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
+								.setIsEnabled(false));
 			}
 		}
 
-		rlist.add(new SelectStringEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(),
-				(SelectStringEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist,
-						mouseX, mouseY)));
+		rlist.add(new SelectElementEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(),
+				Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (SelectElementEntry entry, DisplayList dlist,
+						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .275), width / 3, 100, 15,
 				rlist);
@@ -418,13 +428,13 @@ public class ManageStudentsInventory extends Show {
 			for (CCOLPlayerInfo student : DYNServerMod.roster) {
 				if (student.getCCOLName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
-						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(),
-								(SelectStringEntry entry, DisplayList dlist, int mouseX,
+						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
+								(SelectElementEntry entry, DisplayList dlist, int mouseX,
 										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					} else {
 						rosterDisplayList
-								.add(new SelectStringEntry(student.getCCOLName(),
-										(SelectStringEntry entry, DisplayList dlist, int mouseX,
+								.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
+										(SelectElementEntry entry, DisplayList dlist, int mouseX,
 												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
 														.setIsEnabled(false));
 					}
