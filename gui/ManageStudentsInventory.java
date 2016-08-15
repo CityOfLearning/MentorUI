@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
@@ -165,7 +164,7 @@ public class ManageStudentsInventory extends Show {
 		}
 
 		else {
-			if (userSelected == null || itemSelected == null) {
+			if ((userSelected == null) || (itemSelected == null)) {
 				return;
 			}
 			String student = DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue());
@@ -224,7 +223,7 @@ public class ManageStudentsInventory extends Show {
 				removeItem(student.getMinecraftUsername());
 			}
 		} else {
-			if (userSelected == null || itemSelected == null) {
+			if ((userSelected == null) || (itemSelected == null)) {
 				return;
 			}
 			String student = DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue());

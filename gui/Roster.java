@@ -214,7 +214,7 @@ public class Roster extends Show {
 
 								Runnable task = () -> {
 									// this blocks and so we gotta thread it
-									
+
 									int progress = 0;
 									for (CCOLPlayerInfo player : DYNServerMod.roster) {
 										progBar.getProgressChangedListener()

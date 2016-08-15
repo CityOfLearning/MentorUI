@@ -90,8 +90,8 @@ public class ManageStudent extends Show {
 								(SelectElementEntry entry, DisplayList dlist, int mouseX,
 										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					} else {
-						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), Color.gray,
-								(SelectElementEntry entry, DisplayList dlist, int mouseX,
+						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
+								Color.gray, (SelectElementEntry entry, DisplayList dlist, int mouseX,
 										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					}
 				}
@@ -198,11 +198,12 @@ public class ManageStudent extends Show {
 
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
-				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry, DisplayList dlist,
-						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
-			} else {
-				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), Color.GRAY, (SelectElementEntry entry,
+				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry,
 						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+			} else {
+				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), Color.GRAY,
+						(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,
+								dlist, mouseX, mouseY)));
 			}
 		}
 
