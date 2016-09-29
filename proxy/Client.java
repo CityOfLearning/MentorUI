@@ -1,9 +1,13 @@
 package com.dyn.mentor.proxy;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.lwjgl.input.Keyboard;
 
 import com.dyn.DYNServerMod;
 import com.dyn.mentor.gui.Home;
+import com.dyn.mentor.gui.Warps;
 import com.dyn.server.packets.PacketDispatcher;
 import com.dyn.server.packets.server.RequestUserlistMessage;
 import com.dyn.utils.PlayerLevel;
@@ -20,6 +24,13 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 public class Client implements Proxy {
 
 	private KeyBinding mentorKey;
+
+	@Override
+	public Map<String, ?> getKeyBindings() {
+		Map<String, KeyBinding> keys = new HashMap();
+		keys.put("mentor", mentorKey);
+		return keys;
+	}
 
 	@Override
 	public void init() {
@@ -39,7 +50,9 @@ public class Client implements Proxy {
 			return;
 		}
 		if ((DYNServerMod.status == PlayerLevel.MENTOR) && mentorKey.isPressed()) {
-			PacketDispatcher.sendToServer(new RequestUserlistMessage());
+			if(!Minecraft.getMinecraft().thePlayer.worldObj.isRemote){
+				PacketDispatcher.sendToServer(new RequestUserlistMessage());
+			}
 			RabbitGui.proxy.display(new Home());
 		}
 	}
