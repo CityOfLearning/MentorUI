@@ -210,6 +210,12 @@ public class MonitorAchievements extends Show {
 				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(false).addHoverText("Award Achievements")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
+		
+		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_6.getLeft()),
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_6.getRight()), 30, 30,
+				DYNServerConstants.WARP_IMAGE).setIsEnabled(true).addHoverText("Warp Locations")
+						.doesDrawHoverText(true)
+						.setClickListener(but -> getStage().display(new Warps())));
 
 		registerComponent(new TextBox((int) (width * .235), (int) (height * .2), width / 4, 20, "Search for User")
 				.setId("usersearch")
@@ -241,11 +247,12 @@ public class MonitorAchievements extends Show {
 
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
-				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
-						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry,
+						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 			} else {
-				rlist.add(new SelectStringEntry(student.getCCOLName(), (SelectStringEntry entry, DisplayList dlist,
-						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)).setIsEnabled(false));
+				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry,
+						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
+								.setIsEnabled(false));
 			}
 		}
 
@@ -292,13 +299,13 @@ public class MonitorAchievements extends Show {
 			for (CCOLPlayerInfo student : DYNServerMod.roster) {
 				if (student.getCCOLName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
-						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(),
-								(SelectStringEntry entry, DisplayList dlist, int mouseX,
+						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
+								(SelectElementEntry entry, DisplayList dlist, int mouseX,
 										int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 					} else {
 						rosterDisplayList
-								.add(new SelectStringEntry(student.getCCOLName(),
-										(SelectStringEntry entry, DisplayList dlist, int mouseX,
+								.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
+										(SelectElementEntry entry, DisplayList dlist, int mouseX,
 												int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
 														.setIsEnabled(false));
 					}
