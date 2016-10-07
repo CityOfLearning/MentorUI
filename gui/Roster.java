@@ -277,11 +277,10 @@ public class Roster extends Show {
 				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
-		
+
 		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_6.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_6.getRight()), 30, 30,
-				DYNServerConstants.WARP_IMAGE).setIsEnabled(true).addHoverText("Warp Locations")
-						.doesDrawHoverText(true)
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_6.getRight()), 30, 30, DYNServerConstants.WARP_IMAGE)
+						.setIsEnabled(true).addHoverText("Warp Locations").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Warps())));
 
 		// The background

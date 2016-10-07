@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.dyn.DYNServerConstants;
-import com.dyn.admin.gui.Home;
-import com.dyn.admin.gui.ManageStudent;
-import com.dyn.admin.gui.ManageStudentsInventory;
-import com.dyn.admin.gui.MonitorAchievements;
-import com.dyn.admin.gui.Roster;
+import com.dyn.mentor.gui.Home;
+import com.dyn.mentor.gui.ManageStudent;
+import com.dyn.mentor.gui.ManageStudentsInventory;
+import com.dyn.mentor.gui.MonitorAchievements;
+import com.dyn.mentor.gui.Roster;
 import com.forgeessentials.multiworld.ModuleMultiworld;
 import com.google.common.collect.Maps;
 import com.rabbit.gui.background.DefaultBackground;
@@ -102,7 +102,7 @@ public class Warps extends Show {
 						WaystoneEntry entry = waystones.get(selectedEntry);
 						System.out.println(entry);
 						if (entry != null) {
-							this.getStage().close();
+							getStage().close();
 							NetworkHandler.channel.sendToServer(new MessageWarpStone(entry));
 						}
 					}

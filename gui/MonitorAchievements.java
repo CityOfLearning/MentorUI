@@ -210,11 +210,10 @@ public class MonitorAchievements extends Show {
 				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(false).addHoverText("Award Achievements")
 						.doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new MonitorAchievements())));
-		
+
 		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_6.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_6.getRight()), 30, 30,
-				DYNServerConstants.WARP_IMAGE).setIsEnabled(true).addHoverText("Warp Locations")
-						.doesDrawHoverText(true)
+				(int) (height * DYNServerConstants.BUTTON_LOCATION_6.getRight()), 30, 30, DYNServerConstants.WARP_IMAGE)
+						.setIsEnabled(true).addHoverText("Warp Locations").doesDrawHoverText(true)
 						.setClickListener(but -> getStage().display(new Warps())));
 
 		registerComponent(new TextBox((int) (width * .235), (int) (height * .2), width / 4, 20, "Search for User")
