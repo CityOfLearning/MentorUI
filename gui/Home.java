@@ -6,12 +6,12 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.FeedPlayerMessage;
-import com.dyn.server.packets.server.RemoveEffectsMessage;
-import com.dyn.server.packets.server.RequestFreezePlayerMessage;
-import com.dyn.server.packets.server.RequestUserlistMessage;
-import com.dyn.server.packets.server.ServerCommandMessage;
+import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.packets.server.FeedPlayerMessage;
+import com.dyn.server.network.packets.server.RemoveEffectsMessage;
+import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
+import com.dyn.server.network.packets.server.RequestUserlistMessage;
+import com.dyn.server.network.packets.server.ServerCommandMessage;
 import com.dyn.utils.BooleanChangeListener;
 import com.dyn.utils.CCOLPlayerInfo;
 import com.rabbit.gui.background.DefaultBackground;
@@ -85,14 +85,14 @@ public class Home extends Show {
 	// Manage Students
 	private void feedStudents() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			PacketDispatcher.sendToServer(new FeedPlayerMessage(student.getMinecraftUsername()));
+			NetworkDispatcher.sendToServer(new FeedPlayerMessage(student.getMinecraftUsername()));
 		}
 	}
 
 	private void freezeUnfreezeStudents() {
 		isFrozen = !isFrozen;
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			PacketDispatcher.sendToServer(new RequestFreezePlayerMessage(student.getMinecraftUsername(), isFrozen));
+			NetworkDispatcher.sendToServer(new RequestFreezePlayerMessage(student.getMinecraftUsername(), isFrozen));
 		}
 
 		if (isFrozen) {
@@ -112,7 +112,7 @@ public class Home extends Show {
 
 	private void healStudents() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			PacketDispatcher.sendToServer(new ServerCommandMessage("/heal " + student.getMinecraftUsername()));
+			NetworkDispatcher.sendToServer(new ServerCommandMessage("/heal " + student.getMinecraftUsername()));
 		}
 	}
 
@@ -124,9 +124,9 @@ public class Home extends Show {
 	private void muteUnmuteStudents() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (isMuted) {
-				PacketDispatcher.sendToServer(new ServerCommandMessage("/mute " + student.getMinecraftUsername()));
+				NetworkDispatcher.sendToServer(new ServerCommandMessage("/mute " + student.getMinecraftUsername()));
 			} else {
-				PacketDispatcher.sendToServer(new ServerCommandMessage("/unmute " + student.getMinecraftUsername()));
+				NetworkDispatcher.sendToServer(new ServerCommandMessage("/unmute " + student.getMinecraftUsername()));
 			}
 		}
 
@@ -148,7 +148,7 @@ public class Home extends Show {
 
 	private void removeEffects() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			PacketDispatcher.sendToServer(new RemoveEffectsMessage(student.getMinecraftUsername()));
+			NetworkDispatcher.sendToServer(new RemoveEffectsMessage(student.getMinecraftUsername()));
 		}
 	}
 
@@ -162,41 +162,9 @@ public class Home extends Show {
 		registerComponent(
 				new TextLabel(width / 3, (int) (height * .1), width / 3, 20, "Manage Classroom", TextAlignment.CENTER));
 
-		// the side buttons
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
-				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(false).addHoverText("Manage Classroom")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Home())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
-				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new Roster())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
-				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
-						.doesDrawHoverText(true).setClickListener(but -> getStage().display(new ManageStudent())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
-				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new ManageStudentsInventory())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
-				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
-						.doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new MonitorAchievements())));
-
-		registerComponent(new PictureButton((int) (width * DYNServerConstants.BUTTON_LOCATION_6.getLeft()),
-				(int) (height * DYNServerConstants.BUTTON_LOCATION_6.getRight()), 30, 30, DYNServerConstants.WARP_IMAGE)
-						.setIsEnabled(true).addHoverText("Warp Locations").doesDrawHoverText(true)
-						.setClickListener(but -> getStage().display(new Warps())));
+		SideButtons.init(this, 1);
 
 		// gui main area
-
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
 
@@ -226,7 +194,7 @@ public class Home extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .35), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> PacketDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
 
 		// Manage Students
 		registerComponent(new Button((int) (width * .55), (int) (height * .72), (int) (width / 3.3), 20,
@@ -308,10 +276,10 @@ public class Home extends Show {
 			if (sTime < 0) {
 				sTime += 24000;
 			}
-			PacketDispatcher.sendToServer(new ServerCommandMessage("/time set " + sTime));
+			NetworkDispatcher.sendToServer(new ServerCommandMessage("/time set " + sTime));
 		}
 		if (s.getId() == "speed") { // speed has to be an integer value
-			PacketDispatcher.sendToServer(
+			NetworkDispatcher.sendToServer(
 					new ServerCommandMessage("/speed " + (int) (1 + (pos * 10)) + " " + mentor.getDisplayNameString()));
 			// mentor.sendChatMessage("/speed " + (int) (1 + (pos * 10)));
 		}
@@ -319,7 +287,7 @@ public class Home extends Show {
 
 	private void switchMode() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			PacketDispatcher.sendToServer(new ServerCommandMessage(
+			NetworkDispatcher.sendToServer(new ServerCommandMessage(
 					"/gamemode " + (areStudentsInCreative ? "0 " : "1 ") + student.getMinecraftUsername()));
 		}
 		areStudentsInCreative = !areStudentsInCreative;
@@ -342,14 +310,14 @@ public class Home extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			PacketDispatcher.sendToServer(new ServerCommandMessage(
+			NetworkDispatcher.sendToServer(new ServerCommandMessage(
 					"/tp " + student.getMinecraftUsername() + " " + mentor.getDisplayNameString()));
 		}
 	}
 
 	private void toggleCreative() {
 
-		PacketDispatcher.sendToServer(
+		NetworkDispatcher.sendToServer(
 				new ServerCommandMessage("/gamemode " + (isCreative ? "0 " : "1 ") + mentor.getDisplayNameString()));
 		isCreative = !isCreative;
 		if (isCreative) {
