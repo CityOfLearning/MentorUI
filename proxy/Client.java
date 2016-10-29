@@ -7,8 +7,8 @@ import org.lwjgl.input.Keyboard;
 
 import com.dyn.DYNServerMod;
 import com.dyn.mentor.gui.Home;
-import com.dyn.server.packets.PacketDispatcher;
-import com.dyn.server.packets.server.RequestUserlistMessage;
+import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.utils.PlayerLevel;
 import com.rabbit.gui.RabbitGui;
 
@@ -33,7 +33,7 @@ public class Client implements Proxy {
 
 	@Override
 	public void init() {
-		if (DYNServerMod.status == PlayerLevel.MENTOR) {
+		if (DYNServerMod.accessLevel == PlayerLevel.MENTOR) {
 			MinecraftForge.EVENT_BUS.register(this);
 
 			mentorKey = new KeyBinding("key.toggle.mentorui", Keyboard.KEY_M, "key.categories.toggle");
@@ -48,9 +48,9 @@ public class Client implements Proxy {
 		if ((Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
 			return;
 		}
-		if ((DYNServerMod.status == PlayerLevel.MENTOR) && mentorKey.isPressed()) {
+		if ((DYNServerMod.accessLevel == PlayerLevel.MENTOR) && mentorKey.isPressed()) {
 			if (!Minecraft.getMinecraft().thePlayer.worldObj.isRemote) {
-				PacketDispatcher.sendToServer(new RequestUserlistMessage());
+				NetworkDispatcher.sendToServer(new RequestUserlistMessage());
 			}
 			RabbitGui.proxy.display(new Home());
 		}
