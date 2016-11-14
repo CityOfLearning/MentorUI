@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.server.network.packets.server.ServerCommandMessage;
 import com.dyn.utils.BooleanChangeListener;
@@ -53,7 +53,7 @@ public class ManageStudentsInventory extends Show {
 		title = "Mentor Gui";
 		affectAllStudents = false;
 
-		BooleanChangeListener rosterlistener = event -> {
+		BooleanChangeListener rosterlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
 				for (CCOLPlayerInfo student : DYNServerMod.roster) {
@@ -72,7 +72,12 @@ public class ManageStudentsInventory extends Show {
 			}
 		};
 
-		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener);
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
+	}
+	
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	private void checkBoxChanged() {
@@ -83,7 +88,7 @@ public class ManageStudentsInventory extends Show {
 	private void checkStudentInventory() {
 		if (!userSelected.getTitle().isEmpty()) {
 
-			NetworkDispatcher.sendToServer(new ServerCommandMessage(
+			NetworkManager.sendToServer(new ServerCommandMessage(
 					"/invsee " + DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue())));
 		}
 	}
@@ -92,10 +97,10 @@ public class ManageStudentsInventory extends Show {
 		// Clear all students inventory
 		if (affectAllStudents) {
 			for (CCOLPlayerInfo student : DYNServerMod.roster) {
-				NetworkDispatcher.sendToServer(new ServerCommandMessage("/clear " + student.getMinecraftUsername()));
+				NetworkManager.sendToServer(new ServerCommandMessage("/clear " + student.getMinecraftUsername()));
 			}
 		} else if (!userSelected.getTitle().isEmpty()) {
-			NetworkDispatcher.sendToServer(new ServerCommandMessage(
+			NetworkManager.sendToServer(new ServerCommandMessage(
 					"/clear " + DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue())));
 			// userBox.getText()
 		}
@@ -152,7 +157,7 @@ public class ManageStudentsInventory extends Show {
 		} catch (NumberFormatException nfe) {
 			amt = 1;
 		}
-		NetworkDispatcher.sendToServer(new ServerCommandMessage(
+		NetworkManager.sendToServer(new ServerCommandMessage(
 				"/give " + student + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
 	}
 
@@ -212,7 +217,7 @@ public class ManageStudentsInventory extends Show {
 		} else {
 			amt = "1";
 		}
-		NetworkDispatcher.sendToServer(new ServerCommandMessage(
+		NetworkManager.sendToServer(new ServerCommandMessage(
 				"/clear " + student + " " + tItem.getRegistryName() + " " + amt + " " + itemMod));
 	}
 
@@ -334,7 +339,7 @@ public class ManageStudentsInventory extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .175), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		userBox = new TextBox((int) (width * .235), (int) (height * .725), width / 4, 20, "User").setId("user")
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText));

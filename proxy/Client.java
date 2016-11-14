@@ -7,7 +7,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.dyn.DYNServerMod;
 import com.dyn.mentor.gui.Home;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.utils.PlayerLevel;
 import com.rabbit.gui.RabbitGui;
@@ -50,7 +50,7 @@ public class Client implements Proxy {
 		}
 		if ((DYNServerMod.accessLevel == PlayerLevel.MENTOR) && mentorKey.isPressed()) {
 			if (!Minecraft.getMinecraft().thePlayer.worldObj.isRemote) {
-				NetworkDispatcher.sendToServer(new RequestUserlistMessage());
+				NetworkManager.sendToServer(new RequestUserlistMessage());
 			}
 			RabbitGui.proxy.display(new Home());
 		}

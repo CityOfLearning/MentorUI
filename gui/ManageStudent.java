@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
 import com.dyn.server.network.packets.server.RemoveEffectsMessage;
 import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
@@ -68,7 +68,7 @@ public class ManageStudent extends Show {
 		dynUsername = "Username: ";
 		dynPassword = "Password: ";
 
-		BooleanChangeListener listener = event -> {
+		BooleanChangeListener listener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				isFrozen = DYNServerMod.playerStatus.get("frozen").getAsBoolean();
 				freezeButton.setToggle(isFrozen);
@@ -79,9 +79,9 @@ public class ManageStudent extends Show {
 			}
 		};
 
-		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener);
+		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener, this);
 
-		BooleanChangeListener rosterlistener = event -> {
+		BooleanChangeListener rosterlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
 				for (CCOLPlayerInfo student : DYNServerMod.roster) {
@@ -98,7 +98,13 @@ public class ManageStudent extends Show {
 			}
 		};
 
-		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener);
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
+	}
+	
+	@Override
+	public void onClose() {
+		DYNServerMod.playerStatusReturned.removeBooleanChangeListener(this);
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	private void entryClicked(SelectElementEntry entry, DisplayList list, int mouseX, int mouseY) {
@@ -108,7 +114,7 @@ public class ManageStudent extends Show {
 			}
 		}
 		selectedEntry = entry;
-		NetworkDispatcher.sendToServer(
+		NetworkManager.sendToServer(
 				new RequestUserStatusMessage(DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 		usernameAndPassword();
 	}
@@ -116,7 +122,7 @@ public class ManageStudent extends Show {
 	private void feedStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				NetworkDispatcher.sendToServer(new FeedPlayerMessage(
+				NetworkManager.sendToServer(new FeedPlayerMessage(
 						DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 		}
@@ -125,7 +131,7 @@ public class ManageStudent extends Show {
 	private void freezeUnfreezeStudent() {
 		if (selectedEntry != null) {
 			isFrozen = !isFrozen;
-			NetworkDispatcher.sendToServer(new RequestFreezePlayerMessage(
+			NetworkManager.sendToServer(new RequestFreezePlayerMessage(
 					DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue()), isFrozen));
 
 			if (isFrozen) {
@@ -147,7 +153,7 @@ public class ManageStudent extends Show {
 	private void healStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				NetworkDispatcher.sendToServer(new ServerCommandMessage(
+				NetworkManager.sendToServer(new ServerCommandMessage(
 						"/heal " + DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 		}
@@ -156,10 +162,10 @@ public class ManageStudent extends Show {
 	private void muteUnmuteStudent() {
 		if (selectedEntry != null) {
 			if (!isMuted) {
-				NetworkDispatcher.sendToServer(new ServerCommandMessage(
+				NetworkManager.sendToServer(new ServerCommandMessage(
 						"/mute " + DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			} else {
-				NetworkDispatcher.sendToServer(new ServerCommandMessage(
+				NetworkManager.sendToServer(new ServerCommandMessage(
 						"/unmute " + DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 
@@ -218,7 +224,7 @@ public class ManageStudent extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .25), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		freezeButton = new CheckBoxPictureButton((int) (width * .55), (int) (height * .25), 50, 25,
 				DYNServerConstants.FREEZE_IMAGE, false);
@@ -260,7 +266,7 @@ public class ManageStudent extends Show {
 						.addHoverText("Removes effects like poison and invisibility").doesDrawHoverText(true)
 						.setClickListener(but -> {
 							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
-								NetworkDispatcher.sendToServer(new RemoveEffectsMessage(
+								NetworkManager.sendToServer(new RemoveEffectsMessage(
 										DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 							}
 						}));
@@ -279,7 +285,7 @@ public class ManageStudent extends Show {
 
 	private void switchMode() {
 		if (selectedEntry != null) {
-			NetworkDispatcher.sendToServer(new ServerCommandMessage("/gamemode " + (isStudentInCreative ? "0 " : "1 ")
+			NetworkManager.sendToServer(new ServerCommandMessage("/gamemode " + (isStudentInCreative ? "0 " : "1 ")
 					+ DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			isStudentInCreative = !isStudentInCreative;
 			if (isStudentInCreative) {
@@ -301,7 +307,7 @@ public class ManageStudent extends Show {
 	private void teleportStudentTo() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				NetworkDispatcher.sendToServer(new ServerCommandMessage(
+				NetworkManager.sendToServer(new ServerCommandMessage(
 						"/tp " + DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue()) + " "
 								+ mentor.getDisplayNameString()));
 			}
@@ -311,7 +317,7 @@ public class ManageStudent extends Show {
 	private void teleportToStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				NetworkDispatcher.sendToServer(new ServerCommandMessage("/tp " + mentor.getDisplayNameString() + " "
+				NetworkManager.sendToServer(new ServerCommandMessage("/tp " + mentor.getDisplayNameString() + " "
 						+ DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 		}

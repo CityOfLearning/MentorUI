@@ -66,7 +66,7 @@ public class Roster extends Show {
 					KeyManager.getSecretKey(dropdown.getElement(selected).getValue()),
 					KeyManager.getOrgKey(dropdown.getElement(selected).getValue()));
 
-			BooleanChangeListener listener = event -> {
+			BooleanChangeListener listener = (event, show) -> {
 				if (event.getDispatcher().getFlag()) {
 					JsonObject jObj = progRequest.jsonResponse.getAsJsonObject();
 					if (jObj.has("result")) {
@@ -80,7 +80,7 @@ public class Roster extends Show {
 				}
 			};
 
-			progRequest.responseReceived.addBooleanChangeListener(listener);
+			progRequest.responseReceived.addBooleanChangeListener(listener, this);
 
 		} else if (dropdown.getId().equals("program")) {
 
@@ -95,7 +95,7 @@ public class Roster extends Show {
 
 			selectedProgram = dropdown.getElement(selected).getValue();
 
-			BooleanChangeListener listener = event -> {
+			BooleanChangeListener listener = (event, show) -> {
 				if (event.getDispatcher().getFlag()) {
 					JsonObject jObj = scheduleRequest.jsonResponse.getAsJsonObject();
 					if (jObj.has("result")) {
@@ -117,7 +117,7 @@ public class Roster extends Show {
 				}
 			};
 
-			scheduleRequest.responseReceived.addBooleanChangeListener(listener);
+			scheduleRequest.responseReceived.addBooleanChangeListener(listener, this);
 
 		} else if (dropdown.getId().equals("schedule")) {
 
@@ -129,12 +129,13 @@ public class Roster extends Show {
 					dropdown.getElement(selected).getValue(), KeyManager.getSecretKey(selectedOrg),
 					KeyManager.getOrgKey(selectedOrg));
 
-			BooleanChangeListener listener = event -> {
+			BooleanChangeListener listener = (event, show) -> {
 				if (event.getDispatcher().getFlag()) {
 					JsonObject jObj = rosterRequest.jsonResponse.getAsJsonObject();
 					if (jObj.has("result")) {
 						rosterDisplayList.add(new StringEntry("Student Name"));
 						rosterDisplayList.add(new StringEntry("------------------------------------------"));
+						System.out.println(jObj.get("result"));
 						for (JsonElement entry : jObj.get("result").getAsJsonArray()) {
 							JsonObject entryObj = entry.getAsJsonObject();
 							JsonObject userEntryObj = entryObj.get("user").getAsJsonObject();
@@ -157,7 +158,7 @@ public class Roster extends Show {
 				}
 			};
 
-			rosterRequest.responseReceived.addBooleanChangeListener(listener);
+			rosterRequest.responseReceived.addBooleanChangeListener(listener, this);
 		}
 	}
 

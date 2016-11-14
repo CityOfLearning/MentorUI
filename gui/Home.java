@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
 import com.dyn.server.network.packets.server.RemoveEffectsMessage;
 import com.dyn.server.network.packets.server.RequestFreezePlayerMessage;
@@ -61,7 +61,7 @@ public class Home extends Show {
 		muteText = "Mute Students";
 		modeText = "Set Students to Creative Mode";
 
-		BooleanChangeListener listener = event -> {
+		BooleanChangeListener listener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
 				int missing = 0;
@@ -79,20 +79,25 @@ public class Home extends Show {
 			}
 		};
 
-		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener);
+		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
+	}
+	
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	// Manage Students
 	private void feedStudents() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			NetworkDispatcher.sendToServer(new FeedPlayerMessage(student.getMinecraftUsername()));
+			NetworkManager.sendToServer(new FeedPlayerMessage(student.getMinecraftUsername()));
 		}
 	}
 
 	private void freezeUnfreezeStudents() {
 		isFrozen = !isFrozen;
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			NetworkDispatcher.sendToServer(new RequestFreezePlayerMessage(student.getMinecraftUsername(), isFrozen));
+			NetworkManager.sendToServer(new RequestFreezePlayerMessage(student.getMinecraftUsername(), isFrozen));
 		}
 
 		if (isFrozen) {
@@ -112,7 +117,7 @@ public class Home extends Show {
 
 	private void healStudents() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			NetworkDispatcher.sendToServer(new ServerCommandMessage("/heal " + student.getMinecraftUsername()));
+			NetworkManager.sendToServer(new ServerCommandMessage("/heal " + student.getMinecraftUsername()));
 		}
 	}
 
@@ -124,9 +129,9 @@ public class Home extends Show {
 	private void muteUnmuteStudents() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (isMuted) {
-				NetworkDispatcher.sendToServer(new ServerCommandMessage("/mute " + student.getMinecraftUsername()));
+				NetworkManager.sendToServer(new ServerCommandMessage("/mute " + student.getMinecraftUsername()));
 			} else {
-				NetworkDispatcher.sendToServer(new ServerCommandMessage("/unmute " + student.getMinecraftUsername()));
+				NetworkManager.sendToServer(new ServerCommandMessage("/unmute " + student.getMinecraftUsername()));
 			}
 		}
 
@@ -148,7 +153,7 @@ public class Home extends Show {
 
 	private void removeEffects() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			NetworkDispatcher.sendToServer(new RemoveEffectsMessage(student.getMinecraftUsername()));
+			NetworkManager.sendToServer(new RemoveEffectsMessage(student.getMinecraftUsername()));
 		}
 	}
 
@@ -194,7 +199,7 @@ public class Home extends Show {
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .35), 20, 20, DYNServerConstants.REFRESH_IMAGE)
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
-								but -> NetworkDispatcher.sendToServer(new RequestUserlistMessage())));
+								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		// Manage Students
 		registerComponent(new Button((int) (width * .55), (int) (height * .72), (int) (width / 3.3), 20,
@@ -276,10 +281,10 @@ public class Home extends Show {
 			if (sTime < 0) {
 				sTime += 24000;
 			}
-			NetworkDispatcher.sendToServer(new ServerCommandMessage("/time set " + sTime));
+			NetworkManager.sendToServer(new ServerCommandMessage("/time set " + sTime));
 		}
 		if (s.getId() == "speed") { // speed has to be an integer value
-			NetworkDispatcher.sendToServer(
+			NetworkManager.sendToServer(
 					new ServerCommandMessage("/speed " + (int) (1 + (pos * 10)) + " " + mentor.getDisplayNameString()));
 			// mentor.sendChatMessage("/speed " + (int) (1 + (pos * 10)));
 		}
@@ -287,7 +292,7 @@ public class Home extends Show {
 
 	private void switchMode() {
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			NetworkDispatcher.sendToServer(new ServerCommandMessage(
+			NetworkManager.sendToServer(new ServerCommandMessage(
 					"/gamemode " + (areStudentsInCreative ? "0 " : "1 ") + student.getMinecraftUsername()));
 		}
 		areStudentsInCreative = !areStudentsInCreative;
@@ -310,14 +315,14 @@ public class Home extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
-			NetworkDispatcher.sendToServer(new ServerCommandMessage(
+			NetworkManager.sendToServer(new ServerCommandMessage(
 					"/tp " + student.getMinecraftUsername() + " " + mentor.getDisplayNameString()));
 		}
 	}
 
 	private void toggleCreative() {
 
-		NetworkDispatcher.sendToServer(
+		NetworkManager.sendToServer(
 				new ServerCommandMessage("/gamemode " + (isCreative ? "0 " : "1 ") + mentor.getDisplayNameString()));
 		isCreative = !isCreative;
 		if (isCreative) {

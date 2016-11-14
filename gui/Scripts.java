@@ -2,14 +2,14 @@ package com.dyn.mentor.gui;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Map;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.StopServerPythonScriptMessage;
 import com.dyn.utils.CCOLPlayerInfo;
-import com.google.common.collect.Maps;
 import com.rabbit.gui.background.DefaultBackground;
+import com.rabbit.gui.component.code.CodeInterface;
 import com.rabbit.gui.component.control.Button;
 import com.rabbit.gui.component.display.Picture;
 import com.rabbit.gui.component.display.TextLabel;
@@ -20,22 +20,19 @@ import com.rabbit.gui.component.list.entries.SelectElementEntry;
 import com.rabbit.gui.component.list.entries.SelectListEntry;
 import com.rabbit.gui.show.Show;
 
-import net.blay09.mods.waystones.network.NetworkHandler;
-import net.blay09.mods.waystones.util.WaystoneEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 
 public class Scripts extends Show {
-
-	private static final Map<String, WaystoneEntry> waystones = Maps.newHashMap();
-
 	private EntityPlayerSP mentor;
 	private SelectElementEntry selectedEntry;
 	private ScrollableDisplayList rosterDisplayList;
 
+	private CodeInterface codeWindow;
+
 	public Scripts() {
 		setBackground(new DefaultBackground());
-		title = "Warp Areas";
+		title = "Roster Script Management";
 		mentor = Minecraft.getMinecraft().thePlayer;
 	}
 
@@ -76,7 +73,7 @@ public class Scripts extends Show {
 						.setClickListener(btn -> {
 
 							if (selectedEntry != null) {
-								NetworkHandler.channel.sendToServer(
+								NetworkManager.sendToServer(
 										new StopServerPythonScriptMessage((String) selectedEntry.getValue()));
 							}
 						}));
@@ -87,11 +84,14 @@ public class Scripts extends Show {
 
 							for (CCOLPlayerInfo student : DYNServerMod.roster) {
 								if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
-									NetworkHandler.channel.sendToServer(
+									NetworkManager.sendToServer(
 											new StopServerPythonScriptMessage(student.getMinecraftUsername()));
 								}
 							}
 						}));
+
+		registerComponent(codeWindow = (CodeInterface) new CodeInterface(width / 2, height / 5, (int) (width * .3),
+				(int) (height * .7)).setDrawUnicode(true));
 
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),

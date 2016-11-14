@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
-import com.dyn.server.network.NetworkDispatcher;
+import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestWorldListMessage;
 import com.dyn.utils.BooleanChangeListener;
 import com.dyn.utils.CCOLPlayerInfo;
@@ -49,9 +49,9 @@ public class Warps extends Show {
 		setBackground(new DefaultBackground());
 		title = "Warp Areas";
 		mentor = Minecraft.getMinecraft().thePlayer;
-		NetworkDispatcher.sendToServer(new RequestWorldListMessage());
+		NetworkManager.sendToServer(new RequestWorldListMessage());
 
-		BooleanChangeListener worldlistener = event -> {
+		BooleanChangeListener worldlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				WarpDisplayList.clear();
 
@@ -70,7 +70,12 @@ public class Warps extends Show {
 			}
 		};
 
-		DYNServerMod.worldsMessageRecieved.addBooleanChangeListener(worldlistener);
+		DYNServerMod.worldsMessageRecieved.addBooleanChangeListener(worldlistener, this);
+	}
+	
+	@Override
+	public void onClose() {
+		DYNServerMod.worldsMessageRecieved.removeBooleanChangeListener(this);
 	}
 
 	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
