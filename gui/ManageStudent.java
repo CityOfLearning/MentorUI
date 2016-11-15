@@ -100,12 +100,6 @@ public class ManageStudent extends Show {
 
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
 	}
-	
-	@Override
-	public void onClose() {
-		DYNServerMod.playerStatusReturned.removeBooleanChangeListener(this);
-		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
-	}
 
 	private void entryClicked(SelectElementEntry entry, DisplayList list, int mouseX, int mouseY) {
 		for (ListEntry listEntry : list.getContent()) {
@@ -184,6 +178,12 @@ public class ManageStudent extends Show {
 				muteButton.setHoverText(text);
 			}
 		}
+	}
+
+	@Override
+	public void onClose() {
+		DYNServerMod.playerStatusReturned.removeBooleanChangeListener(this);
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	@Override

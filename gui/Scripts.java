@@ -33,7 +33,7 @@ public class Scripts extends Show {
 	private ScrollableDisplayList rosterDisplayList;
 
 	private CodeInterface codeWindow;
-	
+
 	private BooleanChangeListener scriptlistener;
 	private BooleanChangeListener rosterlistener;
 
@@ -42,18 +42,18 @@ public class Scripts extends Show {
 		title = "Roster Script Management";
 		mentor = Minecraft.getMinecraft().thePlayer;
 	}
-	
+
+	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
+		selectedEntry = (SelectElementEntry) entry;
+		NetworkManager.sendToServer(new MentorRequstScriptMessage("_",
+				Minecraft.getMinecraft().theWorld.getPlayerEntityByName((String) entry.getValue()).getEntityId()));
+	}
+
 	@Override
 	public void onClose() {
 		DYNServerMod.studentScriptMessageRecieved.removeBooleanChangeListener(scriptlistener);
 		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(rosterlistener);
 		super.onClose();
-	}
-	
-	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
-		selectedEntry = (SelectElementEntry) entry;
-		NetworkManager.sendToServer(new MentorRequstScriptMessage("_",
-				Minecraft.getMinecraft().theWorld.getPlayerEntityByName((String) entry.getValue()).getEntityId()));
 	}
 
 	@Override
@@ -70,9 +70,11 @@ public class Scripts extends Show {
 						(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,
 								dlist, mouseX, mouseY)));
 			} else {
-				rlist.add(new SelectElementEntry(student.getMinecraftUsername(), student.getCCOLName(), Color.GRAY,
-						(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,
-								dlist, mouseX, mouseY)).setIsEnabled(false));
+				rlist.add(
+						new SelectElementEntry(student.getMinecraftUsername(),
+								student.getCCOLName(), Color.GRAY, (SelectElementEntry entry, DisplayList dlist,
+										int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
+												.setIsEnabled(false));
 			}
 		}
 
@@ -126,7 +128,7 @@ public class Scripts extends Show {
 		// The background
 		registerComponent(new Picture(width / 8, (int) (height * .15), (int) (width * (6.0 / 8.0)), (int) (height * .8),
 				DYNServerConstants.BG1_IMAGE));
-		
+
 		scriptlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				((Scripts) show).updateCodeWindowText(DYNServerMod.studentSctipt);
@@ -142,12 +144,12 @@ public class Scripts extends Show {
 		};
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
 	}
-	
-	public void updateCodeWindowText(String script){
+
+	public void updateCodeWindowText(String script) {
 		codeWindow.setText(script);
 	}
-	
-	public void updateRoster(){
+
+	public void updateRoster() {
 		rosterDisplayList.clear();
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
@@ -155,9 +157,11 @@ public class Scripts extends Show {
 						(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,
 								dlist, mouseX, mouseY)));
 			} else {
-				rosterDisplayList.add(new SelectElementEntry(student.getMinecraftUsername(), student.getCCOLName(), Color.GRAY,
-						(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,
-								dlist, mouseX, mouseY)).setIsEnabled(false));
+				rosterDisplayList
+						.add(new SelectElementEntry(student.getMinecraftUsername(),
+								student.getCCOLName(), Color.GRAY, (SelectElementEntry entry, DisplayList dlist,
+										int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY))
+												.setIsEnabled(false));
 			}
 		}
 	}

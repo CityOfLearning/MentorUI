@@ -72,11 +72,6 @@ public class Warps extends Show {
 
 		DYNServerMod.worldsMessageRecieved.addBooleanChangeListener(worldlistener, this);
 	}
-	
-	@Override
-	public void onClose() {
-		DYNServerMod.worldsMessageRecieved.removeBooleanChangeListener(this);
-	}
 
 	private void entryClicked(SelectListEntry entry, DisplayList list, int mouseX, int mouseY) {
 		if (list.getId().equals("warps")) {
@@ -97,6 +92,11 @@ public class Warps extends Show {
 		default:
 			return Integer.toString(dimId);
 		}
+	}
+
+	@Override
+	public void onClose() {
+		DYNServerMod.worldsMessageRecieved.removeBooleanChangeListener(this);
 	}
 
 	@Override

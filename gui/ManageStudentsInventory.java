@@ -74,11 +74,6 @@ public class ManageStudentsInventory extends Show {
 
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
 	}
-	
-	@Override
-	public void onClose() {
-		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
-	}
 
 	private void checkBoxChanged() {
 		affectAllStudents = !affectAllStudents;
@@ -175,6 +170,11 @@ public class ManageStudentsInventory extends Show {
 			String student = DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue());
 			giveItem(student == null ? (String) userSelected.getValue() : student);
 		}
+	}
+
+	@Override
+	public void onClose() {
+		DYNServerMod.serverUserlistReturned.removeBooleanChangeListener(this);
 	}
 
 	private void removeItem(String student) {
