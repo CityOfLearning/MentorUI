@@ -135,7 +135,6 @@ public class Roster extends Show {
 					if (jObj.has("result")) {
 						rosterDisplayList.add(new StringEntry("Student Name"));
 						rosterDisplayList.add(new StringEntry("------------------------------------------"));
-						System.out.println(jObj.get("result"));
 						for (JsonElement entry : jObj.get("result").getAsJsonArray()) {
 							JsonObject entryObj = entry.getAsJsonObject();
 							JsonObject userEntryObj = entryObj.get("user").getAsJsonObject();
