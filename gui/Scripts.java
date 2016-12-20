@@ -62,7 +62,7 @@ public class Scripts extends Show {
 		SideButtons.init(this, 7);
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {

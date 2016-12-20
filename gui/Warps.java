@@ -105,7 +105,7 @@ public class Warps extends Show {
 		SideButtons.init(this, 6);
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
@@ -132,7 +132,7 @@ public class Warps extends Show {
 		for (WaystoneEntry warp : WaystoneManager.getServerWaystones()) {
 			waystones.put(warp.getName(), warp);
 			if (!warpWorlds.containsKey(warp.getDimensionId())) {
-				List<String> warps = new ArrayList<String>();
+				List<String> warps = new ArrayList<>();
 				warps.add(warp.getName());
 				warpWorlds.put(warp.getDimensionId(), warps);
 			} else {

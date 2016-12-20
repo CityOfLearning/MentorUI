@@ -80,7 +80,7 @@ public class MonitorAchievements extends Show {
 
 		if ((selectedUser != null) && (selectedAchievement != null)) {
 			AchievementPlus ach = AchievementManager.findAchievementByName(selectedAchievement.getTitle());
-			ArrayList<ListEntry> ulist = new ArrayList<ListEntry>();
+			ArrayList<ListEntry> ulist = new ArrayList<>();
 
 			if (ach.hasRequirementOfType(RequirementType.CRAFT)) {
 				ulist.add(new SelectStringEntry("-Craft-"));
@@ -202,7 +202,7 @@ public class MonitorAchievements extends Show {
 						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
 								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
-		List<ListEntry> dslist = new ArrayList<ListEntry>();
+		List<ListEntry> dslist = new ArrayList<>();
 
 		for (AchievementPlus a : AchievementManager.getAllAchievements()) {
 			dslist.add(new SelectStringEntry(a.getName(), (SelectStringEntry entry, DisplayList dlist, int mouseX,
@@ -216,7 +216,7 @@ public class MonitorAchievements extends Show {
 		registerComponent(achDisplayList);
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
@@ -245,7 +245,7 @@ public class MonitorAchievements extends Show {
 					}
 				}));
 
-		List<ListEntry> content = new ArrayList<ListEntry>();
+		List<ListEntry> content = new ArrayList<>();
 		content.add(new SelectStringEntry(""));
 		infoDisplayList = new ScrollableDisplayList((int) (width * .53), (int) (height * .2), (int) (width / 3.2), 140,
 				15, content);

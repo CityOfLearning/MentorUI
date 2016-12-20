@@ -33,7 +33,7 @@ import com.rabbit.gui.show.Show;
 
 public class Roster extends Show {
 
-	private Map<UUID, CCOLPlayerInfo> tmpPlayerInfo = new HashMap<UUID, CCOLPlayerInfo>();
+	private Map<UUID, CCOLPlayerInfo> tmpPlayerInfo = new HashMap<>();
 
 	private DropDown<Integer> orgs;
 	private DropDown<Integer> programs;
@@ -236,7 +236,7 @@ public class Roster extends Show {
 				TextAlignment.CENTER));
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (CCOLPlayerInfo user : DYNServerMod.roster) {
 			rlist.add(new StringEntry(user.getCCOLName()));

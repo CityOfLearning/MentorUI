@@ -202,7 +202,7 @@ public class ManageStudent extends Show {
 				.setTextChangedListener((TextBox textbox, String previousText) -> textChanged(textbox, previousText)));
 
 		// The students on the Roster List for this class
-		ArrayList<ListEntry> rlist = new ArrayList<ListEntry>();
+		ArrayList<ListEntry> rlist = new ArrayList<>();
 
 		for (CCOLPlayerInfo student : DYNServerMod.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
