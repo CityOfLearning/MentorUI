@@ -199,7 +199,7 @@ public class MonitorAchievements extends Show {
 
 		registerComponent(
 				new PictureButton((int) (width * .15), (int) (height * .2), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh").doesDrawHoverText(true).setClickListener(
+						.addHoverText("Refresh").setDoesDrawHoverText(true).setClickListener(
 								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		List<ListEntry> dslist = new ArrayList<>();

@@ -83,7 +83,7 @@ public class Scripts extends Show {
 
 		registerComponent(
 				new PictureButton((int) (width * .45), (int) (height * .175), 15, 15, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh Roster").doesDrawHoverText(true).setClickListener(
+						.addHoverText("Refresh Roster").setDoesDrawHoverText(true).setClickListener(
 								but -> NetworkManager.sendToServer(new RequestUserlistMessage())));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .25), width / 3, 100, 15,
@@ -113,7 +113,7 @@ public class Scripts extends Show {
 
 		registerComponent(
 				new PictureButton((int) (width * .45), (int) (height * .7), 20, 20, DYNServerConstants.REFRESH_IMAGE)
-						.addHoverText("Refresh Script").doesDrawHoverText(true).setClickListener(but -> {
+						.addHoverText("Refresh Script").setDoesDrawHoverText(true).setClickListener(but -> {
 							if (selectedEntry != null) {
 								NetworkManager.sendToServer(new MentorRequstScriptMessage("_",
 										Minecraft.getMinecraft().theWorld

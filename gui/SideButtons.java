@@ -20,7 +20,7 @@ public class SideButtons {
 				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_1.getLeft()),
 				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_1.getRight()), 30, 30,
 				DYNServerConstants.STUDENTS_IMAGE).setIsEnabled(true).addHoverText("Manage Classroom")
-						.doesDrawHoverText(true).setClickListener(but -> {
+						.setDoesDrawHoverText(true).setClickListener(but -> {
 							show.getStage().display(new Home());
 							show.onClose();
 						}));
@@ -29,7 +29,7 @@ public class SideButtons {
 				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_2.getLeft()),
 				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_2.getRight()), 30, 30,
 				DYNServerConstants.ROSTER_IMAGE).setIsEnabled(true).addHoverText("Student Rosters")
-						.doesDrawHoverText(true).setClickListener(but -> {
+						.setDoesDrawHoverText(true).setClickListener(but -> {
 							show.getStage().display(new Roster());
 							show.onClose();
 						}));
@@ -38,7 +38,7 @@ public class SideButtons {
 				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_3.getLeft()),
 				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_3.getRight()), 30, 30,
 				DYNServerConstants.STUDENT_IMAGE).setIsEnabled(true).addHoverText("Manage a Student")
-						.doesDrawHoverText(true).setClickListener(but -> {
+						.setDoesDrawHoverText(true).setClickListener(but -> {
 							show.getStage().display(new ManageStudent());
 							show.onClose();
 						}));
@@ -47,7 +47,7 @@ public class SideButtons {
 				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_4.getLeft()),
 				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_4.getRight()), 30, 30,
 				DYNServerConstants.INVENTORY_IMAGE).setIsEnabled(true).addHoverText("Manage Inventory")
-						.doesDrawHoverText(true).setClickListener(but -> {
+						.setDoesDrawHoverText(true).setClickListener(but -> {
 							show.getStage().display(new ManageStudentsInventory());
 							show.onClose();
 						}));
@@ -56,7 +56,7 @@ public class SideButtons {
 				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_5.getLeft()),
 				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_5.getRight()), 30, 30,
 				DYNServerConstants.ACHIEVEMENT_IMAGE).setIsEnabled(true).addHoverText("Award Achievements")
-						.doesDrawHoverText(true).setClickListener(but -> {
+						.setDoesDrawHoverText(true).setClickListener(but -> {
 							show.getStage().display(new MonitorAchievements());
 							show.onClose();
 						}));
@@ -64,8 +64,8 @@ public class SideButtons {
 		show.registerComponent(but6 = (PictureButton) new PictureButton(
 				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_6.getLeft()),
 				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_6.getRight()), 30, 30,
-				DYNServerConstants.WARP_IMAGE).setIsEnabled(true).addHoverText("Warp Locations").doesDrawHoverText(true)
-						.setClickListener(but -> {
+				DYNServerConstants.WARP_IMAGE).setIsEnabled(true).addHoverText("Warp Locations")
+						.setDoesDrawHoverText(true).setClickListener(but -> {
 							show.getStage().display(new Warps());
 							show.onClose();
 						}));
@@ -74,7 +74,7 @@ public class SideButtons {
 				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_7.getLeft()),
 				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_7.getRight()), 30, 30,
 				DYNServerConstants.PYTHON_IMAGE).setIsEnabled(true).addHoverText("Roster Script Options")
-						.doesDrawHoverText(true).setClickListener(but -> {
+						.setDoesDrawHoverText(true).setClickListener(but -> {
 							show.getStage().display(new Scripts());
 							show.onClose();
 						}));
