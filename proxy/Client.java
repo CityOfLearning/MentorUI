@@ -9,7 +9,7 @@ import com.dyn.DYNServerMod;
 import com.dyn.mentor.gui.Home;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
-import com.dyn.utils.PlayerLevel;
+import com.dyn.utils.PlayerAccessLevel;
 import com.rabbit.gui.RabbitGui;
 
 import net.minecraft.client.Minecraft;
@@ -33,7 +33,7 @@ public class Client implements Proxy {
 
 	@Override
 	public void init() {
-		if (DYNServerMod.accessLevel == PlayerLevel.MENTOR) {
+		if (DYNServerMod.accessLevel == PlayerAccessLevel.MENTOR) {
 			MinecraftForge.EVENT_BUS.register(this);
 
 			mentorKey = new KeyBinding("key.toggle.mentorui", Keyboard.KEY_M, "key.categories.toggle");
@@ -48,7 +48,7 @@ public class Client implements Proxy {
 		if ((Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
 			return;
 		}
-		if ((DYNServerMod.accessLevel == PlayerLevel.MENTOR) && mentorKey.isPressed()) {
+		if ((DYNServerMod.accessLevel == PlayerAccessLevel.MENTOR) && mentorKey.isPressed()) {
 			if (!Minecraft.getMinecraft().thePlayer.worldObj.isRemote) {
 				NetworkManager.sendToServer(new RequestUserlistMessage());
 			}
