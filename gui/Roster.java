@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.text.WordUtils;
 
 import com.dyn.DYNServerConstants;
-import com.dyn.DYNServerMod;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.http.GetProgramRoster;
 import com.dyn.server.http.GetPrograms;
 import com.dyn.server.http.GetScheduledPrograms;
@@ -209,7 +209,7 @@ public class Roster extends Show {
 						.setClickListener(but -> {
 							if (tmpPlayerInfo.size() > 0) {
 								but.setIsEnabled(false);
-								DYNServerMod.roster.addAll(tmpPlayerInfo.values());
+								MentorUI.roster.addAll(tmpPlayerInfo.values());
 								rosterStatus.setText("Adding Students to Roster");
 								progBar.getProgressChangedListener().setValue(0);
 
@@ -217,9 +217,9 @@ public class Roster extends Show {
 									// this blocks and so we gotta thread it
 
 									int progress = 0;
-									for (CCOLPlayerInfo player : DYNServerMod.roster) {
+									for (CCOLPlayerInfo player : MentorUI.roster) {
 										progBar.getProgressChangedListener()
-												.setValue(((float) progress++) / DYNServerMod.roster.size());
+												.setValue(((float) progress++) / MentorUI.roster.size());
 										player.grabMissingData();
 									}
 									but.setIsEnabled(true);
@@ -238,7 +238,7 @@ public class Roster extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<>();
 
-		for (CCOLPlayerInfo user : DYNServerMod.roster) {
+		for (CCOLPlayerInfo user : MentorUI.roster) {
 			rlist.add(new StringEntry(user.getCCOLName()));
 		}
 
@@ -248,7 +248,7 @@ public class Roster extends Show {
 		registerComponent(rosterDisplayList);
 
 		numberOfStudentsOnRoster = new TextLabel((int) (width * .5) + 20, (int) (height * .2), 90, 20, Color.black,
-				"Roster Count: " + DYNServerMod.roster.size(), TextAlignment.LEFT);
+				"Roster Count: " + MentorUI.roster.size(), TextAlignment.LEFT);
 		registerComponent(numberOfStudentsOnRoster);
 
 		// The background

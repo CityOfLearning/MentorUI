@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
 import com.dyn.server.network.packets.server.ServerCommandMessage;
@@ -56,7 +57,7 @@ public class ManageStudentsInventory extends Show {
 		BooleanChangeListener rosterlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
-				for (CCOLPlayerInfo student : DYNServerMod.roster) {
+				for (CCOLPlayerInfo student : MentorUI.roster) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 						rosterDisplayList.add(new SelectStringEntry(student.getCCOLName(),
 								(SelectStringEntry entry, DisplayList dlist, int mouseX,
@@ -84,19 +85,19 @@ public class ManageStudentsInventory extends Show {
 		if (!userSelected.getTitle().isEmpty()) {
 
 			NetworkManager.sendToServer(new ServerCommandMessage(
-					"/invsee " + DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue())));
+					"/invsee " + CCOLPlayerInfo.mc_username2ccol_id.inverse().get(userSelected.getValue())));
 		}
 	}
 
 	private void clearPlayerInventory() {
 		// Clear all students inventory
 		if (affectAllStudents) {
-			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			for (CCOLPlayerInfo student : MentorUI.roster) {
 				NetworkManager.sendToServer(new ServerCommandMessage("/clear " + student.getMinecraftUsername()));
 			}
 		} else if (!userSelected.getTitle().isEmpty()) {
 			NetworkManager.sendToServer(new ServerCommandMessage(
-					"/clear " + DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue())));
+					"/clear " + CCOLPlayerInfo.mc_username2ccol_id.inverse().get(userSelected.getValue())));
 			// userBox.getText()
 		}
 	}
@@ -158,7 +159,7 @@ public class ManageStudentsInventory extends Show {
 
 	private void giveItemToPlayer() {
 		if (affectAllStudents) {
-			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			for (CCOLPlayerInfo student : MentorUI.roster) {
 				giveItem(student.getMinecraftUsername());
 			}
 		}
@@ -167,7 +168,7 @@ public class ManageStudentsInventory extends Show {
 			if ((userSelected == null) || (itemSelected == null)) {
 				return;
 			}
-			String student = DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue());
+			String student = CCOLPlayerInfo.mc_username2ccol_id.inverse().get(userSelected.getValue());
 			giveItem(student == null ? (String) userSelected.getValue() : student);
 		}
 	}
@@ -224,14 +225,14 @@ public class ManageStudentsInventory extends Show {
 	private void removeItemFromPlayer() {
 
 		if (affectAllStudents) {
-			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			for (CCOLPlayerInfo student : MentorUI.roster) {
 				removeItem(student.getMinecraftUsername());
 			}
 		} else {
 			if ((userSelected == null) || (itemSelected == null)) {
 				return;
 			}
-			String student = DYNServerMod.mc_username2ccol_id.inverse().get(userSelected.getValue());
+			String student = CCOLPlayerInfo.mc_username2ccol_id.inverse().get(userSelected.getValue());
 			removeItem(student == null ? (String) userSelected.getValue() : student);
 		}
 	}
@@ -316,7 +317,7 @@ public class ManageStudentsInventory extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<>();
 
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry,
 						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
@@ -404,7 +405,7 @@ public class ManageStudentsInventory extends Show {
 			}
 		} else if (textbox.getId() == "usersearch") {
 			rosterDisplayList.clear();
-			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			for (CCOLPlayerInfo student : MentorUI.roster) {
 				if (student.getCCOLName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),

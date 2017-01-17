@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.bidirectional.MentorRequstScriptMessage;
 import com.dyn.server.network.packets.server.RequestUserlistMessage;
@@ -64,7 +65,7 @@ public class Scripts extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<>();
 
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 				rlist.add(new SelectElementEntry(student.getMinecraftUsername(), student.getCCOLName(),
 						(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,
@@ -79,7 +80,7 @@ public class Scripts extends Show {
 		}
 
 		registerComponent(new TextLabel((int) (width * .15), (int) (height * .2), width / 3, 20, Color.black,
-				"Roster Count: " + DYNServerMod.roster.size()));
+				"Roster Count: " + MentorUI.roster.size()));
 
 		registerComponent(
 				new PictureButton((int) (width * .45), (int) (height * .175), 15, 15, DYNServerConstants.REFRESH_IMAGE)
@@ -103,7 +104,7 @@ public class Scripts extends Show {
 		registerComponent(
 				new Button((int) (width * .15), (int) (height * .8), (int) (width / 3.5), 20, "Stop Roster Scripts")
 						.setClickListener(btn -> {
-							for (CCOLPlayerInfo student : DYNServerMod.roster) {
+							for (CCOLPlayerInfo student : MentorUI.roster) {
 								if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 									NetworkManager.sendToServer(
 											new StopServerPythonScriptMessage(student.getMinecraftUsername()));
@@ -151,7 +152,7 @@ public class Scripts extends Show {
 
 	public void updateRoster() {
 		rosterDisplayList.clear();
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 				rosterDisplayList.add(new SelectElementEntry(student.getMinecraftUsername(), student.getCCOLName(),
 						(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,

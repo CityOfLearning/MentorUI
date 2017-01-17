@@ -1,3 +1,4 @@
+
 package com.dyn.mentor.gui;
 
 import java.awt.Color;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.RequestWorldListMessage;
 import com.dyn.utils.BooleanChangeListener;
@@ -107,7 +109,7 @@ public class Warps extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<>();
 
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 				rlist.add(new SelectElementEntry(student.getMinecraftUsername(), student.getCCOLName(),
 						(SelectElementEntry entry, DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry,
@@ -120,7 +122,7 @@ public class Warps extends Show {
 		}
 
 		registerComponent(new TextLabel((int) (width * .15), (int) (height * .2), width / 3, 20, Color.black,
-				"Roster Count: " + DYNServerMod.roster.size()));
+				"Roster Count: " + MentorUI.roster.size()));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .25), width / 3, 100, 15,
 				rlist);
@@ -190,7 +192,7 @@ public class Warps extends Show {
 						WaystoneEntry entry = waystones.get(selectedWarpEntry);
 						if (entry != null) {
 							getStage().close();
-							for (CCOLPlayerInfo student : DYNServerMod.roster) {
+							for (CCOLPlayerInfo student : MentorUI.roster) {
 								if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 									NetworkHandler.channel
 											.sendToServer(new MessageWarp2Stone(entry, student.getMinecraftUsername()));

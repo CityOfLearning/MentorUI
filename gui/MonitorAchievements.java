@@ -9,6 +9,7 @@ import com.dyn.achievements.achievement.AchievementPlus;
 import com.dyn.achievements.achievement.RequirementType;
 import com.dyn.achievements.achievement.Requirements.BaseRequirement;
 import com.dyn.achievements.handlers.AchievementManager;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.MentorGivingAchievementMessage;
 import com.dyn.server.network.packets.server.RequestUserAchievementsProgressMessage;
@@ -45,7 +46,7 @@ public class MonitorAchievements extends Show {
 		BooleanChangeListener rosterlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
-				for (CCOLPlayerInfo student : DYNServerMod.roster) {
+				for (CCOLPlayerInfo student : MentorUI.roster) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
 								(SelectElementEntry entry, DisplayList dlist, int mouseX,
@@ -75,7 +76,7 @@ public class MonitorAchievements extends Show {
 		} else if (list.getId() == "roster") {
 			selectedUser = (SelectElementEntry) entry;
 			NetworkManager.sendToServer(new RequestUserAchievementsProgressMessage(
-					DYNServerMod.mc_username2ccol_id.inverse().get(selectedUser.getValue())));
+					CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedUser.getValue())));
 		}
 
 		if ((selectedUser != null) && (selectedAchievement != null)) {
@@ -218,7 +219,7 @@ public class MonitorAchievements extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<>();
 
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry,
 						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
@@ -240,7 +241,7 @@ public class MonitorAchievements extends Show {
 					if ((selectedUser != null) && (selectedAchievement != null) && !selectedUser.getTitle().isEmpty()
 							&& !selectedAchievement.getTitle().isEmpty()) {
 						NetworkManager.sendToServer(new MentorGivingAchievementMessage(
-								DYNServerMod.mc_username2ccol_id.inverse().get(selectedUser.getValue()),
+								CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedUser.getValue()),
 								AchievementManager.findAchievementByName(selectedAchievement.getTitle()).getId()));
 					}
 				}));
@@ -269,7 +270,7 @@ public class MonitorAchievements extends Show {
 			}
 		} else if (textbox.getId() == "usersearch") {
 			rosterDisplayList.clear();
-			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			for (CCOLPlayerInfo student : MentorUI.roster) {
 				if (student.getCCOLName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),

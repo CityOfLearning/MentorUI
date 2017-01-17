@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
 import com.dyn.server.network.packets.server.RemoveEffectsMessage;
@@ -84,7 +85,7 @@ public class ManageStudent extends Show {
 		BooleanChangeListener rosterlistener = (event, show) -> {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
-				for (CCOLPlayerInfo student : DYNServerMod.roster) {
+				for (CCOLPlayerInfo student : MentorUI.roster) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
 								(SelectElementEntry entry, DisplayList dlist, int mouseX,
@@ -108,8 +109,8 @@ public class ManageStudent extends Show {
 			}
 		}
 		selectedEntry = entry;
-		NetworkManager.sendToServer(
-				new RequestUserStatusMessage(DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
+		NetworkManager.sendToServer(new RequestUserStatusMessage(
+				CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 		usernameAndPassword();
 	}
 
@@ -117,7 +118,7 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
 				NetworkManager.sendToServer(new FeedPlayerMessage(
-						DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
+						CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 		}
 	}
@@ -126,7 +127,7 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			isFrozen = !isFrozen;
 			NetworkManager.sendToServer(new RequestFreezePlayerMessage(
-					DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue()), isFrozen));
+					CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue()), isFrozen));
 
 			if (isFrozen) {
 				freezeText = "UnFreeze Students";
@@ -148,7 +149,7 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
 				NetworkManager.sendToServer(new ServerCommandMessage(
-						"/heal " + DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
+						"/heal " + CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 		}
 	}
@@ -157,10 +158,10 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (!isMuted) {
 				NetworkManager.sendToServer(new ServerCommandMessage(
-						"/mute " + DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
+						"/mute " + CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			} else {
 				NetworkManager.sendToServer(new ServerCommandMessage(
-						"/unmute " + DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
+						"/unmute " + CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 
 			isMuted = !isMuted;
@@ -204,7 +205,7 @@ public class ManageStudent extends Show {
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<>();
 
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 				rlist.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(), (SelectElementEntry entry,
 						DisplayList dlist, int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
@@ -268,7 +269,7 @@ public class ManageStudent extends Show {
 						.setClickListener(but -> {
 							if ((selectedEntry != null) && !selectedEntry.getTitle().isEmpty()) {
 								NetworkManager.sendToServer(new RemoveEffectsMessage(
-										DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
+										CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 							}
 						}));
 
@@ -287,7 +288,7 @@ public class ManageStudent extends Show {
 	private void switchMode() {
 		if (selectedEntry != null) {
 			NetworkManager.sendToServer(new ServerCommandMessage("/gamemode " + (isStudentInCreative ? "0 " : "1 ")
-					+ DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
+					+ CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			isStudentInCreative = !isStudentInCreative;
 			if (isStudentInCreative) {
 				modeText = "Survival Mode";
@@ -309,7 +310,7 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
 				NetworkManager.sendToServer(new ServerCommandMessage(
-						"/tp " + DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue()) + " "
+						"/tp " + CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue()) + " "
 								+ mentor.getDisplayNameString()));
 			}
 		}
@@ -319,7 +320,7 @@ public class ManageStudent extends Show {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
 				NetworkManager.sendToServer(new ServerCommandMessage("/tp " + mentor.getDisplayNameString() + " "
-						+ DYNServerMod.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
+						+ CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 		}
 	}
@@ -327,7 +328,7 @@ public class ManageStudent extends Show {
 	private void textChanged(TextBox textbox, String previousText) {
 		if (textbox.getId() == "rostersearch") {
 			rosterDisplayList.clear();
-			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			for (CCOLPlayerInfo student : MentorUI.roster) {
 				if (student.getCCOLName().toLowerCase().contains(textbox.getText().toLowerCase())) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 						rosterDisplayList.add(new SelectElementEntry(student.getCCOLid(), student.getCCOLName(),
@@ -347,7 +348,7 @@ public class ManageStudent extends Show {
 
 	private void usernameAndPassword() {
 		if (selectedEntry != null) {
-			for (CCOLPlayerInfo student : DYNServerMod.roster) {
+			for (CCOLPlayerInfo student : MentorUI.roster) {
 				if (student.getCCOLid().equals(selectedEntry.getValue())) {
 					dynUsernameLabel.setText(dynUsername + student.getUsername());
 					dynPasswordLabel.setText(dynPassword + student.getPassword());

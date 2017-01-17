@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.dyn.DYNServerConstants;
 import com.dyn.DYNServerMod;
+import com.dyn.mentor.MentorUI;
 import com.dyn.server.network.NetworkManager;
 import com.dyn.server.network.packets.server.FeedPlayerMessage;
 import com.dyn.server.network.packets.server.RemoveEffectsMessage;
@@ -65,7 +66,7 @@ public class Home extends Show {
 			if (event.getDispatcher().getFlag()) {
 				rosterDisplayList.clear();
 				int missing = 0;
-				for (CCOLPlayerInfo student : DYNServerMod.roster) {
+				for (CCOLPlayerInfo student : MentorUI.roster) {
 					if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 						rosterDisplayList.add(new StringEntry(student.getCCOLName()));
 					} else {
@@ -74,8 +75,7 @@ public class Home extends Show {
 					}
 
 				}
-				numberOfStudentsOnRoster
-						.setText((DYNServerMod.roster.size() - missing) + "/" + DYNServerMod.roster.size());
+				numberOfStudentsOnRoster.setText((MentorUI.roster.size() - missing) + "/" + MentorUI.roster.size());
 			}
 		};
 
@@ -84,14 +84,14 @@ public class Home extends Show {
 
 	// Manage Students
 	private void feedStudents() {
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			NetworkManager.sendToServer(new FeedPlayerMessage(student.getMinecraftUsername()));
 		}
 	}
 
 	private void freezeUnfreezeStudents() {
 		isFrozen = !isFrozen;
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			NetworkManager.sendToServer(new RequestFreezePlayerMessage(student.getMinecraftUsername(), isFrozen));
 		}
 
@@ -111,7 +111,7 @@ public class Home extends Show {
 	}
 
 	private void healStudents() {
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			NetworkManager.sendToServer(new ServerCommandMessage("/heal " + student.getMinecraftUsername()));
 		}
 	}
@@ -122,7 +122,7 @@ public class Home extends Show {
 	}
 
 	private void muteUnmuteStudents() {
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			if (isMuted) {
 				NetworkManager.sendToServer(new ServerCommandMessage("/mute " + student.getMinecraftUsername()));
 			} else {
@@ -152,7 +152,7 @@ public class Home extends Show {
 	}
 
 	private void removeEffects() {
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			NetworkManager.sendToServer(new RemoveEffectsMessage(student.getMinecraftUsername()));
 		}
 	}
@@ -175,7 +175,7 @@ public class Home extends Show {
 
 		// View roster list
 		int missing = 0;
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			if (DYNServerMod.usernames.contains(student.getMinecraftUsername())) {
 				rlist.add(new StringEntry(student.getCCOLName()));
 			} else {
@@ -191,7 +191,7 @@ public class Home extends Show {
 		registerComponent(rosterDisplayList);
 
 		numberOfStudentsOnRoster = new TextLabel((int) (width * .37), (int) (height * .4), 90, 20, Color.black,
-				(DYNServerMod.roster.size() - missing) + "/" + DYNServerMod.roster.size(), TextAlignment.LEFT);
+				(MentorUI.roster.size() - missing) + "/" + MentorUI.roster.size(), TextAlignment.LEFT);
 		registerComponent(numberOfStudentsOnRoster);
 
 		// when this returns refresh the total number of online students with
@@ -292,7 +292,7 @@ public class Home extends Show {
 	}
 
 	private void switchMode() {
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			NetworkManager.sendToServer(new ServerCommandMessage(
 					"/gamemode " + (areStudentsInCreative ? "0 " : "1 ") + student.getMinecraftUsername()));
 		}
@@ -315,7 +315,7 @@ public class Home extends Show {
 	private void teleportStudentsToMe() {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
-		for (CCOLPlayerInfo student : DYNServerMod.roster) {
+		for (CCOLPlayerInfo student : MentorUI.roster) {
 			NetworkManager.sendToServer(new ServerCommandMessage(
 					"/tp " + student.getMinecraftUsername() + " " + mentor.getDisplayNameString()));
 		}
