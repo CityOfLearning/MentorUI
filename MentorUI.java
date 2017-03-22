@@ -1,6 +1,7 @@
 package com.dyn.mentor;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.dyn.mentor.proxy.Proxy;
 import com.dyn.mentor.reference.MetaData;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, dependencies = "required-after:dyn|server")
 public class MentorUI {
 
-	public static ArrayList<CCOLPlayerInfo> roster = new ArrayList<>();
+	public static Set<CCOLPlayerInfo> roster = new HashSet<>();
 
 	@Mod.Instance(Reference.MOD_ID)
 	public static MentorUI instance;
