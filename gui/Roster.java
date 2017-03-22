@@ -80,6 +80,7 @@ public class Roster extends Show {
 				}
 			};
 
+			progRequest.responseReceived.setFlag(false);
 			progRequest.responseReceived.addBooleanChangeListener(listener, this);
 
 		} else if (dropdown.getId().equals("program")) {
@@ -117,6 +118,7 @@ public class Roster extends Show {
 				}
 			};
 
+			scheduleRequest.responseReceived.setFlag(false);
 			scheduleRequest.responseReceived.addBooleanChangeListener(listener, this);
 
 		} else if (dropdown.getId().equals("schedule")) {
@@ -157,6 +159,7 @@ public class Roster extends Show {
 				}
 			};
 
+			rosterRequest.responseReceived.setFlag(false);
 			rosterRequest.responseReceived.addBooleanChangeListener(listener, this);
 		}
 	}

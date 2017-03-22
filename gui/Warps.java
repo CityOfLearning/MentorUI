@@ -72,6 +72,7 @@ public class Warps extends Show {
 			}
 		};
 
+		DYNServerMod.worldsMessageRecieved.setFlag(false);
 		DYNServerMod.worldsMessageRecieved.addBooleanChangeListener(worldlistener, this);
 	}
 

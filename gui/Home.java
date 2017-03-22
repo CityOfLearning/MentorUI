@@ -79,6 +79,7 @@ public class Home extends Show {
 			}
 		};
 
+		DYNServerMod.serverUserlistReturned.setFlag(false);
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(listener, this);
 	}
 

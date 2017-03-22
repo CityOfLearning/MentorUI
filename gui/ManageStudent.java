@@ -80,6 +80,7 @@ public class ManageStudent extends Show {
 			}
 		};
 
+		DYNServerMod.playerStatusReturned.setFlag(false);
 		DYNServerMod.playerStatusReturned.addBooleanChangeListener(listener, this);
 
 		BooleanChangeListener rosterlistener = (event, show) -> {
@@ -99,6 +100,7 @@ public class ManageStudent extends Show {
 			}
 		};
 
+		DYNServerMod.serverUserlistReturned.setFlag(false);
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
 	}
 

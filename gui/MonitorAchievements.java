@@ -62,6 +62,7 @@ public class MonitorAchievements extends Show {
 			}
 		};
 
+		DYNServerMod.serverUserlistReturned.setFlag(false);
 		DYNServerMod.serverUserlistReturned.addBooleanChangeListener(rosterlistener, this);
 	}
 
