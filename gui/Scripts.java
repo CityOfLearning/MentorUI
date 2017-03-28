@@ -60,7 +60,7 @@ public class Scripts extends Show {
 	@Override
 	public void setup() {
 
-		SideButtons.init(this, 7);
+		SideButtons.init(this, 6);
 
 		// The students on the Roster List for this class
 		ArrayList<ListEntry> rlist = new ArrayList<>();

@@ -62,15 +62,6 @@ public class SideButtons {
 						}));
 
 		show.registerComponent(but6 = (PictureButton) new PictureButton(
-				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_6.getLeft()),
-				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_6.getRight()), 30, 30,
-				DYNServerConstants.WARP_IMAGE).setIsEnabled(true).addHoverText("Warp Locations")
-						.setDoesDrawHoverText(true).setClickListener(but -> {
-							show.getStage().display(new Warps());
-							show.onClose();
-						}));
-
-		show.registerComponent(but7 = (PictureButton) new PictureButton(
 				(int) (show.getWidth() * DYNServerConstants.BUTTON_LOCATION_7.getLeft()),
 				(int) (show.getHeight() * DYNServerConstants.BUTTON_LOCATION_7.getRight()), 30, 30,
 				DYNServerConstants.PYTHON_IMAGE).setIsEnabled(true).addHoverText("Roster Script Options")
