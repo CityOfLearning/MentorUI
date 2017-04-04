@@ -313,7 +313,7 @@ public class ManageStudent extends Show {
 			if (!selectedEntry.getTitle().isEmpty()) {
 				NetworkManager.sendToServer(new ServerCommandMessage(
 						"/tp " + CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue()) + " "
-								+ mentor.getDisplayNameString()));
+								+ mentor.getName()));
 			}
 		}
 	}
@@ -321,7 +321,7 @@ public class ManageStudent extends Show {
 	private void teleportToStudent() {
 		if (selectedEntry != null) {
 			if (!selectedEntry.getTitle().isEmpty()) {
-				NetworkManager.sendToServer(new ServerCommandMessage("/tp " + mentor.getDisplayNameString() + " "
+				NetworkManager.sendToServer(new ServerCommandMessage("/tp " + mentor.getName() + " "
 						+ CCOLPlayerInfo.mc_username2ccol_id.inverse().get(selectedEntry.getValue())));
 			}
 		}

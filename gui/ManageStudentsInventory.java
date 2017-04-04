@@ -329,9 +329,9 @@ public class ManageStudentsInventory extends Show {
 			}
 		}
 
-		rlist.add(new SelectElementEntry(Minecraft.getMinecraft().thePlayer.getDisplayNameString(),
-				Minecraft.getMinecraft().thePlayer.getDisplayNameString(), (SelectElementEntry entry, DisplayList dlist,
-						int mouseX, int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
+		rlist.add(new SelectElementEntry(Minecraft.getMinecraft().thePlayer.getName(),
+				Minecraft.getMinecraft().thePlayer.getName(), (SelectElementEntry entry, DisplayList dlist, int mouseX,
+						int mouseY) -> entryClicked(entry, dlist, mouseX, mouseY)));
 
 		rosterDisplayList = new ScrollableDisplayList((int) (width * .15), (int) (height * .275), width / 3, 100, 15,
 				rlist);

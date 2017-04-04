@@ -287,7 +287,7 @@ public class Home extends Show {
 		}
 		if (s.getId() == "speed") { // speed has to be an integer value
 			NetworkManager.sendToServer(
-					new ServerCommandMessage("/speed " + (int) (1 + (pos * 10)) + " " + mentor.getDisplayNameString()));
+					new ServerCommandMessage("/speed " + (int) (1 + (pos * 10)) + " " + mentor.getName()));
 			// mentor.sendChatMessage("/speed " + (int) (1 + (pos * 10)));
 		}
 	}
@@ -317,15 +317,15 @@ public class Home extends Show {
 		/// tp <Player1> <Player2>. Player1 is the person doing the teleporting,
 		/// Player2 is the person that Player1 is teleporting to
 		for (CCOLPlayerInfo student : MentorUI.roster) {
-			NetworkManager.sendToServer(new ServerCommandMessage(
-					"/tp " + student.getMinecraftUsername() + " " + mentor.getDisplayNameString()));
+			NetworkManager.sendToServer(
+					new ServerCommandMessage("/tp " + student.getMinecraftUsername() + " " + mentor.getName()));
 		}
 	}
 
 	private void toggleCreative() {
 
-		NetworkManager.sendToServer(
-				new ServerCommandMessage("/gamemode " + (isCreative ? "0 " : "1 ") + mentor.getDisplayNameString()));
+		NetworkManager
+				.sendToServer(new ServerCommandMessage("/gamemode " + (isCreative ? "0 " : "1 ") + mentor.getName()));
 		isCreative = !isCreative;
 		if (isCreative) {
 			modeText = "Set your gamemode to Survival";
